@@ -1,0 +1,11 @@
+{
+    "Simulator Target Bundle": "com.upds.tarija.com",
+    "aps": {
+     "alert" : {
+       "title" : "HOLA BUENAS",
+       "body" : "Test notification"
+     },
+        "sound": "default",
+        "badge": 1
+    }
+}
