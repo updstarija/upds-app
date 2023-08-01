@@ -1,15 +1,16 @@
 import { View, Text } from 'react-native'
 import React, { useState } from 'react'
 import DropDownPicker from 'react-native-dropdown-picker';
-import { useCarreraContext, useThemeColor } from '@/hooks';
+import { useCarreraContext, useCarreras, useThemeColor } from '@/hooks';
 import { FontAwesome } from '@expo/vector-icons';
 import { COLORS } from '~/constants';
+import { Texto } from '@/components';
 
 export const SelectCarrera = () => {
     const isDarkMode = useThemeColor() === "dark"
 
     const {
-        carrerasQuery: carreras,
+
         valueCarrera,
         setValueCarrera,
     } = useCarreraContext();
@@ -17,13 +18,17 @@ export const SelectCarrera = () => {
     const [openCarrera, setOpenCarrera] = useState(false);
 
 
+    const { carrerasQuery } = useCarreras()
+
+    if (carrerasQuery.isLoading) return <Texto>CARGANDO</Texto>
+    if (carrerasQuery.isError) return <Texto>ERROR</Texto>
 
     return (
         <DropDownPicker
             open={openCarrera}
             value={valueCarrera}
             // @ts-ignore
-            items={carreras.data}
+            items={carrerasQuery.data}
             setOpen={setOpenCarrera}
             setValue={setValueCarrera}
             placeholder="Selecciona la carrera"

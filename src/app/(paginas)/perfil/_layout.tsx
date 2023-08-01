@@ -23,7 +23,7 @@ export default function Layout() {
                 tabBarStyle: {
                     backgroundColor: isDarkMode ? COLORS.dark.secondary : '#FFF',
                 },
-                tabBarLabelStyle: { margin: 0, padding: 0, fontSize: 12 },
+                tabBarLabelStyle: { margin: 20, padding: 0, fontSize: 12 },
 
                 tabBarActiveTintColor: isDarkMode
                     ? '#FFF'
