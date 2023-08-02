@@ -1,9 +1,8 @@
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useAuthContext, useThemeColor } from '@/hooks';
 import { Texto } from '../../../components';
 import { FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { formatCumpleanios, nombreCompleto } from '@/helpers';
-import { ScrollView } from 'react-native-gesture-handler';
 
 
 const Perfil = () => {
@@ -172,7 +171,7 @@ const Perfil = () => {
                         <View className='mt-4 flex-row justify-between items-center'>
                             <View className='flex-row items-center'>
                                 <MaterialCommunityIcons name='calendar-today' color={isDarkMode ? "#FFF" : "#000"} size={20} style={{ width: 30 }} />
-                                <Texto className='ml-1 text-black dark:text-white ' weight='Bold'>Fecha Registro</Texto>
+                                <Texto className='ml-1 text-black dark:text-white ' weight='Bold'>Fecha de Registro</Texto>
                             </View>
 
                             <Texto>{formatCumpleanios(usuario.fechaRegistro)}</Texto>

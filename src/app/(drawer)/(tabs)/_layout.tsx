@@ -7,6 +7,8 @@ import { Animated, useColorScheme } from 'react-native';
 import { useThemeColor } from '@/hooks';
 
 
+const av = new Animated.Value(0)
+av.addListener(() => { return });
 
 export default function Layout() {
   const isDarkMode = useThemeColor() === 'dark';
@@ -21,7 +23,15 @@ export default function Layout() {
 
       <LayoutHome>
         <MaterialTopTabs
-
+          screenListeners={{
+            focus: () => {
+              Animated.timing(av, {
+                toValue: 1,
+                duration: 200,
+                useNativeDriver: true,
+              }).start();
+            },
+          }}
           tabBarPosition="bottom"
           screenOptions={{
             //   lazy: true,

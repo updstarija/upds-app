@@ -30,7 +30,7 @@ export const menuHomeScreen: Menu[] = [
     {
         text: 'UPDS Responde',
         icon: 'device-unknown',
-        to: '/upds-responde',
+        to: '/chat',
         link: false
     },
     {
@@ -40,10 +40,11 @@ export const menuHomeScreen: Menu[] = [
         link: false
     },
     {
-        text: 'TEST ADMIN',
-        icon: 'supervised-user-circle',
-        to: 'https://tarija.upds.edu.bo/AppUpds',
-        link: true
+        text: 'Calendario Academico',
+        icon: 'calendar-today',
+        to: '/calendario-academico',
+        link: false,
+        auth: false
     },
 ]
 
@@ -61,9 +62,9 @@ export const menuHomeStudent: Menu[] = [
         link: false
     },
     {
-        text: 'Tutoriales UPDS',
-        icon: 'library-books',
-        to: 'TutorialScreen',
+        text: 'Preguntas Frecuentes',
+        icon: 'dvr',
+        to: '/preguntas-frecuentes',
         link: false
     },
     {
@@ -92,4 +93,5 @@ export const menuHomeStudent: Menu[] = [
         link: false,
         auth:true
     },
+   
 ]

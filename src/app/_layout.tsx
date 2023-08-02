@@ -74,6 +74,12 @@ function RootLayoutNav() {
                     //@ts-ignore
                     options={{ ...configStack('Perfil') }} />
 
+
+                  <Stack.Screen name="(paginas)/calendario-academico/index"
+
+                    //@ts-ignore
+                    options={{ ...configStack('Calendario Academico') }} />
+
                   <Stack.Screen
                     name="(home)/redes-sociales"
                     //@ts-ignore

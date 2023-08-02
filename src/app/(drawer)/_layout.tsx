@@ -12,7 +12,7 @@ const LayoutDrawer = () => {
       drawerType: "slide",
       drawerActiveBackgroundColor: COLORS.light.background,
       drawerActiveTintColor: '#fff',
-      drawerInactiveTintColor: '#ccc',
+      drawerInactiveTintColor: '#9e9d9d',
       drawerLabelStyle: {
         marginLeft: -25,
         fontFamily: 'LatoRegular',
@@ -51,6 +51,19 @@ const LayoutDrawer = () => {
           )
         }}
       />
+
+      <Drawer.Screen
+        name="carrera/[id]"
+        options={{
+          title: 'Carrera',
+          drawerItemStyle: { display: "none" },
+          drawerIcon: ({ color }) => (
+            <Ionicons name='settings-outline' size={20} color={color} />
+          )
+        }}
+      />
+
+
     </Drawer>
   );
 };

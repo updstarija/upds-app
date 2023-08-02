@@ -39,7 +39,8 @@ export const CardNavigation: React.FC<Props> = ({
       }}
     >
       <View
-        className={`bg-white dark:bg-secondary-dark h-[150px] w-40 rounded-xl justify-center p-8 items-center shadow-sm shadow-primario`}
+        className={`bg-white dark:bg-secondary-dark h-[150px] w-40 rounded-xl justify-center p-8 items-center ${isIos ? "shadow-md" : ""}`}
+        style={{ elevation: 5 }}
       >
         <MaterialIcons
           name={icon}

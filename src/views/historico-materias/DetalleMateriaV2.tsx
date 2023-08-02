@@ -222,8 +222,8 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
         onPress={handlePresentModalPress}
         disabled={plan.estado.id == 0}
       >
-        <Texto className="text-center text-white">{plan.nombre}</Texto>
-        <Texto className="text-center text-white">
+        <Texto className="text-center text-black dark:text-white">{plan.nombre}</Texto>
+        <Texto className="text-center text-black dark:text-white">
           {plan.estado.id == 0 ? "Pendiente" : plan.estado.id == 6 ? "Retirado" : plan.nota}
         </Texto>
       </Button>
@@ -347,7 +347,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
                               paddingVertical: 4,
                               borderRadius: 4,
                             }}>
-                            <Texto className="text-white">{item.value}</Texto>
+                            <Texto className="text-black dark:text-white">{item.value}</Texto>
                           </View>
                         )}
                       />
@@ -494,7 +494,8 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
                             return (
                               <View className="flex w-14 items-center justify-center rounded-xl border bg-[#0D1F46] p-2 dark:bg-[#223B82]">
                                 <Texto
-                                  style={{ color: 'white', fontWeight: 'bold' }}>
+                                  className='text-white'
+                                  weight='Bold'>
                                   {items[0].value}
                                 </Texto>
                               </View>

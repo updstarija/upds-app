@@ -11,18 +11,7 @@ const Busqueda = () => {
     const [selectedItem, setSelectedItem] = useState<null | { id: string }>(null)
     return (
 
-        <AutocompleteDropdown
-
-            clearOnFocus={false}
-            closeOnBlur={true}
-            initialValue={{ id: '2' }} // or just '2'
-            onSelectItem={setSelectedItem}
-            dataSet={[
-                { id: '1', title: 'Alpha' },
-                { id: '2', title: 'Beta' },
-                { id: '3', title: 'Gamma' },
-            ]}
-        />
+        <Texto>TESTING</Texto>
 
     )
 }

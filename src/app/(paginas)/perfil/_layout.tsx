@@ -17,14 +17,14 @@ export default function Layout() {
 
             tabBarPosition="bottom"
             screenOptions={{
-                //   lazy: true,
+                lazy: true,
                 //tabBarItemStyle: { padding: 6 },
 
                 tabBarStyle: {
                     backgroundColor: isDarkMode ? COLORS.dark.secondary : '#FFF',
                 },
-                tabBarLabelStyle: { margin: 20, padding: 0, fontSize: 12 },
-
+                tabBarLabelStyle: { margin: 0, padding: 0, fontSize: 12 },
+                tabBarItemStyle: { padding: 15 },
                 tabBarActiveTintColor: isDarkMode
                     ? '#FFF'
                     : COLORS.light.background,

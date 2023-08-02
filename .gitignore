@@ -42,5 +42,3 @@ expo-env.d.ts
 
 build-*
 
-google-services.*
-GoogleService-Info.*

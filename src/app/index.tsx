@@ -123,19 +123,25 @@ const Index = () => {
 
       const onOpenApp = messaging().onNotificationOpenedApp(
         async ({ data }) => {
-          console.log(data)
+
+          console.log(data, 'datos')
 
           if (data && data?.to && data.to.length > 0) {
             const datos = data.to.split("|")  //[0] ruta [1] id
 
-            console.log(datos)
+            console.log(datos, 'datos')
             if (datos[0] === "comunicados") {
 
-              console.log("REDIRECCIONAR")
+
               router.push({
                 pathname: `/(home)/comunicados/[id]`, params: {
                   id: datos[1]
                 }
+              })
+            } else if (datos[0] == "chat") {
+              console.log('redirect')
+              router.push({
+                pathname: `/(home)/chat`
               })
             }
           }

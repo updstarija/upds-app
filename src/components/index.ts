@@ -13,3 +13,4 @@ export { default as TextField } from './TextField';
 export * from './Themed';
 export * from './VideoPlayer';
 export * from './ui';
+export * from './Counter';
