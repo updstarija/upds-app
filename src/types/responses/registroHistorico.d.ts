@@ -1,8 +1,12 @@
 export interface IResponseRegistroHistorico {
     status: number
-    data: IPlanEstudio[]
+    data: IRegistroHistoricoGroup[]
 }
 
+export interface IRegistroHistoricoGroup {
+    carrera: string
+    materias: IRegistroHistorico[]
+}
 export interface IRegistroHistorico {
     id: number
     nombre: string
@@ -11,7 +15,7 @@ export interface IRegistroHistorico {
     estado: IEstado
 }
 
-export interface IEstado{
-    id:number;
-    nombre:string
+export interface IEstado {
+    id: number;
+    nombre: string
 }

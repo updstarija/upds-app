@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback, useRef, memo } from 'react';
-import { ActivityIndicator, ScrollView, View, useColorScheme } from 'react-native';
+import { ActivityIndicator, ScrollView, View, Dimensions } from 'react-native';
 // import {
 //  BottomSheetScrollView,
 //  BottomSheetBackdrop,
@@ -22,6 +22,7 @@ interface Props {
 
 export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
   const isDarkMode = useThemeColor() === 'dark';
+  const width = Dimensions.get("window").width
 
   //const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const bottomSheetModalRef = useRef<any>(null);
@@ -29,7 +30,6 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
   const snapPoints = useMemo(() => ['35%', '60%', '90%'], []);
 
   const [selectedDistribution, setSelectedDistribution] = useState<any>(null);
-  const [distribucionNotas, setDistribucionNotas] = useState([]);
 
   const { detalleGrupoMateriaQuery: data } = useDetalleGrupoMateria({
     grupo: plan.grupo || 0,
@@ -78,7 +78,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
   const customLabel = (val: any) => {
     return (
       <View style={{ width: 90, marginLeft: 7 }}>
-        <Texto className='text-white' weight="Bold">{val}</Texto>
+        <Texto className='text-white text-center' weight="Bold">{val}</Texto>
       </View>
     );
   };
@@ -97,7 +97,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
   const detalleNotasData = [
     {
       value: data.data?.data.detalleNotas.notaMinima,
-      labelComponent: () => customLabel('Minima'),
+      labelComponent: () => customLabel('Nota\nMinima'),
       customDataPoint: customDataPoint,
     },
     {
@@ -117,7 +117,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
     },
     {
       value: data.data?.data.detalleNotas.notaMaxima,
-      labelComponent: () => customLabel('Maxima'),
+      labelComponent: () => customLabel('Nota\nMaxima'),
       customDataPoint: customDataPoint,
     },
   ];
@@ -171,42 +171,6 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
     /* @ts-ignore */
     return notasOrdenadas[0];
   }, [selectedDistribution]);
-
-  const pieData = [
-    {
-      value: 47,
-      color: '#009FFF',
-      gradientCenterColor: '#006DFF',
-      focused: true,
-      text: '2 %',
-      tipo: 'XYZ',
-      cantidad: 33,
-    },
-    {
-      value: 40,
-      color: '#93FCF8',
-      gradientCenterColor: '#3BE9DE',
-      text: '2 %',
-      tipo: 'XYZ',
-      cantidad: 33,
-    },
-    {
-      value: 16,
-      color: '#BDB2FA',
-      gradientCenterColor: '#8F80F3',
-      text: '2 %',
-      tipo: 'XYZ',
-      cantidad: 33,
-    },
-    {
-      value: 3,
-      color: '#FFA5BA',
-      gradientCenterColor: '#FF7F97',
-      text: '2 %',
-      tipo: 'XYZ',
-      cantidad: 33,
-    },
-  ];
 
   const isPendiente = plan.estado.id == 0
   const isAprobado = plan.estado.id == 1
@@ -470,12 +434,15 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
                         thickness={3}
                         color={isDarkMode ? '#fff' : '#091f4e'}
                         maxValue={100}
-                        noOfSections={4}
+                        noOfSections={5}
+                        width={width - 180}
                         areaChart
                         yAxisTextStyle={{ color: '#Fff' }}
                         //@ts-ignore 
                         data={detalleNotasData}
-                        spacing={70}
+                        initialSpacing={20}
+                        spacing={90}
+                        endSpacing={40}
                         startFillColor={isDarkMode ? '#223B82' : '#168aad'}
                         endFillColor={isDarkMode ? '#223B82' : '#3687a0'}
                         startOpacity={0.4}

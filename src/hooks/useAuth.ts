@@ -1,9 +1,9 @@
 import { useState } from "react"
-import Toast from "react-native-toast-message"
-import { IFormLogin, IResponseLogin } from "@/types"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import Toast from "react-native-toast-message"
 import { updsApi } from "@/api"
-import { Alert } from "react-native"
+import { IFormLogin, IResponseLogin } from "@/types"
+
 
 export const useAuth = () => {
     const [isLoading, setIsLoading] = useState(false)
@@ -16,15 +16,14 @@ export const useAuth = () => {
             const data = fetch("https://tarija.upds.edu.bo/ApiProyecciones/api/auth/login", {
                 body: JSON.stringify(dataUser),
                 method: "POST"
-            })
-
-            data.then((x) => {
-                console.log('Se completo el fetch', x)
+            }).then(() => {
                 console.log('--------------------------------------------------------')
-            })
+                console.log('SE COMPLETO EL FETCH')
+                console.log('--------------------------------------------------------')
 
+            })
         } catch {
-            Alert.alert("ERRROR EN FECTCH")
+            console.error('HUBO UN ERROR')
         }
 
 
