@@ -16,3 +16,4 @@ export * from './useProtectedRoute';
 export * from './useThemeColor';
 export * from './useSearchMateria';
 export * from './useRegistroHistorico';
+export * from './useEstadisticasPerfil';

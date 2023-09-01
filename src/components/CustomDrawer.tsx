@@ -2,268 +2,200 @@ import { Text, View } from 'react-native'
 import React, { useState } from 'react'
 import { DrawerContentScrollView, DrawerItemList, DrawerItem, DrawerView, DrawerContentComponentProps } from '@react-navigation/drawer'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { AntDesign, Ionicons } from '@expo/vector-icons'
+import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'
 
 import { ThemeConfig } from '@/views'
 import { useAuthContext, useThemeColor } from '@/hooks'
 import { router } from 'expo-router'
 import { COLORS } from '~/constants'
+import { Texto } from './ui'
+
+type MaterialComIcon = keyof typeof MaterialCommunityIcons.glyphMap;
+interface Menu {
+    label: string
+    items?: Menu[]
+    link?: string
+    icon: MaterialComIcon
+}
 
 
+const menu: Menu[] = [
+    {
+        label: "Facultades", items: [
+            {
+                label: "Ciencias Jurídicas", items: [
+                    { label: "Derecho", link: "/carrera", icon: "book" }
+                ],
+                icon: "folder-table"
+            },
+            {
+                label: "Ciencias Empresariales", items: [
+                    { label: "Administración de Empresas", link: "/carrera", icon: "book" },
+                    { label: "Contaduría Pública", link: "/carrera", icon: "book" },
+                    { label: "Ingeniería Comercial", link: "/carrera", icon: "book" },
+                ],
+                icon: "folder-table"
+            },
+            {
+                label: "Ciencias Sociales", items: [
+                    { label: "Ciencias de la Comunicación Social", link: "/carrera", icon: "book" },
+                    { label: "Psicología", link: "/carrera", icon: "book" },
+                ],
+                icon: "folder-table"
+            },
+            {
+                label: "Ingeniería", items: [
+                    { label: "Ingeniería Civil", link: "/carrera", icon: "book" },
+                    { label: "Ingeniería en Gestión Ambiental", link: "/carrera", icon: "book" },
+                    { label: "Ingeniería en Redes y Telecomunicaciones", link: "/carrera", icon: "book" },
+                    { label: "Ingeniería Industrial", link: "/carrera", icon: "book" },
+                ],
+                icon: "folder-table"
+            },
+            {
+                label: "Semiprensenciales", items: [
+                    { label: "Derecho", link: "/carrera", icon: "book" },
+                    { label: "Adm Empresas", link: "/carrera", icon: "book" },
+                ],
+                icon: "folder-table"
+            }
+        ],
+        icon: "home-group"
+    },
+]
 
 
 const CustomDrawer = (props: DrawerContentComponentProps) => {
     const isDarkMode = useThemeColor() === "dark"
     const { status, userAuth, logout } = useAuthContext();
 
+    const [menuActual, setMenuActual] = useState(menu)
+    const [historyMenu, setHistoryMenu] = useState<any[]>([])
+    const [title, setTitle] = useState("")
 
     const cerrarSesion = async () => {
-        router.push('/auth/login');
         logout();
+        router.replace('/auth/login');
     };
 
-    const [subItem, setSubItem] = useState(-1)
-    const [subSubItem, setSubSubItem] = useState(-1)
-    const [activeItem, setActiveItem] = useState("")
-
-    const LabelSubItem = (title: string, indexItem: number, color: string) => {
-        return (<View style={{ marginLeft: -25 }} className='flex-row justify-between items-center'>
+    const LabelSubItem = (title: string, link: string | undefined, color: string) => {
+        return (<View style={{ marginLeft: -25 }} className=' flex-1 justify-between items-center flex-row'>
             <Text style={{
-                color: "#9e9d9d",
+                color: historyMenu.length == 0 ? "#9e9d9d" : "#000",
                 fontFamily: 'LatoRegular',
                 fontSize: 15,
             }}>{title}</Text>
 
-            {subItem == indexItem ? <Ionicons name='chevron-up' size={15} /> : <Ionicons name='chevron-down' size={15} />}
+            {!link ? <Ionicons name='chevron-forward' size={15} color={"#Fff"} /> : null}
+
+
+
         </View>)
     }
 
-    const LabelSubSubItem = (title: string, indexItem: number, color: string) => {
-        return (<View style={{ marginLeft: -25 }} className='flex-row justify-between items-center'>
-            <Text style={{
-                color,
-                fontFamily: 'LatoRegular',
-                fontSize: 15,
-            }}>{title}</Text>
-
-            {subSubItem == indexItem ? <Ionicons name='chevron-up' size={15} /> : <Ionicons name='chevron-down' size={15} />}
-        </View>)
-    }
+    const handleMenuClick = (menu: any) => {
 
 
-    const data = [
-        {
-            title: "Facultades",
+        if (menu?.items) {
+            setTitle(menu.label)
+            setMenuActual(menu.items)
+            setHistoryMenu([...historyMenu, menu])
+            if (historyMenu == null) {
+            } else {
+                //setHistoryMenu([...historyMenu, menu])
+            }
 
-            children: subItem == 1 ? [
-                {
-                    title: "Ingenieria",
-                    children: subSubItem == 1 ? [{ title: "TEXT" }] : []
-                },
-                {
-                    title: "Ciencias Empresariales",
-                    children: []
-                }
-            ] : []
-        },
-        {
-            title: "Otra cosa",
-
-            children: subItem == 2 ? [
-                {
-                    title: "Ingenieria",
-
-                },
-                {
-                    title: "Ciencias Empresariales",
-
-                }
-            ] : []
         }
-    ]
+    }
+
+    const handleBackMenuClick = () => {
+        if (historyMenu?.length == 1) {
+            setMenuActual(menu)
+            setHistoryMenu([])
+            return
+        }
+
+        //   setMenuActual(historyMenu[0])
+
+        console.log(JSON.stringify(historyMenu[historyMenu.length - 2]))
+
+        const newMenu = historyMenu[historyMenu.length - 2]
+        // setMenuActual(historyMenu[historyMenu.length - 2].items)
+        setTitle(newMenu.label)
+        setMenuActual(newMenu.items)
+        const newHistori = historyMenu.slice(0, historyMenu.length - 1)
+
+
+
+        //const newHistory = [...historyMenu]
+        console.log(newHistori.length)
+        setHistoryMenu(newHistori)
+
+    }
+
     return (
         <View className='flex-1 bg-white dark:bg-primario-dark border-r border-[.6px] border-secondary-dark'>
             <DrawerContentScrollView {...props} className=''>
 
-                {/*   {data.map((x, indexx) => (
-                    <>
-                        <DrawerItem
-                            key={x.title}
-                            activeBackgroundColor={"#ebeffa"}
-                            activeTintColor='#9e9d9d'
-                            inactiveTintColor='#9e9d9d'
-                            focused={subItem == indexx + 1}
-                            onPress={() => {
-                                setSubItem(subItem == 1 ? -1 : 1)
-                            }}
+                {historyMenu.length != 0 && <View className='flex-row justify-between p-4'>
+                    <TouchableOpacity onPress={handleBackMenuClick}>
+                        <AntDesign name='left' size={20} color={isDarkMode ? "#FFF" : "#000"} />
+                    </TouchableOpacity>
 
-                            icon={({ color, focused, size }) => <Ionicons name='home-sharp' color={color} size={20} />}
-                            label={({ color }) => LabelSubItem(x.title, 1, color)}
+                    <Texto>{title}</Texto>
 
-                        />
-
-                        {x.children.map((y, index) => (
-                            <View style={{ marginLeft: 15 }}>
-                                <DrawerItem
-                                    key={y.title}
-                                    activeBackgroundColor={"#ebeffa"}
-                                    activeTintColor='#9e9d9d'
-                                    inactiveTintColor='#9e9d9d'
-                                    focused={subSubItem == index + 1}
-                                    onPress={() => {
-                                        setSubSubItem(subSubItem == 1 ? -1 : 1)
-                                    }}
-
-                                    icon={({ color, focused, size }) => <Ionicons name='home-sharp' color={color} size={20} />}
-                                    label={({ color }) => LabelSubItem(y.title, 1, color)}
-
-                                />
-
-                                {y.children.map(z => (
-                                    <View style={{ marginLeft: 15 }}>
-                                        <DrawerItem
-                                            key={z.title}
-                                            activeBackgroundColor={"#ebeffa"}
-                                            activeTintColor='#9e9d9d'
-                                            inactiveTintColor='#9e9d9d'
-
-                                            onPress={() => {
-                                                //  setSubSubItem(subSubItem == 1 ? -1 : 1)
-                                            }}
-
-                                            icon={({ color, focused, size }) => <Ionicons name='home-sharp' color={color} size={20} />}
-                                            label={z.title}
-
-                                        />
-                                    </View>
-                                ))}
-                            </View>
-                        ))}
-                    </>
-
-
-                ))} */}
-
-
-
-                <DrawerItem
-                    activeBackgroundColor={"#ebeffa"}
-                    activeTintColor='#9e9d9d'
-                    inactiveTintColor='#9e9d9d'
-                    focused={subItem == 1}
-                    onPress={() => {
-                        setSubItem(subItem == 1 ? -1 : 1)
-                    }}
-
-                    icon={({ color, focused, size }) => <Ionicons name='home-sharp' color={color} size={20} />}
-                    label={({ color }) => LabelSubItem("Facultades", 1, color)}
-
-                />
-
-
-                {subItem === 1 && <View style={{ marginLeft: 15 }}>
-                    <DrawerItem
-                        focused={subSubItem == 1}
-                        activeBackgroundColor={"#ebeffa"}
-                        activeTintColor='#9e9d9d'
-                        inactiveTintColor='#9e9d9d'
-                        onPress={() => {
-                            setSubSubItem(subSubItem == 1 ? -1 : 1)
-                        }}
-                        label={({ color }) => LabelSubSubItem("Ingenieria", 1, color)}
-                        icon={({ color, focused, size }) => <Ionicons name='home-sharp' color={color} size={20} />} />
-
-                    {subSubItem === 1 && <View style={{ marginLeft: 15 }}>
-                        <DrawerItem
-                            activeBackgroundColor={"#ebeffa"}
-                            activeTintColor='#9e9d9d'
-                            inactiveTintColor='#9e9d9d'
-                            onPress={() => {
-                                router.push("carrera/Ing-Sistemas")
-                            }}
-                            label={({ color, focused }) => <Text style={{ color, marginLeft: -25 }}>Ing. Sistemas</Text>}
-                            icon={({ color, focused, size }) => <Ionicons name='home-sharp' color={color} size={20} />} />
-
-
-                        <DrawerItem
-
-                            activeBackgroundColor={"#ebeffa"}
-                            activeTintColor='#9e9d9d'
-                            inactiveTintColor='#9e9d9d'
-                            onPress={() => {
-                                router.push("carrera/Ing-Redes")
-                            }}
-                            labelStyle={{ marginLeft: -25 }}
-                            label={"Ing. Redes y Comunicaciones"}
-                            icon={({ color, focused, size }) => <Ionicons name='home-sharp' color={color} size={20} />} />
-                    </View>}
-
-                    <DrawerItem
-                        activeBackgroundColor={"#ebeffa"}
-                        activeTintColor='#9e9d9d'
-                        inactiveTintColor='#9e9d9d'
-                        onPress={() => {
-                            setSubSubItem(subSubItem == 2 ? -1 : 2)
-                        }}
-                        labelStyle={{ marginLeft: -25 }}
-                        label={({ color }) => LabelSubSubItem("Ciencias Empresariales", 1, color)}
-                        icon={({ color, focused, size }) => <Ionicons name='home-sharp' color={color} size={20} />} />
-
-
-                    {subSubItem === 2 && <View style={{ marginLeft: 15 }}>
-                        <DrawerItem
-                            activeBackgroundColor={"#ebeffa"}
-                            activeTintColor='#9e9d9d'
-                            inactiveTintColor='#9e9d9d'
-                            onPress={() => {
-
-                            }}
-                            label={({ color, focused }) => <Text style={{ color, marginLeft: -25 }}>Derecho</Text>}
-                            icon={({ color, focused, size }) => <Ionicons name='home-sharp' color={color} size={20} />} />
-
-
-                        <DrawerItem
-
-                            activeBackgroundColor={"#ebeffa"}
-                            activeTintColor='#9e9d9d'
-                            inactiveTintColor='#9e9d9d'
-                            onPress={() => {
-
-                            }}
-                            labelStyle={{ marginLeft: -25 }}
-                            label={"Adm. Empresas"}
-                            icon={({ color, focused, size }) => <Ionicons name='home-sharp' color={color} size={20} />} />
-                    </View>}
-
-
+                    <View />
                 </View>}
-                <DrawerItemList {...props} />
+
+                {menuActual.map((x) => (
+                    <DrawerItem
+                        //style={{ justifyContent: "space-between", display: "flex", flexDirection: "row", alignItems: "center", flex: 1 }}
+                        key={x.label}
+                        activeBackgroundColor={"#ebeffa"}
+                        activeTintColor='#9e9d9d'
+                        inactiveTintColor={historyMenu.length == 0 ? "#9e9d9d" : "#000"}
+                        onPress={() => {
+                            if (x?.link) {
+                                router.push(`${x.link}/${x.label.toLowerCase().replaceAll(" ", "-")}`)
+                            }
+                            else handleMenuClick(x)
+                        }}
+                        icon={({ color, focused, size }) => {
+                            {/* <Ionicons name='home-sharp' color={color} size={20} /> */ }
+                            return <MaterialCommunityIcons name={x.icon} color={color} size={20} />
+                        }}
+                        label={({ color }) => LabelSubItem(x.label, x?.link, color)}
+
+                    />
+                ))}
+
+                {historyMenu.length == 0 && <DrawerItemList {...props} />}
             </DrawerContentScrollView>
 
 
             <View className='px-4 mb-4'>
                 <ThemeConfig />
             </View>
-
             <View className='border-t p-4 border-[#ccc]'>
 
-                <TouchableOpacity onPress={() => { }} style={{ paddingVertical: 15 }}>
-                    <View className='flex-row items-center'>
-                        <AntDesign name="questioncircleo" size={22} color={isDarkMode ? "#FFF" : "#000"} />
-                        <Text className='text-black dark:text-white ml-2'>
-                            Acerca de
-                        </Text>
-                    </View>
-                </TouchableOpacity>
+                {status === "autenticado" ?
+                    <TouchableOpacity onPress={cerrarSesion} style={{ paddingVertical: 15 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Ionicons name="exit-outline" size={22} color={isDarkMode ? "#FFF" : "#000"} />
+                            <Text className='text-black dark:text-white ml-2'>
+                                Cerrar Sesion
+                            </Text>
+                        </View>
+                    </TouchableOpacity>
+                    : <TouchableOpacity onPress={() => router.push("/auth/login")} style={{ paddingVertical: 15 }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                            <Ionicons name="log-in" size={22} color={isDarkMode ? "#FFF" : "#000"} />
+                            <Text className='text-black dark:text-white ml-2 text-center'>
+                                Iniciar Sesion
+                            </Text>
+                        </View>
+                    </TouchableOpacity>}
 
-                <TouchableOpacity onPress={cerrarSesion} style={{ paddingVertical: 15 }}>
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Ionicons name="exit-outline" size={22} color={isDarkMode ? "#FFF" : "#000"} />
-                        <Text className='text-black dark:text-white ml-2'>
-                            Cerrar Sesion
-                        </Text>
-                    </View>
-                </TouchableOpacity>
             </View>
         </View>
     )

@@ -2,16 +2,14 @@ import { BackHandler, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import WebView, { WebViewNavigation } from "react-native-webview";
 import { Texto } from "@/components";
+import Spinner from "@/components/ui/Spinner";
 
 const Updsnet = () => {
   const webViewRef = useRef<WebView>(null);
+  const [isLoading, setIsLoading] = useState(true)
 
   const handleNavigationStateChange = (newNavState: WebViewNavigation) => {
-    // Verifica si el WebView puede retroceder o no
-    const canGoBack = newNavState.canGoBack;
 
-    // Actualiza el estado de retroceso o realiza otras acciones según sea necesario
-    // ...
   };
 
   const handleBackButtonPress = () => {
@@ -28,17 +26,28 @@ const Updsnet = () => {
       handleBackButtonPress
     );
 
+
     return () => backHandler.remove();
   }, []);
 
   return (
-    <WebView
-      ref={webViewRef}
-      sharedCookiesEnabled
-      onNavigationStateChange={handleNavigationStateChange}
-      javaScriptEnabled
-      source={{ uri: "https://portal.upds.edu.bo/updsnet/5.8/" }}
-    />
+    <>
+      <WebView
+        ref={webViewRef}
+        onLoad={(x) => {
+          setIsLoading(false)
+        }}
+        sharedCookiesEnabled
+        //source={{ uri: "https://portal.upds.edu.bo/ev-docente/#/ev-est/evaluacion/32255" }}
+        javaScriptEnabled
+        source={{ uri: "https://portal.upds.edu.bo/updsnet/5.8/" }}
+        renderError={(s) => <>{ }</>}
+      />
+
+      {isLoading && <View style={{ position: "absolute", top: "50%", left: "50%" }}>
+        <Spinner classNameContainer="" />
+      </View>}
+    </>
   );
 };
 

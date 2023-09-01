@@ -11,15 +11,23 @@ import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { configStack } from '@/helpers';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { AutocompleteDropdownContextProvider } from 'react-native-autocomplete-dropdown'
+import messaging from '@react-native-firebase/messaging';
+
 const queryClient = new QueryClient();
 
+
 export {
-  // Catch any errors thrown by the Layout component.
   ErrorBoundary,
 } from 'expo-router';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+
 SplashScreen.preventAutoHideAsync();
+
+messaging().setBackgroundMessageHandler(
+  async msg => {
+    console.log('notificacion on background', msg.data);
+  },
+);
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
@@ -61,24 +69,62 @@ function RootLayoutNav() {
                 <Stack>
                   <Stack.Screen name="index" options={{ headerShown: false }} />
                   <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-                  <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                   <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+                  <Stack.Screen name="bienvenida" options={{ headerShown: false }} />
+
+
+
+                  <Stack.Screen
+                    name="(paginas)/carrera/[id]"
+                    //@ts-ignore
+                    options={configStack('Carrera')}
+                  />
 
                   <Stack.Screen name="(paginas)/notificacion"
-
                     //@ts-ignore
                     options={{ ...configStack('Notificaciones') }} />
 
-                  <Stack.Screen name="(paginas)/perfil"
 
+                  <Stack.Screen name="(paginas)/perfil"
                     //@ts-ignore
                     options={{ ...configStack('Perfil') }} />
 
+                  <Stack.Screen name="(paginas)/about/index"
+                    //@ts-ignore
+                    options={{ ...configStack('Acerca de la aplicacion') }} />
+
+                  <Stack.Screen name="(paginas)/politica/index"
+                    //@ts-ignore
+                    options={{ ...configStack('Politica de Privacidad') }} />
+
+
+                  <Stack.Screen name="(paginas)/notificacionConfig/index"
+                    //@ts-ignore
+                    options={{ ...configStack('Ajuste de Notificaciones') }} />
+
+                  <Stack.Screen name="(paginas)/terminos/index"
+                    //@ts-ignore
+                    options={{ ...configStack('Terminos de Uso') }} />
+                  <Stack.Screen name="(paginas)/tema/index"
+                    //@ts-ignore
+                    options={{ ...configStack('Ajustes de Tema') }} />
+
+                  <Stack.Screen name="(paginas)/tutorialConfig/index"
+                    //@ts-ignore
+                    options={{ ...configStack('Ajustes de Tutoriales') }} />
+
 
                   <Stack.Screen name="(paginas)/calendario-academico/index"
-
                     //@ts-ignore
                     options={{ ...configStack('Calendario Academico') }} />
+
+                  <Stack.Screen name="(paginas)/tutorial/index"
+                    //@ts-ignore
+                    options={{ ...configStack('Tutoriales') }} />
+
+                  <Stack.Screen name="(paginas)/faq/index"
+                    //@ts-ignore
+                    options={{ ...configStack('Preguntas Frecuentes') }} />
 
                   <Stack.Screen
                     name="(home)/redes-sociales"
@@ -98,7 +144,7 @@ function RootLayoutNav() {
                     options={configStack('Comunicado')}
                   />
 
-
+                  {/* FIX: NO DISPONINLE */}
                   <Stack.Screen
                     name="(home)/upds-responde"
                     //@ts-ignore
@@ -111,10 +157,18 @@ function RootLayoutNav() {
                     options={configStack('Chat UPDS')}
                   />
 
+
+
                   <Stack.Screen
                     name="(home)/test-vocacional"
                     //@ts-ignore
                     options={configStack('Test Vocacional')}
+                  />
+
+                  <Stack.Screen
+                    name="(estudiante)/ayuda"
+                    //@ts-ignore
+                    options={configStack('AYUDA')}
                   />
 
                   <Stack.Screen
@@ -126,7 +180,7 @@ function RootLayoutNav() {
                   <Stack.Screen
                     name="(estudiante)/proyecciones2"
                     //@ts-ignore
-                    options={configStack('Proyecciones2')}
+                    options={configStack('Proyecciones')}
                   />
 
                   <Stack.Screen
@@ -136,15 +190,39 @@ function RootLayoutNav() {
                   />
 
                   <Stack.Screen
-                    name="(paginas-externas)/moodle"
+                    name="(paginas-externas)/moodle/index"
                     //@ts-ignore
                     options={configStack('Plataforma Moodle')}
                   />
+                  <Stack.Screen
+                    name="(paginas-externas)/moodle/[id]"
+                    //@ts-ignore
+                    options={configStack('Moodle Aula')}
+                  />
+
+                  <Stack.Screen
+                    name="(paginas-externas)/evaluacion/index"
+                    //@ts-ignore
+                    options={configStack('Plataforma Moodle')}
+                  />
+                  <Stack.Screen
+                    name="(paginas-externas)/evaluacion/[id]"
+                    //@ts-ignore
+                    options={configStack('Evaluacion Docente')}
+                  />
+
                   <Stack.Screen
                     name="(paginas-externas)/updsnet"
                     //@ts-ignore
                     options={configStack('UpdsNet')}
                   />
+
+                  <Stack.Screen
+                    name="(paginas-externas)/ubicacion"
+                    //@ts-ignore
+                    options={configStack('Ubicacion')}
+                  />
+
 
                   <Stack.Screen
                     name="(paginas-externas)/biblioteca"

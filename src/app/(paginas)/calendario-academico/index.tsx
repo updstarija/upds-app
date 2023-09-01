@@ -4,12 +4,13 @@ import { Calendar, LocaleConfig } from 'react-native-calendars';
 import { useThemeColor } from '@/hooks';
 import { COLORS } from '~/constants';
 import { ExpandableCalendarScreen } from '@/views/Calendario';
+import CalendarioAgenda from '@/views/CalendarioAgenda';
 
 
 LocaleConfig.locales['es'] = {
     monthNames: [
         'Enero',
-        'Febrerp',
+        'Febrero',
         'Marzo',
         'Abril',
         'Mayo',
@@ -35,7 +36,8 @@ const CalendarioAcademico = () => {
     const isDarkMode = useThemeColor() === "dark"
     return (
         <View className='bg-white dark:bg-primario-dark flex-1'>
-            <ExpandableCalendarScreen />
+            {/* <ExpandableCalendarScreen /> */}
+            <CalendarioAgenda />
         </View>
     )
 }

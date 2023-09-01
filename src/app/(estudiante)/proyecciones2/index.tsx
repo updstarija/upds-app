@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { FlashList } from '@shopify/flash-list';
 import { Texto } from '@/components';
 import Spinner from '@/components/ui/Spinner';
+import { SelectCarrera } from '@/views/SelectCarrera';
 
 const HistoricoMaterias = () => {
     const { valueCarrera } = useCarreraContext();
@@ -25,14 +26,18 @@ const HistoricoMaterias = () => {
 
     return (
         <View className='bg-white flex-1 dark:bg-primario-dark '>
-            <View className="mt-10">
+            <View className='my-4 z-10'>
+                <SelectCarrera />
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
                 {semestresQuery.data.map(semestre => (
-                    <View key={semestre.id} className="mb-1">
+                    <View key={semestre.id} className="mb-[1px]">
                         <DetallePlanSemestre semestre={semestre} active={semestre.id === semestreOpen}
                             onChangeSemestre={onChangeSemestre} />
                     </View>
                 ))}
-            </View>
+            </ScrollView>
 
 
 

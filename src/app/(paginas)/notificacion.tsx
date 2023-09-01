@@ -1,7 +1,7 @@
 import { View, Text, Pressable, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { getNotificaciones } from '@/services'
-import { BottomSheet, Button, Texto } from '../../components'
+import { BottomSheet, Button, Spinner, Texto } from '../../components'
 import { INotificacion } from '@/types'
 import { FlashList } from '@shopify/flash-list'
 import { Link, useRouter } from 'expo-router'
@@ -9,6 +9,8 @@ import { Feather, FontAwesome5 } from '@expo/vector-icons'
 import { useThemeColor } from '@/hooks'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { formatFecha } from '@/helpers'
+import { ScrollView } from 'react-native-gesture-handler'
+
 const Notificacion
   = () => {
     const [isLoading, setIsLoading] = useState(true)
@@ -40,10 +42,11 @@ const Notificacion
     const navigation = async (item: INotificacion) => {
       await marcarComoLeido(item.id)
 
-      if (item.to && item.param) {
+      if (item.to) {
+        const data = item.to.split("|")
         router.push({
           pathname: `/(home)/comunicados/[id]`, params: {
-            id: item.param
+            id: data[1]
           }
         })
       }
@@ -121,16 +124,16 @@ const Notificacion
             </View>
 
             <BottomSheet content={<FontAwesome5 name='ellipsis-h' color={isDarkMode ? "#FFF" : "#000"} size={20} />} snapPointsProp={["40%"]}>
-              <View className='p-2'>
+              <ScrollView className='p-2'>
                 <View className=''>
-                  <Texto className='text-center text-xl' weight='Bold'>{item.titulo}</Texto>
-                  <Texto className='text-center' numberOfLines={10}>{item.mensaje}</Texto>
+                  <Texto className='text-center text-xl dark:text-white' weight='Bold'>{item.titulo}</Texto>
+                  <Texto className='text-center dark:text-white' numberOfLines={10}>{item.mensaje}</Texto>
                 </View>
 
                 <View className='mt-3'>
                   <Button onPress={() => deleteNotificacion(item.id)} classNameBtn='bg-primario p-4 rounded-xl flex-row justify-between items-center'>
 
-                    <Texto className='text-white'>Eliminar Notificacion</Texto>
+                    <Texto className='text-white '>Eliminar Notificacion</Texto>
                     <Feather name='delete' color={"#fff"} size={20} />
 
                   </Button>
@@ -143,7 +146,7 @@ const Notificacion
 
                   </Button>
                 </View>
-              </View>
+              </ScrollView>
             </BottomSheet>
           </View>
 
@@ -236,7 +239,7 @@ const Notificacion
     return (
       <View className='bg-white dark:bg-primario-dark flex-1'>
         {isLoading
-          ? <Texto>CARGANDO</Texto>
+          ? <Spinner />
           : <FlashList
             renderItem={({ item }) => <NotificacionItem {...item} />}
             estimatedItemSize={100}

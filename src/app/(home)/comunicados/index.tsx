@@ -23,13 +23,13 @@ const Comunicados = () => {
         <FlashList
           data={data}
           ListHeaderComponentStyle={{ margin: 3 }}
-          onEndReachedThreshold={0}
+          onEndReachedThreshold={1}
           onEndReached={getData}
           keyExtractor={(item) => item.id}
-          ListFooterComponent={isLoading ? <Spinner showText text="Cargando Noticias" classNameContainer="p-4 items-center" size={25} /> : <View />}
+          ListFooterComponent={isLoading ? <Spinner showText text="Cargando comunicados" classNameContainer="p-4 items-center" size={25} /> : <View />}
           showsVerticalScrollIndicator={false}
           estimatedItemSize={100}
-          ItemSeparatorComponent={() => <View className="mb-1" />}
+          ItemSeparatorComponent={() => <View className="mb-3" />}
           renderItem={({ item }) => (
             <>
               {/*
@@ -50,8 +50,6 @@ const Comunicados = () => {
             </>
           )}
         />
-
-        <Texto>HOLA</Texto>
       </View>
     </LayoutScreen>
   );

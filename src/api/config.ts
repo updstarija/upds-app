@@ -9,11 +9,8 @@ export const updsApi = axios.create({
     }
 })
 
-const first = async () => { }
-
 updsApi.interceptors.request.use(
     async (config) => {
-
         const getToken = async () => {
             const data = await AsyncStorage.getItem('usuario');
             if (data) {
@@ -22,11 +19,12 @@ updsApi.interceptors.request.use(
             return null
         }
 
+        console.log('BUSCANDO TOKEN')
         const token = await getToken()
+        console.log('SE ENCONTRO EL TOKEN')
+
         config.headers["Authorization"] = `Bearer ${token}`
        // config.headers["Authorization"] = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYXNlV2ViQXBpU3ViamVjdCIsImp0aSI6IjUxMTNhOTQ5LTk0YmUtNDJlOC1iNTQxLTNiNGNmN2VjYjQzNyIsImlhdCI6IjEwLzA3LzIwMjMgNDo1Mzo1MyIsIklkIjoiMTIwOTcyIiwiRG9jdW1lbnRvSWRlbnRpZGFkIjoiMTI3NTU2MTEiLCJleHAiOjE2OTE2NDMyMzMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcwMDgvIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzAwOC8ifQ.7ymtzSW1tScHmpYsucydYffCnPxAO9QPjIghGL87d6U`
-        console.log('intercepto request')
-
         return config
     },
     //     if (token) config.headers["Authorization"] = `Bearer ${token}`

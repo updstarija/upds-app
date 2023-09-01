@@ -3,9 +3,11 @@ import { DrawerToggleButton } from '@react-navigation/drawer';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Texto } from '../components';
+import { useAuthContext } from '@/hooks';
 
 
 export const TopBar = () => {
+  const { status } = useAuthContext()
   return (
     <View className="bg-white dark:bg-primario-dark">
       <View className="bg-primario dark:bg-secondary-dark  rounded-b-[50px]  ">
@@ -18,9 +20,11 @@ export const TopBar = () => {
             <Link className='mr-4' href='/notificacion'>
               <MaterialIcons name="notifications" color={'#FFF'} size={20} />
             </Link>
-            <Link className='mr-4' href='/perfil'>
+
+            {status === "autenticado" && <Link className='mr-4' href='/perfil'>
               <FontAwesome name='user-circle-o' size={20} color="#fff" />
-            </Link>
+            </Link>}
+
           </View>
         </View>
 

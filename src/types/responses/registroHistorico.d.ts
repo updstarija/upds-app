@@ -10,8 +10,11 @@ export interface IRegistroHistoricoGroup {
 export interface IRegistroHistorico {
     id: number
     nombre: string
-    grupo: number
     nota: number
+    grupo: number
+    grupoMaestro: number | null
+    moodle: number | null
+    fechaRegistro: string | null
     estado: IEstado
 }
 

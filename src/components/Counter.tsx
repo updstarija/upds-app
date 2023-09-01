@@ -28,7 +28,7 @@ const Counter: React.FC<Props> = ({ max }) => {
         <View>
             <View style={{ width: "100%" }}>
 
-                <Texto className='text-[80px] text-black dark:text-white' weight='Bold'>{currentValue}</Texto>
+                <Texto className='text-[80px] text-black dark:text-white' weight='Bold'>{Math.round(currentValue)}</Texto>
 
             </View>
 

@@ -7,7 +7,7 @@ import {
   useMateriasProyeccion,
   useThemeColor,
 } from "../../hooks";
-import { BottomSheet, Button, Texto } from "../../components";
+import { BottomSheet, Button, Spinner, Texto } from "../../components";
 import { ISemestre, MateriaProyeccion } from "../../types";
 import {
   AddActions,
@@ -73,7 +73,7 @@ const DetalleMateriasSemestre: React.FC<Props> = ({
 
   const getDetalle = () => {
     if (data.isLoading)
-      return <ActivityIndicator size="large" color="#223B82" className="p-4" />;
+      return <Spinner classNameContainer="bg-white dark:bg-[#183064] p-4" />
 
     if (data.isError) return <Texto>HUBO UN ERROR AL CARGAR EL DETALLE</Texto>;
 
@@ -90,29 +90,10 @@ const DetalleMateriasSemestre: React.FC<Props> = ({
       setIsLoadingLimit(false);
     };
 
+
+
     return (
       <View style={{ zIndex: -9 }}>
-        {/*  {data.data.data.map(item => {
-          const existe = existeMateriaEnBoleta(item.id);
-
-          return (
-            <Swiper
-              key={item.id}
-              onRighOpen={() =>
-                onAddMateria({
-                  materiaId: item.id,
-                  boletaId: boletaQuery.data?.info.boleta,
-                })
-              }
-              closeOnSwipe
-              enabled={!existe}
-              renderLeftActions={InfoActions}
-              renderRightActions={AddActions}>
-              <Row item={item} enabled={!existe} />
-            </Swiper>
-          );
-        })}
- */}
         {active && (
           <FlatList
             contentContainerStyle={{ zIndex: -999 }}
@@ -126,27 +107,33 @@ const DetalleMateriasSemestre: React.FC<Props> = ({
                 <View />
               )
             }
-            renderItem={({ item, index }) => (
-              <TouchableOpacity>
-                <Swiper
-                  key={item.id}
-                  onRighOpen={() =>
-                    onAddMateria({
-                      materiaId: item.id,
-                      boletaId: boletaQuery.data?.info.boleta,
-                    })
-                  }
-                  closeOnSwipe
-                  renderLeftActions={InfoActions}
-                  renderRightActions={AddActions}
-                  enabled={item.estado.id !== 1 ?? item.estado.id !== 0}
-                >
+            renderItem={({ item, index }) => {
+              const isPendiente = item.estado.id == 0
+              const isAprobado = item.estado.id == 1
+              const isReprobado = item.estado.id == 2
+              const isValidMateria = isPendiente || isAprobado || isReprobado
 
-                  <Row item={item} enabled={item.estado.id !== 1 ?? item.estado.id !== 0} />
+              return (
+                <TouchableOpacity>
+                  <Swiper
+                    key={item.id}
+                    onRighOpen={() =>
+                      onAddMateria({
+                        materiaId: item.id,
+                        boletaId: boletaQuery.data?.info.boleta,
+                      })
+                    }
+                    closeOnSwipe
+                    renderRightActions={AddActions}
+                    enabled={!isPendiente && !isAprobado}
+                  >
 
-                </Swiper>
-              </TouchableOpacity>
-            )}
+                    <Row item={item} enabled={!isPendiente && !isAprobado} />
+
+                  </Swiper>
+                </TouchableOpacity>
+              )
+            }}
             keyExtractor={(item, index) => `message ${index}`}
           />
         )}

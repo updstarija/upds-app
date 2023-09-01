@@ -11,31 +11,73 @@ import { tieneToken, yaPasoLaBienvenida, tieneTema } from '@/helpers';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme } from 'nativewind'
 import messaging from '@react-native-firebase/messaging';
+import { Toast } from 'react-native-toast-message/lib/src/Toast';
+import * as Notifications from 'expo-notifications';
+import { useAuth, useAuthContext } from '@/hooks';
+
+
 
 
 const Index = () => {
+  const registerForPushNotification = async () => {
+
+    let token;
+
+    if (Platform.OS === "android") {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF23F7C"
+      })
+    }
+
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+  }
+  const { logout, login } = useAuthContext()
+
+  const isIos = Platform.OS == "ios"
+
   const segments = useSegments();
   const navigationState = useRootNavigationState();
   const navigation = useNavigation();
 
   const [isLoading, setIsLoading] = useState(true);
   const [navegarAHome, setNavegarAHome] = useState(true);
+  const [notificacionState, setNotificacionState] = useState<any>(null)
 
+  const { refreshLogin } = useAuth()
   const { setColorScheme } = useColorScheme()
 
   const verificacion = async () => {
-    if (!await tieneTema()) {
-      await AsyncStorage.setItem('tema', 'system')
-      setColorScheme("system")
+    if (!isIos) {
+      if (!await tieneTema()) {
+        await AsyncStorage.setItem('tema', 'system')
+        setColorScheme("system")
+      } else {
+        const tema = await AsyncStorage.getItem('tema')
+        //@ts-ignore
+        setColorScheme(tema)
+      }
     } else {
-      const tema = await AsyncStorage.getItem('tema')
-      //@ts-ignore
-      setColorScheme(tema)
+      setColorScheme("system")
     }
 
     if (!(await yaPasoLaBienvenida())) {
       setNavegarAHome(false);
       setIsLoading(false);
+      SplashScreen.hideAsync()
       router.replace('/bienvenida');
       return;
     }
@@ -43,8 +85,15 @@ const Index = () => {
       setNavegarAHome(false);
       setIsLoading(false);
       router.replace('/auth/login');
-      return;
+    } else {
+      const data = await refreshLogin()
+      console.log(data, "DATA")
+      if (!data) {
+        logout()
+      } else login(data)
     }
+
+    SplashScreen.hideAsync()
 
     setIsLoading(false);
   };
@@ -56,8 +105,6 @@ const Index = () => {
   useEffect(() => {
     if (!navigationState.key) return;
 
-    //@ts-ignore
-    SplashScreen.hideAsync();
   }, [segments, navigationState.key]);
 
   useEffect(() => {
@@ -71,93 +118,119 @@ const Index = () => {
 
   }, [navegarAHome, isLoading]);
 
-  useEffect(() => {
-    /* const permisos = async () => {
-      const result = await messagin().requestPermission()
 
-      console.log(result, 'PERMISOS')
+  const requestPermissionIos = async () => {
+    const result = await messaging().requestPermission({ announcement: true })
+
+    if (result === messaging.AuthorizationStatus.AUTHORIZED) {
+      Alert.alert("NOTIFICACIONES ACTIVADAS")
+    } else if (result === messaging.AuthorizationStatus.PROVISIONAL) {
+      Alert.alert("NOTIFICACIONES PROVISIONALES")
+    } else if (result === messaging.AuthorizationStatus.DENIED) {
+      Alert.alert("NOTIFICACIONES DENEGADAS")
     }
+  }
 
-    permisos() */
-  })
-
+  async function requestPermissionsAndroid() {
+    return await Notifications.requestPermissionsAsync({
+      android: {
+        allowAlert: true,
+        allowBadge: true,
+        allowSound: true,
+        allowAnnouncements: true,
+      },
+    });
+  }
 
   useEffect(() => {
-    const isIos = Platform.OS == "ios"
+    const identi = async () => {
+      if (isIos) {
+        await requestPermissionIos()
+      } else {
+        await requestPermissionsAndroid()
+        await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).then((x) => {
+          console.log("PERMISOS NOTIFICAION ANDROID: ", x)
+        })
+      }
 
-
-    if (!isIos) {
-      const identi = async () => {
-
-
-        if (isIos) {
-
-          await messaging().requestPermission()
-        } else {
-          PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).then((x) => {
-            console.log("PERMISOS NOTIFICAION: ", x)
-          })
-        }
+      if (isIos && !__DEV__) {
+        await messaging().registerDeviceForRemoteMessages()
         const token = await messaging().getToken();
-        console.log(token);
-      };
+        setNotificacionState(token)
+      }
 
-      const topicSuscribe = messaging()
+      if (!isIos) {
+        console.log("OBTENIENDO TOKEN!!!!")
+
+
+        try {
+          const token = await messaging().getToken();
+          console.log(token)
+        } catch {
+          console.log("FALLO AL OBTENER EL TOKEN")
+          // Alert.alert("FALLO AL OBTENER EL TOKEN")
+        }
+      }
+
+      // Alert.alert("EMPEZANDO A SUSCRIBIR !!!!")
+
+      messaging()
         .subscribeToTopic('upds')
-        .then(() => { }); //console.log('suscrito a upds')
+        .then((x) => {
+          console.log(x)
+          //Alert.alert("SUSCRITO")
+        })
+        .catch((e) => {
+          // Alert.alert(e.message)
+        }).finally(() => {
 
-      //Notificacion cuando esta activo en la app
-      const foregroundSuscribe = messaging().onMessage(async msg => {
-        //showToast(msg.notification?.title || '', msg.notification?.body || '');
+          // Alert.alert("SUSCRITO SIN ERRORES")
+        })
 
-        Alert.alert(msg.notification?.title || "")
-      });
+    };
 
-      //Notificacion cuando esta inactivo en la app
-      const backgroudSuscribe = messaging().setBackgroundMessageHandler(
-        async msg => {
-          console.log('notificacion backrround', msg.data);
-        },
-      );
+    identi()
+  }, [])
 
+  useEffect(() => {
+    messaging().onMessage(async msg => {
+      Toast.show({
+        type: "success",
+        text1: msg.notification?.title,
+        text2: msg.notification?.body,
+        visibilityTime: 7000,
+      })
+    });
+  }, [])
 
-      const onOpenApp = messaging().onNotificationOpenedApp(
-        async ({ data }) => {
-
-          console.log(data, 'datos')
-
-          if (data && data?.to && data.to.length > 0) {
-            const datos = data.to.split("|")  //[0] ruta [1] id
-
-            console.log(datos, 'datos')
-            if (datos[0] === "comunicados") {
-
-
-              router.push({
-                pathname: `/(home)/comunicados/[id]`, params: {
-                  id: datos[1]
-                }
-              })
-            } else if (datos[0] == "chat") {
-              console.log('redirect')
-              router.push({
-                pathname: `/(home)/chat`
-              })
-            }
+  useEffect(() => {
+    messaging().onNotificationOpenedApp(
+      async ({ data }) => {
+        if (data && data?.to && data.to.length > 0) {
+          const datos = data.to.split("|")  //[0] ruta [1] id
+          if (datos[0] === "comunicados") {
+            Alert.alert("redirect to noticias")
+            router.push({
+              pathname: `/(home)/comunicados/[id]`, params: {
+                id: datos[1]
+              }
+            })
+          } else if (datos[0] == "chat") {
+            Alert.alert('redirect to chat')
+            router.push("/chat")
           }
-        },
-      );
+        }
+      },
+    );
 
-      identi();
-
-      return () => {
-        foregroundSuscribe;
-        topicSuscribe;
-        backgroudSuscribe;
-        onOpenApp;
-      };
-    }
+    messaging().getInitialNotification()
+      .then(msg => {
+        console.log(msg, "GET INITIAL NOTIFICATION")
+      })
   }, []);
+
+  if (isLoading) return null
+
   return (
     <View className="flex-1 items-center justify-center">
       {!navigationState.key || isLoading ? (

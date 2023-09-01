@@ -1,7 +1,8 @@
-import { MaterialIcons } from '@expo/vector-icons';
-interface Menu {
+import { MaterialIcons ,FontAwesome} from '@expo/vector-icons';
+
+export interface Menu {
     text: string;
-    icon: keyof typeof MaterialIcons.glyphMap;
+    icon: keyof typeof MaterialIcons.glyphMap | keyof typeof FontAwesome.glyphMap;
     to: string;
     link: boolean
     auth?: boolean
@@ -62,9 +63,9 @@ export const menuHomeStudent: Menu[] = [
         link: false
     },
     {
-        text: 'Preguntas Frecuentes',
-        icon: 'dvr',
-        to: '/preguntas-frecuentes',
+        text: 'Ayuda',
+        icon: 'help-outline',
+        to: '/ayuda',
         link: false
     },
     {
@@ -87,11 +88,58 @@ export const menuHomeStudent: Menu[] = [
           link: false
       }, */
     {
-        text: 'Registro Academico',
+        text: 'Registro Historico',
         icon: 'account-tree',
         to: '/historico-materias',
         link: false,
         auth:true
     },
    
+]
+
+export const menuAjustes: Menu[] = [
+    {
+        icon: "user-circle",
+        text: "Mi perfil",
+        to: "perfil",
+        link: false,
+        auth:true
+    },
+    {
+        icon: "notifications",
+        text: "Notificaciones",
+        to: "notificacionConfig",
+        link: false
+    },
+    {
+        icon: "grid-view",
+        text: "Tutoriales",
+        to: "tutorialConfig",
+        link: false
+    },
+    {
+        icon: "moon-o",
+        text: "Tema",
+        to: "tema",
+        link: false
+    },
+    {
+        icon: "article",
+        text: "Terminos de uso",
+        to: "terminos",
+        link: false
+    },
+    {
+        //@ts-ignore
+        icon: "shield-check",
+        text: "Politica de Privacidad",
+        to: "politica",
+        link: false
+    },
+    {
+        icon: "info-circle",
+        text: "Acerca de",
+        to: "about",
+        link: false
+    }
 ]

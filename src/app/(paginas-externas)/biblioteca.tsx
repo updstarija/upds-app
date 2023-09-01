@@ -6,7 +6,7 @@ const Biblioteca = () => {
     return (
         <WebView
             sharedCookiesEnabled
-            source={{ uri: 'http://tarija.upds.edu.bo/RepositorioAcademico' }}
+            source={{ uri: 'https://tarija.upds.edu.bo/RepositorioAcademico' }}
         />
     )
 }

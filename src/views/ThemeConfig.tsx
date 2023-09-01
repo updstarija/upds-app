@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { View, ActivityIndicator } from 'react-native'
+import { View, ActivityIndicator, Platform } from 'react-native'
 import PagerView from 'react-native-pager-view'
 import { Feather } from '@expo/vector-icons'
 import { Texto } from '../components/ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useColorScheme as useColorWind } from 'nativewind'
 import { COLORS } from '~/constants';
+import { useThemeColor } from '@/hooks';
 
 const typeThemes = {
     0: "light",
@@ -14,7 +15,9 @@ const typeThemes = {
 }
 export const ThemeConfig = () => {
     const { colorScheme, setColorScheme } = useColorWind()
+    const isDark = useThemeColor() == "dark"
     const isDarkMode = colorScheme === "dark"
+    const isIos = Platform.OS == "ios"
 
     const [temaStorage, setTemaStorage] = useState(2)
     const [isLoading, setIsLoading] = useState(true)
@@ -26,40 +29,29 @@ export const ThemeConfig = () => {
         await AsyncStorage.setItem('tema', typeThemes[id])
     }
 
-    const initialTheme = (): number => {
-
-        if (colorScheme === "light") return 0;
-        if (colorScheme === "dark") return 1;
-        if (colorScheme == "system") return 2;
-
-        return 0
-    }
-
-    const getTemaStorage = async () => {
-        const tema = await AsyncStorage.getItem('tema')
-
-        if (tema === "light") return 0;
-        if (tema === "dark") return 1;
-        if (tema == "system") return 2;
-
-        return -1
-    }
-
-
-
     useEffect(() => {
         (
             async () => {
-                const tema = await AsyncStorage.getItem('tema')
+                if (!isIos) {
+                    const tema = await AsyncStorage.getItem('tema')
 
-                if (tema === "light") setTemaStorage(0);
-                else if (tema === "dark") setTemaStorage(1);
-                else if (tema == "system") setTemaStorage(2);
+                    if (tema === "light") setTemaStorage(0);
+                    else if (tema === "dark") setTemaStorage(1);
+                    else if (tema == "system") setTemaStorage(2);
 
-                setIsLoading(false)
+                    setIsLoading(false)
+                } else {
+                    if (colorScheme === "light") setTemaStorage(0);
+                    else if (colorScheme === "dark") setTemaStorage(1);
+                    setIsLoading(false)
+                }
             }
         )()
     }, [])
+
+    useEffect(() => {
+        console.log(isDark)
+    }, [isDark])
 
     return (
         <View className='border-primario border rounded-full'>

@@ -8,3 +8,4 @@ export * from './moduloProyeccion';
 export * from './planEstudio.d';
 export * from './semestre.d';
 export * from './registroHistorico';
+export * from './estadisticasPerfil';

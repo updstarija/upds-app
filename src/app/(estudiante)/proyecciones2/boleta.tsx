@@ -23,15 +23,24 @@ import { templateBoleta, templateBoletaV3 } from '@/data/';
 import CONSTANS from 'expo-constants'
 /////////
 import {
+    TooltipProps,
     TourGuideProvider, // Main provider
     TourGuideZone, // Main wrapper of highlight component
     TourGuideZoneByPosition, // Component to use mask on overlay (ie, position absolute)
     useTourGuideController, // hook to start, etc.
 } from 'rn-tourguide'
 import Spinner from "@/components/ui/Spinner";
-import { useAuth } from '../../../hooks/useAuth';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { verTutorial } from "@/helpers";
+import { SelectCarrera } from "@/views/SelectCarrera";
 
-const Boleta = () => {
+
+interface Props {
+    tutorialEnCurso: boolean
+    setTutorialEnCurso: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
     const isDarkMode = useThemeColor() === "dark";
     const flatListRef = useRef<FlatList | null>(null);
     const boletaRef = useRef<View | null>(null);
@@ -47,11 +56,14 @@ const Boleta = () => {
         modulos: false,
     })
 
+
+
     const {
         canStart, // a boolean indicate if you can start tour guide
         start, // a function to start the tourguide
         stop, // a function  to stopping it
         eventEmitter, // an object for listening some events
+
     } = useTourGuideController()
 
 
@@ -75,6 +87,8 @@ const Boleta = () => {
     const [openModulo, setOpenModulo] = useState(false);
     const [valueModulo, setvalueModulo] = useState<number | null>(null);
 
+    const [blockScroll, setBlockScroll] = useState(true)
+
     const { carrerasQuery } = useCarreras();
     const { semestresQuery } = useSemestres({ carrera: valueCarrera || -1, proyeccion: true });
     const { modulosQuery } = useModulos();
@@ -93,14 +107,24 @@ const Boleta = () => {
 
 
     useEffect(() => {
-        if (canStart && !Object.values(empezarTutorial).includes(false)) {
-            start()
-            // console.log(Object.values(empezarTutorial), 'INICAR GOOO')
-        } else {
-            // console.log('faltan cargar componetnes', empezarTutorial)
-        }
-    }, [canStart, empezarTutorial]) // 👈 don't miss it!
+        (async () => {
+            if (!Object.values(empezarTutorial).includes(false)) {
+                if (canStart && await verTutorial("t-boleta")) {
 
+                    start()
+                    setTutorialEnCurso(true)
+
+                    setTimeout(() => {
+                        setBlockScroll(false)
+                    }, 1000);
+                } else {
+                    setTutorialEnCurso(false)
+                    setBlockScroll(false)
+
+                }
+            }
+        })()
+    }, [canStart, empezarTutorial])
 
 
     const scrollToTop = () => {
@@ -174,60 +198,14 @@ const Boleta = () => {
     };
 
     const renderCarreras = () => (
-        <DropDownPicker
-            open={openCarrera}
-            value={valueCarrera}
-            // @ts-ignore
-            items={carreras.data}
-            setOpen={setOpenCarrera}
-            setValue={setValueCarrera}
-            placeholder="Selecciona la carrera"
-            zIndex={1}
-            ArrowDownIconComponent={() => (
-                <Icon
-                    size={18}
-                    color={isDarkMode ? "#fff" : "#000"}
-                    style={{ paddingHorizontal: 5 }}
-                    name="angle-down"
-                />
-            )}
-            ArrowUpIconComponent={() => (
-                <Icon
-                    size={18}
-                    color={isDarkMode ? "#fff" : "#000"}
-                    style={{ paddingHorizontal: 5 }}
-                    name="angle-up"
-                />
-            )}
-            TickIconComponent={() => (
-                <Icon
-                    size={18}
-                    color={isDarkMode ? "#fff" : "#000"}
-                    style={{ paddingHorizontal: 5 }}
-                    name="check"
-                />
-            )}
-            schema={{
-                label: "nombre",
-                value: "id",
-            }}
-            textStyle={{ color: isDarkMode ? "#fff" : "#000" }}
-            style={
-                isDarkMode
-                    ? { backgroundColor: COLORS.dark.secondary }
-                    : { backgroundColor: "#fff" }
-            }
-            dropDownContainerStyle={
-                isDarkMode && { backgroundColor: COLORS.dark.secondary }
-            }
-        />
+        <SelectCarrera />
     );
 
     const renderBoleta = () => (
         <>
             {valueCarrera ? (
                 <View ref={boletaRef}>
-                    <DetalleBoleta carrera={valueCarrera} empezarTutorial={empezarTutorial} setEmpezarTutorial={setEmpezarTutorial} />
+                    <DetalleBoleta carrera={valueCarrera} empezarTutorial={empezarTutorial} setEmpezarTutorial={setEmpezarTutorial} tutorialEnCurso={tutorialEnCurso} />
                 </View>
             ) : (
                 <Texto className="mt-5 text-black">
@@ -238,26 +216,29 @@ const Boleta = () => {
     );
 
     const renderHeaderBody = () => (
-        <View className="bg-white p-2 dark:bg-primario-dark">
+        <View className="bg-white  dark:bg-primario-dark">
             <Texto className="my-4 text-center text-xl font-weight='Bold' uppercase text-black dark:text-white" weight="Bold">
                 Boleta de proyeccion semestral
             </Texto>
 
-            <TourGuideZone style={{ zIndex: 2 }} zone={1} text="Aqui se listaran las  tu carrera" borderRadius={10} >
+            <TourGuideZone style={{ zIndex: 2 }} zone={1} text="Listado de carreras" borderRadius={10} >
                 <View style={{ zIndex: 1 }}>{renderCarreras()}</View>
             </TourGuideZone>
 
-            <TourGuideZone zone={2} text="Aqui encontraras tu boleta de proyeccion" borderRadius={10} >
+            <TourGuideZone zone={2} text="Boleta de proyección de materias" borderRadius={10} >
                 <View style={{ zIndex: -1 }}>{renderBoleta()}</View>
             </TourGuideZone>
 
-            <View style={{ zIndex: 1, marginBottom: 15 }}>
-                <Busqueda scrollToTop={scrollToTop} />
-            </View>
+            <TourGuideZone zone={3} text="Buscador de materias para proyectar" borderRadius={10} >
+                <View style={{ zIndex: 1, paddingVertical: 20 }}>
+                    <Busqueda scrollToTop={scrollToTop} />
+                </View>
+            </TourGuideZone>
 
 
-            <TourGuideZone style={{ zIndex: 999 }} zone={3} text="Aqui puedes seleccionar los distintos modulos de las materias ofertadas" borderRadius={10} >
-                <View style={{ zIndex: 9999 }}>
+
+            <TourGuideZone style={{ zIndex: 999 }} zone={4} text="Listado de los módulos de la oferta semestral" borderRadius={10} >
+                <View style={{ zIndex: 9999 }} className="pb-4">
                     {/* <View style={{zIndex: 1, position: 'absolute'}}>{renderModulos()}</View> */}
                     {renderModulos()}
                 </View>
@@ -267,7 +248,7 @@ const Boleta = () => {
     );
 
     const renderPlan = () => {
-        if (semestresQuery.isLoading) return <Texto>CARGANDO PLAN..</Texto>;
+        if (semestresQuery.isLoading) return <Spinner />
         if (semestresQuery.isError) return <Texto>HUBO UN ERROR..</Texto>;
 
         if (!empezarTutorial.semestres) {
@@ -278,6 +259,8 @@ const Boleta = () => {
                 <FlatList
                     data={null}
                     ref={flatListRef}
+                    showsVerticalScrollIndicator={false}
+                    scrollEnabled={!blockScroll}
                     ListHeaderComponent={
                         <>
                             <View style={{ zIndex: 1 }}>{renderHeaderBody()}</View>
@@ -325,8 +308,6 @@ const Boleta = () => {
 
     const boletaValida = () => {
         if (boletaQuery.data && boletaQuery.data.data.length > 0) {
-
-            console.log(boletaQuery.data.data)
             return true
         }
 
@@ -348,7 +329,7 @@ const Boleta = () => {
                 orientation: "landscape"
             });
         } catch (error) {
-            console.log("IMPRESION CANCELADA")
+            // console.log("IMPRESION CANCELADA")
         }
     };
 
@@ -363,12 +344,6 @@ const Boleta = () => {
         ` });
         await shareAsync(uri, { UTI: '.pdf', mimeType: 'application/pdf' });
     };
-
-    const generateBoleta = () => {
-
-
-    }
-
 
     const onNewBoleta = async () => {
         Alert.alert("ALERTA", "Estas seguro de generar una nueva boleta de proyeccion?.\nSe eliminara la boleta actual.",
@@ -417,6 +392,7 @@ const Boleta = () => {
                     width={50}
                     height={50}
                 />
+
                 <FloatingAction
                     overlayColor="#0000006a"
                     actions={actions}
@@ -463,76 +439,27 @@ const Boleta = () => {
     );
 };
 
-const ProtectedScreen = () => {
-    const [visibleModal, setVisibleModal] = useState(false);
-    const { height } = Dimensions.get("window");
-
-    const { valueCarrera } = useCarreraContext();
-    const { boletaCreateMutation } = useBoleta({ carrera: valueCarrera || -1 });
-
-    const toggleModal = () => setVisibleModal(!visibleModal);
-
-    const onNewBoleta = async () => {
-        await boletaCreateMutation.mutateAsync(valueCarrera || -1);
-    };
-
-    return (
-        <>
-            {/* @ts-ignore */}
-
-            <Boleta />
-
-            <Modal isVisible={visibleModal} deviceHeight={height + 50}>
-                <View className="rounded-lg bg-white p-4 dark:bg-primario-dark">
-                    <Texto weight="Bold" className="mb-3 text-center text-xl text-black">
-                        DETALLES PARA CREACION DE BOLETA
-                    </Texto>
-
-                    <View className="mb-3 flex-row justify-between">
-                        <Texto weight="Bold" className="text-black dark:text-white">
-                            Estudiante:
-                        </Texto>
-                        <Texto className="text-black dark:text-white">xxxxxxxxxxxx</Texto>
-                    </View>
-
-                    <View className="mb-3 flex-row justify-between">
-                        <Texto weight="Bold" className="text-black dark:text-white">
-                            Carrera:
-                        </Texto>
-                        <Texto className="text-black dark:text-white">xxxxxxxxxxxx</Texto>
-                    </View>
-
-                    <View>
-                        <Button
-                            onPress={toggleModal}
-                            classNameBtn="bg-primario p-2 rounded"
-                        >
-                            <Texto className="text-center">Generar Boleta</Texto>
-                        </Button>
-                    </View>
-                </View>
-            </Modal>
-
-            <View className="absolute bottom-0 right-0">
-                {/* <FloatingButton onNew={onNewBoleta} onPrint={() => { }} /> */}
-            </View>
-        </>
-    );
-};
 
 //-145
 function App() {
     const isIos = Platform.OS === "ios";
 
+    const [tutorialEnCurso, setTutorialEnCurso] = useState(false)
 
+    const onSkipOrFinishTutorial = async (x: TooltipProps) => {
+        //@ts-ignore
+        x?.handleStop()
+        setTutorialEnCurso(false)
+        await AsyncStorage.setItem("t-boleta", "true")
+    }
 
     return (
-        <TourGuideProvider {...{ borderRadius: 16 }} backdropColor="#000000b3" verticalOffset={isIos ? -100 - CONSTANS.statusBarHeight + 10 : -100} preventOutsideInteraction tooltipComponent={(x) => (
+        <TourGuideProvider {...{ borderRadius: 16 }} backdropColor="#000000b3" verticalOffset={isIos ? -100 - CONSTANS.statusBarHeight + 10 : -104} preventOutsideInteraction tooltipComponent={(x) => (
             <View className="bg-primario dark:bg-secondary-dark p-2 rounded-xl w-72">
                 <Texto className="text-white mb-4 text-center mt-2"> {x.currentStep.text}</Texto>
 
                 <View className="flex-row gap-4 justify-evenly">
-                    {!x.isLastStep && <TouchableOpacity onPress={x.handleStop}>
+                    {!x.isLastStep && <TouchableOpacity onPress={() => onSkipOrFinishTutorial(x)}>
                         <Texto className="text-white">Saltar</Texto>
                     </TouchableOpacity>}
 
@@ -544,13 +471,14 @@ function App() {
                         <Texto className="text-white">Siguiente</Texto>
                     </TouchableOpacity>
                         :
-                        <TouchableOpacity onPress={x.handleStop}>
+                        <TouchableOpacity onPress={() => onSkipOrFinishTutorial(x)}>
                             <Texto className="text-white">Terminar</Texto>
                         </TouchableOpacity>}
                 </View>
 
             </View>)}>
-            <Boleta />
+
+            <Boleta tutorialEnCurso={tutorialEnCurso} setTutorialEnCurso={setTutorialEnCurso} />
 
 
         </TourGuideProvider>

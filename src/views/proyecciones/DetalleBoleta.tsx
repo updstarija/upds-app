@@ -1,39 +1,37 @@
 import {
-  Text,
   View,
-  TouchableOpacity,
-  Alert,
   ActivityIndicator,
 } from "react-native";
-
-import { useBoleta, useCarreraContext } from "@/hooks";
+import { useBoleta } from "@/hooks";
 import { Card, DeleteActions, Swiper, Texto } from "../../components";
 import { useEffect } from "react";
-
-interface TestMateria {
-  id: number;
-  materia: string;
-  turno: string;
-}
 
 interface Props {
   carrera: number;
   empezarTutorial?: any
-  setEmpezarTutorial?: Function
+  setEmpezarTutorial: React.Dispatch<React.SetStateAction<{
+    carreras: boolean;
+    boleta: boolean;
+    semestres: boolean;
+    modulos: boolean;
+  }>>
+  tutorialEnCurso: boolean
 }
 
-const DetalleBoleta: React.FC<Props> = ({ carrera, empezarTutorial, setEmpezarTutorial }) => {
+const DetalleBoleta: React.FC<Props> = ({ carrera, tutorialEnCurso, setEmpezarTutorial }) => {
   const { boletaQuery, materiaProyeccionDeleteMutation } = useBoleta({
     carrera,
   });
 
-  const { setBoleta, boleta } = useCarreraContext();
-
   useEffect(() => {
-    if (empezarTutorial && !empezarTutorial.boleta && !boletaQuery.isLoading) {
-      if (setEmpezarTutorial) setEmpezarTutorial((prev: any) => ({ ...prev, boleta: true }))
+    if (!boletaQuery.isLoading && !boletaQuery.isError) {
+      console.log('boleta go')
+      setEmpezarTutorial((prev) => ({ ...prev, boleta: true }))
+      console.log('boleta true')
+
     }
-  }, [empezarTutorial.boleta, boletaQuery.isLoading])
+  }, [boletaQuery.isLoading, boletaQuery.isError, boletaQuery.isFetching])
+
 
   if (boletaQuery.isLoading)
     return (
@@ -50,6 +48,11 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, empezarTutorial, setEmpezarTu
       </Texto>
     );
 
+  console.log(tutorialEnCurso)
+
+  if (tutorialEnCurso) return (<Card classNameCard="my-4 flex">
+    <Texto className="mt-2 text-center text-white">BOLETA DE PROYECCION</Texto>
+  </Card>)
 
 
   const onDelete = async (detalleBoletaId: number, boletaId: number) => {
@@ -124,16 +127,3 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, empezarTutorial, setEmpezarTu
 };
 export default DetalleBoleta;
 
-const alertIndex = (value: any) => {
-  Alert.alert(`id detalle produccion ${value.id}`);
-};
-
-const materia = (data: TestMateria, index: number) => {
-  return (
-    <TouchableOpacity onPress={() => alertIndex(data)}>
-      <Text className="text-center text-black dark:text-white">
-        {data.materia}
-      </Text>
-    </TouchableOpacity>
-  );
-};

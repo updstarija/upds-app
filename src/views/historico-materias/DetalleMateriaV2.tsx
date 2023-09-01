@@ -1,20 +1,27 @@
-import { useState, useMemo, useCallback, useRef, memo } from 'react';
-import { ActivityIndicator, ScrollView, View, Dimensions } from 'react-native';
+import { useState, useMemo, useCallback, useRef, memo, useEffect } from 'react';
+import { ActivityIndicator, StyleSheet, View, Dimensions, Alert, Pressable } from 'react-native';
 // import {
 //  BottomSheetScrollView,
 //  BottomSheetBackdrop,
 //  BottomSheetModal,
 //} from '@gorhom/bottom-sheet';
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
-import { Texto, Button, Etiqueta } from '../../components';
+import { Texto, Button, Etiqueta, InfoActions, Spinner } from '../../components';
 import { IPlanEstudio, IRegistroHistorico } from '@/types';
 import { useDetalleGrupoMateria, useThemeColor } from '@/hooks';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, TouchableOpacity } from '@gorhom/bottom-sheet';
 import PagerView from 'react-native-pager-view';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { etiquetas } from '@/data';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
+import { RectButton, Swipeable, RawButton } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
+import { Link, router } from 'expo-router';
+import { formatFechaDMY } from '@/helpers';
+import { differenceInMonths } from 'date-fns';
 
+
+const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
 interface Props {
   materia: IRegistroHistorico;
@@ -27,12 +34,16 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
   //const bottomSheetModalRef = useRef<BottomSheetModal>(null);
   const bottomSheetModalRef = useRef<any>(null);
   const [visibleModal, setVisibleModal] = useState(false);
-  const snapPoints = useMemo(() => ['35%', '60%', '90%'], []);
+  const snapPoints = useMemo(() => {
+    if (plan.estado.id == 0) return ["40%"]
+
+    return ['35%', '60%', '90%']
+  }, []);
 
   const [selectedDistribution, setSelectedDistribution] = useState<any>(null);
 
   const { detalleGrupoMateriaQuery: data } = useDetalleGrupoMateria({
-    grupo: plan.grupo || 0,
+    grupo: plan.grupoMaestro || plan.grupo,
     enabled: visibleModal,
   });
 
@@ -178,27 +189,413 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
   const isValidMateria = isPendiente || isAprobado || isReprobado
 
 
+  const swipeRef = useRef<Swipeable>(null);
+
+  const isMateriaEn4Meses = () => {
+    const actualFecha = new Date()
+    const fechaModulo = new Date(plan.fechaRegistro || "")
+    return differenceInMonths(actualFecha, fechaModulo) < 4
+  }
+
+
+  const leftContent = () => {
+    const isValid = isMateriaEn4Meses()
+
+
+    return (
+      <>
+        <RectButton>
+          <Link href={`/evaluacion/${plan.grupo}`} disabled={!isValid} className='bg-red-200'>
+            <View className={`items-center justify-center flex-1 bg-cyan-600 p-2 ${!isValid ? "opacity-60" : ""}`}>
+              <MaterialCommunityIcons
+                name="clipboard-check"
+                size={30}
+                color="#fff"
+
+              />
+            </View>
+          </Link>
+
+
+        </RectButton>
+
+        <RectButton>
+          <Link href={`/moodle/${plan.moodle}`} disabled={!isValid}>
+
+            <View className={`items-center justify-center flex-1 bg-orange-400 p-2 ${!isValid ? "opacity-60" : ""}`}>
+              <MaterialCommunityIcons
+                name="school"
+                size={30}
+                color="#fff"
+
+              />
+            </View>
+
+          </Link>
+
+        </RectButton>
+
+        {/*  <Link href={`/evaluacion/${plan.grupo}`} asChild disabled={!isValid} className='bg-red-200'>
+          <TouchableOpacity className='flex-1 opacity-60'>
+            <View className={`items-center justify-center flex-1 bg-cyan-600 p-2 ${!isValid ? "opacity-60" : ""}`}>
+              <MaterialCommunityIcons
+                name="clipboard-check"
+                size={30}
+                color="#fff"
+
+              />
+            </View>
+          </TouchableOpacity>
+        </Link>
+
+        <Link href={`/moodle/${plan.moodle}`} asChild disabled={!isValid}>
+          <TouchableOpacity className='flex-1'>
+            <View className={`items-center justify-center flex-1 bg-orange-400 p-2 ${!isValid ? "opacity-60" : ""}`}>
+              <MaterialCommunityIcons
+                name="school"
+                size={30}
+                color="#fff"
+
+              />
+            </View>
+          </TouchableOpacity>
+        </Link> */}
+
+
+
+      </>
+    );
+  };
+
+  const rightContent = () => {
+    return (
+      <View className='items-center justify-center p-2'>
+        <View className='flex-col items-center'>
+          <Texto weight='Bold'>Fecha Registro</Texto>
+          <Texto>{formatFechaDMY(plan.fechaRegistro)}</Texto>
+        </View>
+      </View>
+    )
+  }
+
+  const renderContentSheetModal = () => {
+    if (data.isLoading) return <>
+      <View className="p-28">
+        <Spinner />
+      </View>
+    </>
+
+    if (data.isError) return <>
+      <View className="p-28">
+        <Texto>HUBO UN ERROR</Texto>
+      </View>
+    </>
+
+
+    return <BottomSheetScrollView showsVerticalScrollIndicator={false}>
+      <View className="flex gap-y-4 p-5 flex-1">
+        <Texto
+          className="text-center text-xl text-black dark:text-white"
+          weight="Bold">
+          DETALLE DE LA MATERIA
+        </Texto>
+
+        <View className="flex gap-y-3">
+          <View className="flex-row justify-between">
+            <Texto className="text-black dark:text-white" weight="Bold">
+              Materia:
+            </Texto>
+            <Texto className="text-black dark:text-white">
+              {data.data?.data.informacion.materia}
+            </Texto>
+          </View>
+
+          <View className="flex-row justify-between">
+            <Texto className="text-black dark:text-white" weight="Bold">
+              Grupo:
+            </Texto>
+            <Texto className="text-black dark:text-white">
+              {data.data?.data.informacion.grupo}
+            </Texto>
+          </View>
+
+          <View className="flex-row justify-between">
+            <Texto className="text-black dark:text-white" weight="Bold">
+              Horario:
+            </Texto>
+            <Texto className="text-black dark:text-white">
+              {data.data?.data.informacion.horario}
+            </Texto>
+          </View>
+
+          <View className="flex-row justify-between">
+            <Texto className="text-black dark:text-white" weight="Bold">
+              Modulo:
+            </Texto>
+            <Texto className="text-black dark:text-white">
+              {data.data?.data.informacion.modulo}
+            </Texto>
+          </View>
+
+          <View className="flex-row justify-between">
+            <Texto className="text-black dark:text-white" weight="Bold">
+              Docente:
+            </Texto>
+            <Texto className="text-black dark:text-white">
+              {data.data?.data.informacion.docente}
+            </Texto>
+          </View>
+
+          <View className="flex-row justify-between">
+            <Texto className="text-black dark:text-white" weight="Bold">
+              Nota:
+            </Texto>
+            <Texto className="text-black dark:text-white">
+              {data.data?.data.informacion.nota}
+            </Texto>
+          </View>
+        </View>
+
+        {plan.estado.id == 0 ?
+          <View className='items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl'>
+            <Texto className='text-white'>La materia esta en curso. Vuelva Pronto :)</Texto>
+          </View> :
+          <View className='flex-col gap-5'>
+
+            <View className="rounded-2xl bg-[#223B82] p-5 dark:bg-[#0D1F46] ">
+              <Texto
+                className="text-center text-lg uppercase text-white"
+                weight="Bold">
+                Nota y promedio del curso
+              </Texto>
+              <View className="mx-auto">
+                <BarChart
+                  data={notaPromedioData}
+                  showYAxisIndices
+                  noOfSections={4}
+
+                  spacing={24}
+                  barWidth={70}
+                  xAxisThickness={0}
+                  yAxisThickness={0}
+                  yAxisTextStyle={{ color: '#fff' }}
+                  maxValue={100}
+                  isAnimated
+                  barMarginBottom={0}
+                  renderTooltip={(item: any, index: any) => (
+                    <View
+                      style={{
+                        marginBottom: 20,
+                        marginLeft: -6,
+                        backgroundColor: isDarkMode ? '#223B82' : '#fff',
+                        paddingHorizontal: 6,
+                        paddingVertical: 4,
+                        borderRadius: 4,
+                      }}>
+                      <Texto className="text-black dark:text-white">{item.value}</Texto>
+                    </View>
+                  )}
+                />
+
+                <View className="mt-5 flex-1 flex-row justify-evenly">
+                  <Etiqueta color="#177AD5" label="Mi nota" />
+                  <Etiqueta color="#ED6665" label="Promedio del curso" />
+                </View>
+              </View>
+            </View>
+
+
+
+            <View className="rounded-2xl bg-[#223B82] p-5 dark:bg-[#0D1F46]">
+              <Texto
+                className="text-center text-lg uppercase text-white"
+                weight="Bold">
+                Distribucion de Notas
+              </Texto>
+
+              <View className="mx-auto my-5">
+                <PieChart
+                  data={parseDistribucion}
+                  donut
+                  showText
+                  textColor="white"
+                  textSize={10}
+                  focusOnPress
+                  onPress={(x: any) => setSelectedDistribution(x)}
+                  textBackgroundColor="red"
+                  showGradient
+                  sectionAutoFocus
+                  radius={90}
+                  innerRadius={50}
+                  innerCircleColor={isDarkMode ? '#0D1F46' : '#223B82'}
+                  innerCircleBorderWidth={1}
+                  innerCircleBorderColor={'white'}
+                  strokeColor="white"
+                  strokeWidth={1}
+                  centerLabelComponent={() => {
+                    let nota = maxDistribucion;
+                    return (
+                      <View
+                        style={{
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                        }}>
+                        <Texto className="text-2xl text-white" weight="Bold">
+                          {selectedDistribution.cantidad}
+                        </Texto>
+                        <Texto className="text-xs uppercase text-white">
+                          {selectedDistribution.tipo}
+                        </Texto>
+                      </View>
+                    );
+                  }}
+                />
+              </View>
+
+              <View className="flex gap-y-2">
+                <View className="flex-row justify-evenly">
+                  <Etiqueta
+                    color="#006DFF"
+                    label={`Estrategico (85-100) ${data.data?.data.distribucionNotas.find(
+                      x => x.tipo === 'Estratégico',
+                    )?.cantidad
+                      }`}
+                    classNameContainer="mb-1"
+                  />
+                  <Etiqueta
+                    color="#008f00"
+                    label={`Autonomo (70-84)  ${data.data?.data.distribucionNotas.find(
+                      x => x.tipo === 'Autónomo',
+                    )?.cantidad
+                      }`}
+                    classNameContainer="mb-1"
+                  />
+                </View>
+
+                <View className="flex-row justify-evenly">
+                  <Etiqueta
+                    color="#c27e00"
+                    label={`Resolutivo (51-69)  ${data.data?.data.distribucionNotas.find(
+                      x => x.tipo === 'Resolutivo',
+                    )?.cantidad
+                      }`}
+                    classNameContainer="mb-1"
+                  />
+                  <Etiqueta
+                    color="#800080"
+                    label={`Receptivo (25-50)  ${data.data?.data.distribucionNotas.find(
+                      x => x.tipo === 'Receptivo',
+                    )?.cantidad
+                      }`}
+                    classNameContainer="mb-1"
+                  />
+                </View>
+
+                <View>
+                  <Etiqueta
+                    color="#FF0000"
+                    label={`Preformal (0-24)  ${data.data?.data.distribucionNotas.find(
+                      x => x.tipo === 'Preformal',
+                    )?.cantidad
+                      }`}
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View className="rounded-2xl bg-[#223B82] p-5 dark:bg-[#0D1F46]">
+              <Texto
+                className="text-center text-lg uppercase text-white"
+                weight="Bold">
+                Detalle notas
+              </Texto>
+
+              <View className="mx-auto mt-5 p-3">
+                <LineChart
+                  thickness={3}
+                  color={isDarkMode ? '#fff' : '#091f4e'}
+                  maxValue={100}
+                  noOfSections={5}
+                  width={width - 180}
+                  areaChart
+                  yAxisTextStyle={{ color: '#Fff' }}
+                  //@ts-ignore 
+                  data={detalleNotasData}
+                  initialSpacing={20}
+                  spacing={90}
+                  endSpacing={40}
+                  startFillColor={isDarkMode ? '#223B82' : '#168aad'}
+                  endFillColor={isDarkMode ? '#223B82' : '#3687a0'}
+                  startOpacity={0.4}
+                  endOpacity={0.4}
+                  yAxisColor="#0D1F46"
+                  xAxisColor="#0D1F46"
+                  pointerConfig={{
+                    pointerStripUptoDataPoint: true,
+                    pointerStripWidth: 2,
+                    strokeDashArray: [2, 5],
+                    pointerColor: '#223B82',
+                    radius: 4,
+                    pointerLabelWidth: 100,
+                    pointerLabelHeight: 120,
+                    pointerLabelComponent: (items: any) => {
+                      return (
+                        <View className="flex w-14 items-center justify-center rounded-xl border bg-[#0D1F46] p-2 dark:bg-[#223B82]">
+                          <Texto
+                            className='text-white'
+                            weight='Bold'>
+                            {items[0].value}
+                          </Texto>
+                        </View>
+                      );
+                    },
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        }
+      </View>
+    </BottomSheetScrollView>
+  }
+
+
   return (
     <View className='bg-white dark:bg-secondary-dark'>
-      <Button
-        classNameBtn={`px-3 py-4 flex-row justify-between items-center 
+
+      <Swipeable
+        ref={swipeRef}
+        enabled={plan.estado.id >= 0 && plan.estado.id != 6}
+
+        renderRightActions={rightContent}
+        renderLeftActions={leftContent}>
+        <View style={{ position: "relative", overflow: "hidden" }}>
+          <Button
+            classNameBtn={`px-3 py-4 flex-row justify-between items-center bg-white dark:bg-secondary-dark
           `}
-        onPress={handlePresentModalPress}
-        disabled={plan.estado.id == 0}
-      >
-        <Texto className="text-center text-black dark:text-white">{plan.nombre}</Texto>
-        <Texto className="text-center text-black dark:text-white">
-          {plan.estado.id == 0 ? "Pendiente" : plan.estado.id == 6 ? "Retirado" : plan.nota}
-        </Texto>
-      </Button>
+            onPress={handlePresentModalPress}
+            disabled={plan.estado.id < 0 || plan.estado.id == 6}
 
-      {isValidMateria && <>
-        <View style={{ borderBottomColor: etiquetas[plan.estado.id].color, borderRightWidth: 25, borderBottomWidth: 25, width: 0, height: 0, backgroundColor: "transparent", borderStyle: "solid", borderLeftWidth: 0, borderLeftColor: "transparent", borderRightColor: "transparent", position: "absolute", top: 0, right: 0, transform: [{ rotate: "180deg" }] }} />
-
-        <View style={{ position: "absolute", top: 1, right: 1, zIndex: 999 }}>
-          <FontAwesome name={etiquetas[plan.estado.id].icon} color={"#FFF"} />
+          >
+            <Texto className="text-center text-black dark:text-white">{plan.nombre}</Texto>
+            <Texto className="text-center text-black dark:text-white">
+              {plan.estado.id < 0 ? "S/C" : plan.nota}
+            </Texto>
+          </Button>
         </View>
-      </>}
+
+
+        {isValidMateria && <>
+          <View style={{ borderBottomColor: etiquetas[plan.estado.id].color, borderRightWidth: 25, borderBottomWidth: 25, width: 0, height: 0, backgroundColor: "transparent", borderStyle: "solid", borderLeftWidth: 0, borderLeftColor: "transparent", borderRightColor: "transparent", position: "absolute", top: 0, right: 0, transform: [{ rotate: "180deg" }] }} />
+
+          <View style={{ position: "absolute", top: 1, right: 1, zIndex: 999 }}>
+            <FontAwesome name={etiquetas[plan.estado.id].icon} color={"#FFF"} />
+          </View>
+        </>}
+
+      </Swipeable>
+
+
 
 
       <BottomSheetModal
@@ -211,275 +608,14 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
         backgroundStyle={{ backgroundColor: isDarkMode ? '#040e22' : '#fff' }}>
         {visibleModal && (
           <>
-            {data.isLoading ? (
-              <View className="p-28">
-                <ActivityIndicator color="#223B82" size={50} />
-              </View>
-            ) : (
-
-              <BottomSheetScrollView key="1" showsVerticalScrollIndicator={false}>
-                <View className="flex gap-y-4 p-5 flex-1">
-                  <Texto
-                    className="text-center text-xl text-black dark:text-white"
-                    weight="Bold">
-                    DETALLE DE LA MATERIA
-                  </Texto>
-
-                  <View className="flex gap-y-3">
-                    <View className="flex-row justify-between">
-                      <Texto className="text-black dark:text-white" weight="Bold">
-                        Materia:
-                      </Texto>
-                      <Texto className="text-black dark:text-white">
-                        {data.data?.data.informacion.materia}
-                      </Texto>
-                    </View>
-
-                    <View className="flex-row justify-between">
-                      <Texto className="text-black dark:text-white" weight="Bold">
-                        Grupo:
-                      </Texto>
-                      <Texto className="text-black dark:text-white">
-                        {data.data?.data.informacion.grupo}
-                      </Texto>
-                    </View>
-
-                    <View className="flex-row justify-between">
-                      <Texto className="text-black dark:text-white" weight="Bold">
-                        Horario:
-                      </Texto>
-                      <Texto className="text-black dark:text-white">
-                        {data.data?.data.informacion.horario}
-                      </Texto>
-                    </View>
-
-                    <View className="flex-row justify-between">
-                      <Texto className="text-black dark:text-white" weight="Bold">
-                        Modulo:
-                      </Texto>
-                      <Texto className="text-black dark:text-white">
-                        {data.data?.data.informacion.modulo}
-                      </Texto>
-                    </View>
-
-                    <View className="flex-row justify-between">
-                      <Texto className="text-black dark:text-white" weight="Bold">
-                        Docente:
-                      </Texto>
-                      <Texto className="text-black dark:text-white">
-                        {data.data?.data.informacion.docente}
-                      </Texto>
-                    </View>
-
-                    <View className="flex-row justify-between">
-                      <Texto className="text-black dark:text-white" weight="Bold">
-                        Nota:
-                      </Texto>
-                      <Texto className="text-black dark:text-white">
-                        {data.data?.data.informacion.nota}
-                      </Texto>
-                    </View>
-                  </View>
-
-                  <View className="rounded-2xl bg-[#223B82] p-5 dark:bg-[#0D1F46] ">
-                    <Texto
-                      className="text-center text-lg uppercase text-white"
-                      weight="Bold">
-                      Nota y promedio del curso
-                    </Texto>
-                    <View className="mx-auto">
-                      <BarChart
-                        data={notaPromedioData}
-                        showYAxisIndices
-                        noOfSections={4}
-
-                        spacing={24}
-                        barWidth={70}
-                        xAxisThickness={0}
-                        yAxisThickness={0}
-                        yAxisTextStyle={{ color: '#fff' }}
-                        maxValue={100}
-                        isAnimated
-                        barMarginBottom={0}
-                        renderTooltip={(item: any, index: any) => (
-                          <View
-                            style={{
-                              marginBottom: 20,
-                              marginLeft: -6,
-                              backgroundColor: isDarkMode ? '#223B82' : '#fff',
-                              paddingHorizontal: 6,
-                              paddingVertical: 4,
-                              borderRadius: 4,
-                            }}>
-                            <Texto className="text-black dark:text-white">{item.value}</Texto>
-                          </View>
-                        )}
-                      />
-
-                      <View className="mt-5 flex-1 flex-row justify-evenly">
-                        <Etiqueta color="#177AD5" label="Mi nota" />
-                        <Etiqueta color="#ED6665" label="Promedio del curso" />
-                      </View>
-                    </View>
-                  </View>
-
-
-
-                  <View className="rounded-2xl bg-[#223B82] p-5 dark:bg-[#0D1F46]">
-                    <Texto
-                      className="text-center text-lg uppercase text-white"
-                      weight="Bold">
-                      Distribucion de Notas
-                    </Texto>
-
-                    <View className="mx-auto my-5">
-                      <PieChart
-                        data={parseDistribucion}
-                        donut
-                        showText
-                        textColor="white"
-                        textSize={10}
-                        focusOnPress
-                        onPress={(x: any) => setSelectedDistribution(x)}
-                        textBackgroundColor="red"
-                        showGradient
-                        sectionAutoFocus
-                        radius={90}
-                        innerRadius={50}
-                        innerCircleColor={isDarkMode ? '#0D1F46' : '#223B82'}
-                        innerCircleBorderWidth={1}
-                        innerCircleBorderColor={'white'}
-                        strokeColor="white"
-                        strokeWidth={1}
-                        centerLabelComponent={() => {
-                          let nota = maxDistribucion;
-                          return (
-                            <View
-                              style={{
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                              }}>
-                              <Texto className="text-2xl text-white" weight="Bold">
-                                {selectedDistribution.cantidad}
-                              </Texto>
-                              <Texto className="text-xs uppercase text-white">
-                                {selectedDistribution.tipo}
-                              </Texto>
-                            </View>
-                          );
-                        }}
-                      />
-                    </View>
-
-                    <View className="flex gap-y-2">
-                      <View className="flex-row justify-evenly">
-                        <Etiqueta
-                          color="#006DFF"
-                          label={`Estrategico (85-100) ${data.data?.data.distribucionNotas.find(
-                            x => x.tipo === 'Estratégico',
-                          )?.cantidad
-                            }`}
-                          classNameContainer="mb-1"
-                        />
-                        <Etiqueta
-                          color="#008f00"
-                          label={`Autonomo (70-84)  ${data.data?.data.distribucionNotas.find(
-                            x => x.tipo === 'Autónomo',
-                          )?.cantidad
-                            }`}
-                          classNameContainer="mb-1"
-                        />
-                      </View>
-
-                      <View className="flex-row justify-evenly">
-                        <Etiqueta
-                          color="#c27e00"
-                          label={`Resolutivo (51-69)  ${data.data?.data.distribucionNotas.find(
-                            x => x.tipo === 'Resolutivo',
-                          )?.cantidad
-                            }`}
-                          classNameContainer="mb-1"
-                        />
-                        <Etiqueta
-                          color="#800080"
-                          label={`Receptivo (25-50)  ${data.data?.data.distribucionNotas.find(
-                            x => x.tipo === 'Receptivo',
-                          )?.cantidad
-                            }`}
-                          classNameContainer="mb-1"
-                        />
-                      </View>
-
-                      <View>
-                        <Etiqueta
-                          color="#FF0000"
-                          label={`Preformal (0-24)  ${data.data?.data.distribucionNotas.find(
-                            x => x.tipo === 'Preformal',
-                          )?.cantidad
-                            }`}
-                        />
-                      </View>
-                    </View>
-                  </View>
-
-                  <View className="rounded-2xl bg-[#223B82] p-5 dark:bg-[#0D1F46]">
-                    <Texto
-                      className="text-center text-lg uppercase text-white"
-                      weight="Bold">
-                      Detalle notas
-                    </Texto>
-
-                    <View className="mx-auto mt-5 p-3">
-                      <LineChart
-                        thickness={3}
-                        color={isDarkMode ? '#fff' : '#091f4e'}
-                        maxValue={100}
-                        noOfSections={5}
-                        width={width - 180}
-                        areaChart
-                        yAxisTextStyle={{ color: '#Fff' }}
-                        //@ts-ignore 
-                        data={detalleNotasData}
-                        initialSpacing={20}
-                        spacing={90}
-                        endSpacing={40}
-                        startFillColor={isDarkMode ? '#223B82' : '#168aad'}
-                        endFillColor={isDarkMode ? '#223B82' : '#3687a0'}
-                        startOpacity={0.4}
-                        endOpacity={0.4}
-                        yAxisColor="#0D1F46"
-                        xAxisColor="#0D1F46"
-                        pointerConfig={{
-                          pointerStripUptoDataPoint: true,
-                          pointerStripWidth: 2,
-                          strokeDashArray: [2, 5],
-                          pointerColor: '#223B82',
-                          radius: 4,
-                          pointerLabelWidth: 100,
-                          pointerLabelHeight: 120,
-                          pointerLabelComponent: (items: any) => {
-                            return (
-                              <View className="flex w-14 items-center justify-center rounded-xl border bg-[#0D1F46] p-2 dark:bg-[#223B82]">
-                                <Texto
-                                  className='text-white'
-                                  weight='Bold'>
-                                  {items[0].value}
-                                </Texto>
-                              </View>
-                            );
-                          },
-                        }}
-                      />
-                    </View>
-                  </View>
-                </View>
-              </BottomSheetScrollView>
-            )}
+            {renderContentSheetModal()}
           </>
         )}
       </BottomSheetModal>
+
 
     </View>
   );
 });
 
+export default DetalleMateriaV2

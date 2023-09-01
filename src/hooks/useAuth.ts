@@ -4,7 +4,6 @@ import Toast from "react-native-toast-message"
 import { updsApi } from "@/api"
 import { IFormLogin, IResponseLogin } from "@/types"
 
-
 export const useAuth = () => {
     const [isLoading, setIsLoading] = useState(false)
 
@@ -56,7 +55,37 @@ export const useAuth = () => {
         return null
     }
 
+    const refreshLogin = async () => {
+        setIsLoading(true)
+        try {
+            const { data } = await updsApi<IResponseLogin>("/auth/perfil")
+
+            await AsyncStorage.setItem('usuario', JSON.stringify(data.data));
+          
+            Toast.show({
+                type: "success",
+                text1: "Bien",
+                text2: "Bienvenido nuevamente :)"
+            })
+
+            return data.data
+        } catch (e: any) {
+            
+            Toast.show({
+                type: "warning",
+                text1: "Sesion caducada",
+                text2: "Inicia sesion nuevamente"
+            })
+        }
+        finally {
+            setIsLoading(false)
+        }
+
+        return null
+    }
+
     return {
+        refreshLogin,
         isLoading,
         login
     }

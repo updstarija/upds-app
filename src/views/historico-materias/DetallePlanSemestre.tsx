@@ -1,16 +1,11 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
-//import Collapsible from 'react-native-collapsible';
-
+import { View } from 'react-native'
 import { useCarreraContext, usePlanEstudio } from '@/hooks';
-import { Texto } from '../../components/ui';
+import { Spinner, Texto } from '../../components/ui';
 import { Button } from '@/components';
 import { ISemestre } from '@/types';
 import { DetalleMateria } from './DetalleMateria';
 import { FontAwesome } from '@expo/vector-icons';
-import { FlashList } from '@shopify/flash-list';
-import BottomSheet from '@gorhom/bottom-sheet';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import DetalleMateriaV2 from './DetalleMateriaV2';
 
 interface Props {
   semestre: ISemestre;
@@ -22,7 +17,6 @@ export const DetallePlanSemestre: React.FC<Props> = ({ semestre, active, onChang
   const { id, nombre } = semestre;
 
   const { valueCarrera } = useCarreraContext();
-  //const [collapsed, setCollapsed] = useState(true);
 
   const { planEstudioQuery: data } = usePlanEstudio({
     carrera: valueCarrera || -1,
@@ -32,7 +26,7 @@ export const DetallePlanSemestre: React.FC<Props> = ({ semestre, active, onChang
 
   const getDetalle = () => {
     if (data.isLoading)
-      return <ActivityIndicator size="large" color="#223B82" className="p-4" />;
+      return <Spinner classNameContainer='p-4 bg-[#183064]' />
 
     if (data.isError) return <Texto>HUBO UN ERROR AL CARGAR EL DETALLE</Texto>;
 
@@ -41,7 +35,7 @@ export const DetallePlanSemestre: React.FC<Props> = ({ semestre, active, onChang
     return (
       <View>
         {data.data.data.map(plan => (
-          <DetalleMateria plan={plan} key={plan.id} />
+          <DetalleMateriaV2 materia={plan} key={plan.id} />
         ))}
       </View>
     );
@@ -52,7 +46,7 @@ export const DetallePlanSemestre: React.FC<Props> = ({ semestre, active, onChang
       <Button onPress={() => onChangeSemestre(semestre.id)}>
         <View className="flex-row justify-between bg-[#223B82] p-3 dark:bg-[#0D1F46]">
           <Texto className="uppercase text-white" weight="Bold">
-            {nombre} a
+            {nombre}
           </Texto>
 
           <FontAwesome

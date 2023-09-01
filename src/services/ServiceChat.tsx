@@ -1,7 +1,7 @@
 import firestore from '@react-native-firebase/firestore';
-import {Message} from '../types/message';
-import {firebase} from '@react-native-firebase/messaging';
-import {MensajeParsed} from '../hooks';
+import { Message } from '../types/message';
+import { firebase } from '@react-native-firebase/messaging';
+import { MensajeParsed } from '../hooks';
 
 const db = firestore();
 
@@ -27,25 +27,29 @@ export const getChatMessages = async (chatId: string) => {
   }
 };
 
-export const sendMessage = async (chatId: string, mensaje: string) => {
+export const sendMessage = async (chatId: string, mensaje: string, uname: string) => {
   try {
+    console.log(chatId, "SEND MESSAGE")
     const device = await firebase.messaging().getToken();
 
-    //TODO: FIX USERNAME
-    const USERNAME = 'Dante Arias';
-
     const newMessage: Message = {
-      id: '0',
       message: mensaje.trim(),
       isSent: true,
       date: firestore.Timestamp.now(),
-      device,
-      uname: USERNAME,
+      device
     };
 
+    await firestore().collection(`CHATS`).doc(chatId).set({
+      latestMessage: firestore.Timestamp.now(),
+      isRead: 0,
+      uname
+    })
+
     await firestore().collection(`CHATS/${chatId}/messages`).add(newMessage);
+
   } catch (error) {
     console.log(error);
+
   }
 };
 
@@ -53,13 +57,14 @@ const CHAT_ID = 'Bopy07q62FQkCbsaDnV3';
 
 const sendInitialMessage = async (chatId: string, uname: string) => {
   const doc = db.collection('CHATS').doc(chatId);
-  doc.set({
-    uname,
-  });
+
   //await doc.update({uname: 'HELLO WORLD'});
   const messages = doc.collection('messages').get();
 
   if ((await messages).empty) {
+    doc.set({
+      uname
+    });
     const device = await firebase.messaging().getToken();
 
     await firestore().collection(`CHATS/${chatId}/messages`).add({
@@ -70,6 +75,10 @@ const sendInitialMessage = async (chatId: string, uname: string) => {
       device,
       uname: 'UPDS',
     });
+  } else {
+    doc.update({
+      uname
+    });
   }
 };
 
@@ -78,7 +87,7 @@ export const cargarMensajes = async (
   uname: string,
   setData: Function,
 ) => {
-  console.log('loading mesage');
+
   await sendInitialMessage(chatId, uname);
 
   const chats = db
@@ -86,6 +95,7 @@ export const cargarMensajes = async (
     .doc(chatId)
     .collection('messages')
     .orderBy('date', 'desc');
+
 
   chats.onSnapshot(snapShot => {
     const mensajes = snapShot.docs.map(doc => ({

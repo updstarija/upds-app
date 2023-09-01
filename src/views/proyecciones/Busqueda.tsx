@@ -11,6 +11,7 @@ import { RequisitoMateria } from './RequisitoMateria'
 import { MateriaProyeccion } from '@/types'
 import { etiquetas } from '@/data'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import Spinner from '@/components/ui/Spinner'
 
 type IconProp = keyof typeof FontAwesome.glyphMap;
 
@@ -30,7 +31,9 @@ export const Busqueda: React.FC<Props> = ({ scrollToTop }) => {
 
     const onChangeText = (q: string) => {
         setInputText(q)
-        getData(q, valueCarrera || -1)
+        if (q != "") {
+            getData(q, valueCarrera || -1)
+        }
     }
     const { boletaQuery } = useBoleta({
         carrera: valueCarrera || -1
@@ -53,11 +56,19 @@ export const Busqueda: React.FC<Props> = ({ scrollToTop }) => {
 
     const renderMaterias = () => {
         if (!selectedItem) return <></>
-        if (materiasProyeccionQuery.isLoading) return <Texto>CARGANDO</Texto>
+        if (materiasProyeccionQuery.isLoading) return <View className="p-4 items-center  bg-secondary-dark">
+            <Spinner classNameContainer='' color={"#FFF"} />
+        </View>
         if (materiasProyeccionQuery.isError) return <Texto>HUBO UN ERROR</Texto>
 
         const isPendienteOCurso = (id: number) => id == 0 || id == 1
 
+        if (materiasProyeccionQuery.data.data.length === 0)
+            return (
+                <View className="p-4 items-center  bg-secondary-dark">
+                    <Texto className="text-white text-center">NO HAY MATERIAS OFERTADAS</Texto>
+                </View>
+            );
         return <View >
             <ScrollView style={{ maxHeight: 400 }} nestedScrollEnabled>
                 {materiasProyeccionQuery.data.data.map(mat => (

@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useRef, memo, Children } from 'react';
 import { ActivityIndicator, Touchable, TouchableHighlight, TouchableOpacity, TouchableOpacityProps, View, useColorScheme } from 'react-native';
 
 import { useThemeColor } from '@/hooks';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetView, useBottomSheetDynamicSnapPoints } from '@gorhom/bottom-sheet';
 
 
 interface Props {
@@ -29,6 +29,8 @@ export const BottomSheet: React.FC<Props> = memo(({ content, children, snapPoint
             onClickFun()
         }
     }, []);
+
+    const { animatedContentHeight, animatedHandleHeight, animatedSnapPoints, handleContentLayout } = useBottomSheetDynamicSnapPoints(snapPoints)
 
     const handleSheetChanges = useCallback((index: number) => {
         if (index >= 0) setVisibleModal(true);
@@ -64,12 +66,18 @@ export const BottomSheet: React.FC<Props> = memo(({ content, children, snapPoint
                 ref={bottomSheetModalRef}
                 index={0}
                 snapPoints={snapPoints}
+
+                //   handleHeight={animatedHandleHeight}
+                // contentHeight={animatedContentHeight}
                 onChange={handleSheetChanges}
                 backdropComponent={renderBackdrop}
                 handleIndicatorStyle={{ backgroundColor: '#0D1F46' }}
                 backgroundStyle={{ backgroundColor: isDarkMode ? '#040e22' : '#fff' }}>
-
-                {children}
+                <BottomSheetView
+                //onLayout={handleContentLayout}
+                >
+                    {children}
+                </BottomSheetView>
 
             </BottomSheetModal>
 

@@ -8,3 +8,4 @@ export * from './modulos';
 export * from './planEstudio';
 export * from './semestres';
 export * from './registroHistorico';
+export * from './estadisticas';

@@ -2,6 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IResponseLogin } from "@/types";
 import { yaPasoLaBienvenida } from "@/helpers";
+import { useQueryClient, QueryClient } from '@tanstack/react-query';
 
 export type LoginStatus =
   | "pendiente"
@@ -16,6 +17,7 @@ interface AuthContext {
   logout: Function;
   mostrarBtnBackLogin: boolean;
   setMostrarBtnBackLogin: Function;
+  setNombreUsuarioNoAuth: Function
 }
 export const AuthContext = createContext<AuthContext>({} as AuthContext);
 
@@ -25,10 +27,25 @@ interface Props {
 
 const initialState = {
   usuario: {
+    id: -1,
     nombre: "",
     apellidoPaterno: "",
     apellidoMaterno: "",
     documentoIdentidad: "",
+    fechaNacimiento: "",
+    celular: "",
+    direccion: "",
+    sexo: "",
+    tipoSangre: "",
+    estadoCivil: "",
+    nacionalidad: "",
+    emailOffice365: "",
+    email: "",
+    telefonoReferencia: "",
+    sede: "",
+    fechaRegistro: "",
+    colegio: "",
+    anioEgresoBachiller: -1,
   },
   token: "",
 };
@@ -72,20 +89,29 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   };
 
   const logout = async () => {
-    setUserAuth(initialState);
-    setStatus("no-autenticado");
     await AsyncStorage.removeItem("usuario");
-    //await AsyncStorage.removeItem("bienvenida");
+    AsyncStorage.removeItem("usuario").then((x) => {
+      console.log("DELETE INFP USER ", x)
+    })
+
+    const queryClient = useQueryClient()
+    await queryClient.invalidateQueries()
+    setUserAuth(initialState);
+    setStatus("no-autenticado")
+
   };
 
-  const logoutPRODUCCION = async () => {
-    setUserAuth(initialState);
-    setStatus("no-autenticado");
-    await AsyncStorage.removeItem("usuario");
-  };
+  const setNombreUsuarioNoAuth = (nombre: string) => {
+    setUserAuth({
+      ...userAuth, usuario: {
+        ...userAuth.usuario,
+        nombre
+      }
+    })
+  }
+
 
   useEffect(() => {
-    getUserAuthStorage();
     verificarScreenBienvenida();
   }, []);
   return (
@@ -97,6 +123,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         login,
         logout,
         setMostrarBtnBackLogin,
+        setNombreUsuarioNoAuth
       }}
     >
       {children}

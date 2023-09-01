@@ -1,6 +1,6 @@
-import {View, TextInput, TextInputProps, Text} from 'react-native';
-import {Controller, Control, RegisterOptions} from 'react-hook-form';
-import {Texto} from './ui';
+import { View, TextInput, TextInputProps, Text } from 'react-native';
+import { Controller, Control, RegisterOptions } from 'react-hook-form';
+import { Texto } from './ui';
 
 interface Props extends TextInputProps {
   control: Control<any>;
@@ -22,16 +22,15 @@ export const TextField: React.FC<Props> = ({
       <Controller
         control={control}
         rules={rules}
-        render={({field, fieldState: {error}}) => (
+        render={({ field, fieldState: { error } }) => (
           <>
             <TextInput
               {...props}
               {...field}
-              className={`rounded-2xl border bg-gray-100 p-4 text-gray-700 dark:bg-primario-dark dark:text-white ${
-                error
+              className={`rounded-2xl border bg-gray-100 p-4 text-gray-700 dark:bg-primario-dark dark:text-white ${error
                   ? 'border-red-300'
                   : 'border-gray-100 dark:border-[#0e285b]'
-              }`}
+                }`}
               onChangeText={field.onChange}
             />
             {error && <Text className="text-red-400">{error?.message}</Text>}

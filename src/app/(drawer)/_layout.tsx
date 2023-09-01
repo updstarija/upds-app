@@ -4,6 +4,7 @@ import { Drawer } from 'expo-router/drawer';
 import { CustomDrawer } from '@/components';
 import { COLORS } from '~/constants';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
+import { configStack } from '@/helpers';
 
 const LayoutDrawer = () => {
   return (
@@ -44,8 +45,9 @@ const LayoutDrawer = () => {
       /> */}
       <Drawer.Screen
         name="ajustes"
+        //@ts-ignore
         options={{
-          title: 'Ajustes',
+          ...configStack("Ajustes"),
           drawerIcon: ({ color }) => (
             <Ionicons name='settings-outline' size={20} color={color} />
           )
@@ -53,6 +55,17 @@ const LayoutDrawer = () => {
       />
 
       <Drawer.Screen
+        name="testing"
+        //@ts-ignore
+        options={{
+          ...configStack("Testing"),
+          drawerIcon: ({ color }) => (
+            <Ionicons name='shield' size={20} color={color} />
+          )
+        }}
+      />
+
+      {/*  <Drawer.Screen
         name="carrera/[id]"
         options={{
           title: 'Carrera',
@@ -62,7 +75,7 @@ const LayoutDrawer = () => {
           )
         }}
       />
-
+ */}
 
     </Drawer>
   );

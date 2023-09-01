@@ -3,17 +3,22 @@ import React, { useEffect, useState } from 'react'
 import { Texto } from '../../../components'
 import { Picker } from '@react-native-picker/picker';
 import { LineChart, PieChart } from 'react-native-gifted-charts'
-import { useThemeColor } from '@/hooks'
+import { useCarreraContext, useProgreso, usePromedio, useThemeColor } from '@/hooks'
 import { SelectCarrera } from '@/views/SelectCarrera'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { COLORS } from '~/constants';
 import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Counter from '@/components/Counter';
 import CircularProgress from 'react-native-circular-progress-indicator'
+import Spinner from '@/components/ui/Spinner';
 
 const Stats = () => {
     const isIos = Platform.OS === "ios"
     const isDarkMode = useThemeColor() === "dark"
+
+    const { valueCarrera } = useCarreraContext()
+
+
 
     const pieData = [
         { value: 70, color: '#177AD5' },
@@ -34,10 +39,16 @@ const Stats = () => {
         { label: 'Finland', value: 'finland' }
     ]);
 
-    const [selectedLanguage, setSelectedLanguage] = useState("todo");
+    const [selectedPromedioType, setSelectedPromedioType] = useState(1);
 
+    const { promedioQuery } = usePromedio({
+        carrera: valueCarrera || -1,
+        tiempo: 1
+    })
 
-
+    const { progresoQuery } = useProgreso({
+        carrera: valueCarrera || -1,
+    })
 
     const dPoint = () => {
         return (
@@ -231,146 +242,123 @@ const Stats = () => {
     const [currentData, setCurrentData] = useState<number>(1);
 
 
+    const renderPromedio = () => {
+        if (promedioQuery.isLoading) return <Spinner style={{ height: 150 }} classNameContainer='bg-transparent' />
+        if (promedioQuery.isError) return null
+
+        return <>
+
+
+            <View className='items-center justify-center'>
+                <Counter max={promedioQuery.data.data.promedio} />
+
+
+            </View>
+        </>
+    }
+
+    const renderProgreso = () => {
+        if (progresoQuery.isLoading) return <Spinner style={{ height: 150 }} classNameContainer='bg-transparent' />
+        if (progresoQuery.isError) return null
+
+        return <>
+            <View className='items-center justify-center'>
+
+                <CircularProgress
+                    value={progresoQuery.data.data.progreso}
+                    duration={1000}
+                    maxValue={100}
+                    activeStrokeColor={COLORS.light.background}
+                    progressValueStyle={{ fontFamily: "LatoBold" }}
+                    activeStrokeWidth={20} radius={90}
+                    valueSuffix="%"
+                    titleColor='black'
+                    progressValueColor={isDarkMode ? "#FFF" : "#000"}
+                    subtitleColor='red' />
+                {/* <PieChart
+    donut
+    innerRadius={80}
+
+    data={pieData}
+    gradientCenterColor='#000'
+    innerCircleColor={isDarkMode ? '#0D1F46' : '#fff'}
+    centerLabelComponent={() => {
+        return <View ><Texto className='text-black dark:text-white text-4xl' weight='Bold'>70%</Texto></View>;
+    }}
+/> */}
+            </View>
+        </>
+    }
 
     return (
-        <ScrollView showsVerticalScrollIndicator={false}>
-            <View className='bg-white dark:bg-primario-dark flex-1 border p-2 gap-2'>
-                <>
-                    <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
-                        <View className='bg-white dark:bg-secondary-dark  rounded-xl p-4 border-gray-50  border-[.5px] dark:border-[0px] '>
-                            <Texto className='text-black dark:text-white text-center text-xl my-3' weight='Bold'>PROMEDIO</Texto>
-
-                            {/* <SelectCarrera /> */}
-
-
-
-                            <View className='flex-row items-center justify-between'>
-                                <View />
-
-                                <View className={`${!isIos ? "border-[.5px]" : ""} h-8 items-center justify-center rounded-full bg-white dark:bg-secondary-dark`} style={{ elevation: 5 }}>
-                                    <Picker
-                                        numberOfLines={1}
-                                        mode='dropdown'
-
-                                        style={[{ width: 140, color: isDarkMode ? "white" : "#000" }, !isIos && { borderWidth: 1, fontSize: 10 }]}
-                                        itemStyle={{ fontSize: 14, color: "#FFF" }}
-                                        dropdownIconColor={isDarkMode ? "white" : "#000"}
-                                        selectedValue={selectedLanguage}
-                                        onValueChange={(itemValue, itemIndex) => {
-                                            setSelectedLanguage(itemValue)
-                                        }}>
-                                        <Picker.Item label="Todo" value={"todo"} style={{ fontSize: 13 }} />
-                                        <Picker.Item label="Anual" value="anual" style={{ fontSize: 13 }} />
-                                        <Picker.Item label="Semestral" value="semestral" style={{ fontSize: 13 }} />
-                                    </Picker>
-                                </View>
-
-                            </View>
-
-                            <View className='items-center justify-center'>
-                                <Counter max={selectedLanguage == "todo" ? 92 : selectedLanguage == "anual" ? 99 : 23} />
-
-
-                            </View>
-                        </View>
-                    </View>
-
-                    <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
-                        <View className='bg-white dark:bg-secondary-dark  rounded-xl p-4 border-gray-50  border-[.5px] dark:border-[0px] '>
-                            <Texto className='text-black dark:text-white text-center text-xl my-3' weight='Bold'>PROGRESO</Texto>
-
-                            {/* <SelectCarrera /> */}
-
-                            <View className='items-center justify-center'>
-
-                                <CircularProgress
-                                    value={60}
-                                    duration={1000}
-                                    maxValue={100}
-                                    activeStrokeColor={COLORS.light.background}
-                                    progressValueStyle={{ fontFamily: "LatoBold" }}
-                                    activeStrokeWidth={20} radius={90}
-                                    valueSuffix="%"
-                                    titleColor='black'
-                                    progressValueColor={isDarkMode ? "#FFF" : "#000"}
-                                    subtitleColor='red' />
-                                {/* <PieChart
-                                    donut
-                                    innerRadius={80}
-
-                                    data={pieData}
-                                    gradientCenterColor='#000'
-                                    innerCircleColor={isDarkMode ? '#0D1F46' : '#fff'}
-                                    centerLabelComponent={() => {
-                                        return <View ><Texto className='text-black dark:text-white text-4xl' weight='Bold'>70%</Texto></View>;
-                                    }}
-                                /> */}
-                            </View>
-                        </View>
-                    </View>
-
-
-                    <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
-                        <View className='bg-white dark:bg-secondary-dark  rounded-xl p-6 border-gray-50  border-[.5px] dark:border-[0px] '>
-                            <Texto className='text-black dark:text-white text-center text-xl my-3' weight='Bold'>RENDIMIENTO</Texto>
-
-                            {/* <SelectCarrera /> */}
-
-                            <View className='flex-row items-center justify-between'>
-                                <View />
-
-                                <View className={`${!isIos ? "border-[.5px]" : ""} h-8 items-center justify-center rounded-full bg-white dark:bg-secondary-dark`} style={{ elevation: 5 }}>
-                                    <Picker
-                                        numberOfLines={1}
-                                        mode='dropdown'
-
-                                        style={[{ width: 140, color: isDarkMode ? "white" : "#000" }, !isIos && { borderWidth: 1, fontSize: 10 }]}
-                                        itemStyle={{ fontSize: 14, color: "#FFF" }}
-                                        dropdownIconColor={isDarkMode ? "white" : "#000"}
-                                        selectedValue={currentData}
-                                        onValueChange={(itemValue: number, itemIndex) =>
-                                            setCurrentData(itemValue)
-                                        }>
-                                        <Picker.Item label="Todo" value={1} style={{ fontSize: 13 }} />
-                                        <Picker.Item label="Anual" value={2} style={{ fontSize: 13 }} />
-                                    </Picker>
-                                </View>
-                            </View>
-
-                            <View className='items-center justify-center mt-10'>
-
-                                <LineChart
-                                    width={Dimensions.get("window").width - 100}
-                                    isAnimated
-                                    thickness={3}
-                                    color="#07BAD1"
-                                    maxValue={600}
-                                    noOfSections={3}
-                                    animateOnDataChange
-                                    animationDuration={10}
-                                    onDataChangeAnimationDuration={10}
-                                    areaChart
-                                    yAxisTextStyle={{ color: 'lightgray' }}
-                                    data={currentData == 1 ? latestData : afterData}
-                                    hideDataPoints
-                                    startFillColor={'rgb(84,219,234)'}
-                                    endFillColor={'rgb(84,219,234)'}
-                                    startOpacity={0.4}
-                                    endOpacity={0.1}
-                                    spacing={22}
-
-                                    rulesColor="gray"
-                                    rulesType="solid"
-                                    initialSpacing={10}
-                                    yAxisColor="lightgray"
-                                    xAxisColor="lightgray"
-                                />
-                            </View>
-                        </View>
-                    </View>
-                </>
+        <>
+            <View className='p-2'>
+                <SelectCarrera />
             </View>
-        </ScrollView>
+
+            <ScrollView showsVerticalScrollIndicator={false}>
+                <View className='bg-white dark:bg-primario-dark flex-1 border p-2 gap-2'>
+                    <>
+
+                        <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
+                            <View className='bg-white dark:bg-secondary-dark  rounded-xl p-4 border-gray-50  border-[.5px] dark:border-[0px] '>
+                                <Texto className='text-black dark:text-white text-center text-xl my-3' weight='Bold'>PROMEDIO</Texto>
+                                {renderPromedio()}
+                            </View>
+                        </View>
+
+                        <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
+                            <View className='bg-white dark:bg-secondary-dark  rounded-xl p-4 border-gray-50  border-[.5px] dark:border-[0px] '>
+                                <Texto className='text-black dark:text-white text-center text-xl my-3' weight='Bold'>PROGRESO</Texto>
+
+                                {/* <SelectCarrera /> */}
+
+                                {renderProgreso()}
+                            </View>
+                        </View>
+
+
+                        <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
+                            <View className='bg-white dark:bg-secondary-dark  rounded-xl p-6 border-gray-50  border-[.5px] dark:border-[0px] '>
+                                <Texto className='text-black dark:text-white text-center text-xl my-3' weight='Bold'>RENDIMIENTO</Texto>
+
+                                {/* <SelectCarrera /> */}
+
+                                <View className='items-center justify-center mt-10'>
+
+                                    <LineChart
+                                        width={Dimensions.get("window").width - 100}
+                                        isAnimated
+                                        thickness={3}
+                                        color="#07BAD1"
+                                        maxValue={600}
+                                        noOfSections={3}
+                                        animateOnDataChange
+                                        animationDuration={10}
+                                        onDataChangeAnimationDuration={10}
+                                        areaChart
+                                        yAxisTextStyle={{ color: 'lightgray' }}
+                                        data={currentData == 1 ? latestData : afterData}
+                                        hideDataPoints
+                                        startFillColor={'rgb(84,219,234)'}
+                                        endFillColor={'rgb(84,219,234)'}
+                                        startOpacity={0.4}
+                                        endOpacity={0.1}
+                                        spacing={22}
+
+                                        rulesColor="gray"
+                                        rulesType="solid"
+                                        initialSpacing={10}
+                                        yAxisColor="lightgray"
+                                        xAxisColor="lightgray"
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                    </>
+                </View>
+            </ScrollView>
+        </>
     )
 }
 

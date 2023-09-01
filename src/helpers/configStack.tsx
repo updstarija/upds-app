@@ -12,6 +12,7 @@ export const configStack = (title: string) => {
       backgroundColor: isDarkMode
         ? COLORS.dark.secondary
         : COLORS.light.background,
+
     },
     headerTintColor: "#fff",
     headerTitleStyle: {

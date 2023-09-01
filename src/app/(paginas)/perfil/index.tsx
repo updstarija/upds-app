@@ -161,7 +161,7 @@ const Perfil = () => {
 
                         <View className='mt-4 flex-row justify-between items-center'>
                             <View className='flex-row items-center'>
-                                <FontAwesome name='archive' color={isDarkMode ? "#FFF" : "#000"} size={20} style={{ width: 30 }} />
+                                <FontAwesome name='institution' color={isDarkMode ? "#FFF" : "#000"} size={20} style={{ width: 30 }} />
                                 <Texto className='ml-1 text-black dark:text-white ' weight='Bold'>Sede</Texto>
                             </View>
 

@@ -10,7 +10,6 @@ export const SelectCarrera = () => {
     const isDarkMode = useThemeColor() === "dark"
 
     const {
-
         valueCarrera,
         setValueCarrera,
     } = useCarreraContext();
@@ -32,6 +31,9 @@ export const SelectCarrera = () => {
             setOpen={setOpenCarrera}
             setValue={setValueCarrera}
             placeholder="Selecciona la carrera"
+            /*  scrollViewProps={{
+                 nestedScrollEnabled: true
+             }} */
             zIndex={1}
             ArrowDownIconComponent={() => (
                 <FontAwesome
@@ -61,7 +63,7 @@ export const SelectCarrera = () => {
                 label: "nombre",
                 value: "id",
             }}
-            textStyle={{ color: isDarkMode ? "#fff" : "#000" }}
+            textStyle={{ color: isDarkMode ? "#fff" : "#000", fontSize: 13 }}
             style={
                 isDarkMode
                     ? { backgroundColor: COLORS.dark.secondary }

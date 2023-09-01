@@ -1,3 +1,3 @@
 export * from "./DetalleMateria"
 export * from "./DetallePlanSemestre"
-export * from "./DetalleMateriaV2"
+export {default as DetalleMateriaV2} from "./DetalleMateriaV2"
