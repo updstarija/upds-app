@@ -5,6 +5,7 @@ import { Texto } from '../../components'
 import { firebase } from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message'
 import messaging from '@react-native-firebase/messaging';
+import WebView from 'react-native-webview';
 
 const Busqueda = () => {
 
@@ -39,8 +40,16 @@ const Busqueda = () => {
     }
 
     return (
+        <>
+            <WebView
 
-        <View className='bg-white flex-1'>
+                scalesPageToFit
+                source={{
+                    html: `
+                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@upds_tarija" data-unique-id="upds_tarija" data-embed-type="creator" style="max-width: 780px; min-width: 288px;" > <section> <a target="_blank" href="https://www.tiktok.com/@upds_tarija?refer=creator_embed">@upds_tarija</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
+                ` }}
+            />
+            {/*  <View className='bg-white flex-1'>
             <Button title='OBTENER TOKEN' onPress={getToken} />
             <Button title='SUSCRIBIRSE' onPress={topicSuscribe} />
 
@@ -48,7 +57,8 @@ const Busqueda = () => {
             <View className='border'>
                 <TextInput value={codigo} multiline />
             </View>
-        </View>
+        </View> */}
+        </>
 
     )
 }

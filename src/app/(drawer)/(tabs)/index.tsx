@@ -14,16 +14,15 @@ export default function TabOneScreen() {
       {/* <EditScreenInfo path="app/(tabs)/index.tsx" /> */}
       <ScrollView showsVerticalScrollIndicator={false} className="">
 
-        <View className="flex flex-row  flex-wrap items-center justify-evenly">
+        <View className="flex flex-row  flex-wrap items-center justify-evenly mt-5">
           {menuHomeScreen.map(menu => (
             <View className="mb-5 mr-2" key={menu.text}>
               {/* @ts-ignore */}
               <CardNavigation {...menu} />
             </View>
           ))}
-
-
         </View>
+
         <View className='flex-row justify-between'>
           <Texto className='text ml-5 pt-2 dark:text-white' weight='Bold'>Mas Relevante</Texto>
 

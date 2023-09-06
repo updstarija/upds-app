@@ -18,6 +18,7 @@ import { LayoutScreen } from "@/layout/LayoutScreen";
 import { COLORS } from "~/constants";
 import { Texto } from "../../components";
 import Spinner from "@/components/ui/Spinner";
+import WebView from "react-native-webview";
 
 const facebookList = [
   {
@@ -517,6 +518,22 @@ const RedesSociales = () => {
                 );
               }}
             /> */}
+
+
+            <View renderToHardwareTextureAndroid className="flex-1">
+              <WebView
+                containerStyle={{ flex: 1, height: 500 }}
+                style={{ flex: 1, height: 500 }}
+                scalesPageToFit
+                source={{
+                  html: `
+                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@upds_tarija" data-unique-id="upds_tarija" data-embed-type="creator" style="max-width: 780px; min-width: 288px;" > <section> <a target="_blank" href="https://www.tiktok.com/@upds_tarija?refer=creator_embed">@upds_tarija</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
+                ` }}
+              />
+
+              <Texto>GOLA</Texto>
+            </View>
+
           </View>
         </View>
       </ScrollView>

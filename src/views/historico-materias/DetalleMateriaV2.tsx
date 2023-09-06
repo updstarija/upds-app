@@ -194,7 +194,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
   const isMateriaEn4Meses = () => {
     const actualFecha = new Date()
     const fechaModulo = new Date(plan.fechaRegistro || "")
-    return differenceInMonths(actualFecha, fechaModulo) < 4
+    return differenceInMonths(actualFecha, fechaModulo) < 3
   }
 
 
@@ -204,7 +204,25 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
 
     return (
       <>
-        <RectButton>
+        <MaterialCommunityIcons.Button
+          onPress={() => router.push(`/evaluacion/${plan.grupo}`)}
+          name="clipboard-check"
+          size={30}
+          color="#fff"
+          disabled={!isValid}
+          style={{ paddingRight: 0, opacity: !isValid ? 0.5 : 1 }}
+        />
+
+        <MaterialCommunityIcons.Button
+          onPress={() => router.push(`/moodle/${plan.moodle}`)}
+          name="school"
+          size={30}
+          color="#fff"
+          backgroundColor={"rgb(251 146 60)"}
+          disabled={!isValid}
+          style={{ paddingRight: 0, opacity: !isValid ? 0.5 : 1 }}
+        />
+        {/*  <RectButton>
           <Link href={`/evaluacion/${plan.grupo}`} disabled={!isValid} className='bg-red-200'>
             <View className={`items-center justify-center flex-1 bg-cyan-600 p-2 ${!isValid ? "opacity-60" : ""}`}>
               <MaterialCommunityIcons
@@ -233,7 +251,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
 
           </Link>
 
-        </RectButton>
+        </RectButton> */}
 
         {/*  <Link href={`/evaluacion/${plan.grupo}`} asChild disabled={!isValid} className='bg-red-200'>
           <TouchableOpacity className='flex-1 opacity-60'>

@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { MaterialTopTabs } from '@/navigator/top-tabs';
 import { COLORS } from '~/constants';
 import { Layout as LayoutHome } from '@/layout/Layout';
@@ -76,6 +76,17 @@ export default function Layout() {
                     tabBarShowLabel: false,
                     tabBarIcon: ({ color }) => (
                         <MaterialCommunityIcons name="google-analytics" color={color} size={20} />
+                    ),
+                }}
+            />
+
+            <MaterialTopTabs.Screen
+                name="facturacion"
+                options={{
+                    title: 'Facturacion',
+                    tabBarShowLabel: false,
+                    tabBarIcon: ({ color }) => (
+                        <FontAwesome5 name="file-invoice-dollar" color={color} size={20} />
                     ),
                 }}
             />

@@ -91,6 +91,7 @@ const Tutorial = () => {
         </LayoutScreen>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,

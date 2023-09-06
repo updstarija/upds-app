@@ -166,9 +166,21 @@ function RootLayoutNav() {
                   />
 
                   <Stack.Screen
+                    name="(home)/ubicacion"
+                    //@ts-ignore
+                    options={configStack('Ubicacion')}
+                  />
+
+                  <Stack.Screen
                     name="(estudiante)/ayuda"
                     //@ts-ignore
                     options={configStack('AYUDA')}
+                  />
+
+                  <Stack.Screen
+                    name="(estudiante)/servicios"
+                    //@ts-ignore
+                    options={configStack('Servicios')}
                   />
 
                   <Stack.Screen
@@ -194,6 +206,13 @@ function RootLayoutNav() {
                     //@ts-ignore
                     options={configStack('Plataforma Moodle')}
                   />
+
+                  <Stack.Screen
+                    name="(paginas-externas)/multipagos"
+                    //@ts-ignore
+                    options={configStack('Multipagos')}
+                  />
+
                   <Stack.Screen
                     name="(paginas-externas)/moodle/[id]"
                     //@ts-ignore
@@ -217,12 +236,12 @@ function RootLayoutNav() {
                     options={configStack('UpdsNet')}
                   />
 
-                  <Stack.Screen
+                  {/*     <Stack.Screen
                     name="(paginas-externas)/ubicacion"
                     //@ts-ignore
                     options={configStack('Ubicacion')}
                   />
-
+ */}
 
                   <Stack.Screen
                     name="(paginas-externas)/biblioteca"

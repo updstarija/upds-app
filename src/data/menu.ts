@@ -1,8 +1,9 @@
 import { MaterialIcons ,FontAwesome} from '@expo/vector-icons';
+import { ReactElement } from 'react';
 
 export interface Menu {
     text: string;
-    icon: keyof typeof MaterialIcons.glyphMap | keyof typeof FontAwesome.glyphMap;
+    icon: keyof typeof MaterialIcons.glyphMap | keyof typeof FontAwesome.glyphMap | "servicios";
     to: string;
     link: boolean
     auth?: boolean
@@ -11,10 +12,11 @@ export interface Menu {
 
 export const menuHomeScreen: Menu[] = [
     {
-        text: 'Ubicacion',
-        icon: 'location-on',
-        to: 'https://www.360virtualbo.com/tour/educacion/updstarija',
-        link: true
+        text: 'UPDS',
+        icon: 'institution',
+      //  to: 'https://www.360virtualbo.com/tour/educacion/updstarija',
+      to:"ubicacion",
+        link: false
     },
     {
         text: 'Comunicados',
@@ -57,9 +59,9 @@ export const menuHomeStudent: Menu[] = [
         link: false
     },
     {
-        text: 'Updsnet',
-        icon: 'language',
-        to: '/updsnet',
+        text: 'Servicios',
+        icon: 'servicios',
+        to: '/servicios',
         link: false
     },
     {
