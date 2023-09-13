@@ -61,19 +61,6 @@ const Index = () => {
   const { setColorScheme } = useColorScheme()
 
   const verificacion = async () => {
-    if (!isIos) {
-      if (!await tieneTema()) {
-        await AsyncStorage.setItem('tema', 'system')
-        setColorScheme("system")
-      } else {
-        const tema = await AsyncStorage.getItem('tema')
-        //@ts-ignore
-        setColorScheme(tema)
-      }
-    } else {
-      setColorScheme("system")
-    }
-
     if (!(await yaPasoLaBienvenida())) {
       setNavegarAHome(false);
       setIsLoading(false);
@@ -87,14 +74,12 @@ const Index = () => {
       router.replace('/auth/login');
     } else {
       const data = await refreshLogin()
-      console.log(data, "DATA")
       if (!data) {
         logout()
       } else login(data)
     }
 
     SplashScreen.hideAsync()
-
     setIsLoading(false);
   };
 

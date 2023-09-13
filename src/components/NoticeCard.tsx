@@ -6,16 +6,12 @@ import { useEffect, useState } from "react";
 import { FontAwesome } from "@expo/vector-icons";
 
 export const NoticeCard = (noticia: INotificacionNotice) => {
-  const { titulo, texto, like, fecha, imagen, id } = noticia;
-
-  const { width } = Dimensions.get("screen");
+  const { titulo, texto, like, fecha, imagen, id, categoria } = noticia;
 
   const [isLiked, setIsLiked] = useState(false)
 
   const checkIfLiked = async () => {
-    //FIX ID
     const liked = await AsyncStorage.getItem(`liked_noticia_${id}`);
-
     if (liked === 'true') {
       setIsLiked(true)
     }
@@ -45,17 +41,22 @@ export const NoticeCard = (noticia: INotificacionNotice) => {
           {texto}
         </Text>
 
-        <View className="flex-row mt-2">
+        <View className="flex-row  mt-2">
+          <IconLabel iconName={"view-dashboard"} textButton={categoria} />
+        </View>
+
+        <View className="flex-row justify-between mt-2">
           <IconLabel iconName={isLiked ? "like1" : "like2"} textButton={like + " likes"} />
+
           <IconLabel iconName="calendar" textButton={new Date(Number(fecha)).toLocaleDateString("es-Es", { hour: "2-digit", minute: "2-digit" })} />
         </View>
       </View>
 
       {noticia.prioridad && <>
-        <View style={{ borderBottomColor: "#3498db", borderRightWidth: 25, borderBottomWidth: 25, width: 0, height: 0, backgroundColor: "transparent", borderStyle: "solid", borderLeftWidth: 0, borderLeftColor: "transparent", borderRightColor: "transparent", position: "absolute", top: 0, right: 0, transform: [{ rotate: "180deg" }] }} />
+        <View className="rounded-bl-xl" style={{ borderBottomColor: "#3498db", borderRightWidth: 40, borderBottomWidth: 40, width: 0, height: 0, backgroundColor: "transparent", borderStyle: "solid", borderLeftWidth: 0, borderLeftColor: "transparent", borderRightColor: "transparent", position: "absolute", top: 0, right: 0, transform: [{ rotate: "180deg" }] }} />
 
-        <View style={{ position: "absolute", top: 1, right: 1, zIndex: 1 }}>
-          <FontAwesome name={"star"} color={"#FFF"} />
+        <View style={{ position: "absolute", top: 5, right: 5, zIndex: 1 }}>
+          <FontAwesome name={"star"} color={"#FFF"} size={15} />
         </View>
       </>}
     </View>

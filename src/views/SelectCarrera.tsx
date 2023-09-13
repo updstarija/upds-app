@@ -31,9 +31,6 @@ export const SelectCarrera = () => {
             setOpen={setOpenCarrera}
             setValue={setValueCarrera}
             placeholder="Selecciona la carrera"
-            /*  scrollViewProps={{
-                 nestedScrollEnabled: true
-             }} */
             zIndex={1}
             ArrowDownIconComponent={() => (
                 <FontAwesome

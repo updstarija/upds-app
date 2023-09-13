@@ -7,149 +7,111 @@ import ReservationList from 'react-native-calendars/src/agenda/reservation-list'
 import { useThemeColor } from '@/hooks';
 import { COLORS } from '~/constants';
 
-const fechas = {
-    "2023-08-01": [
-        {
-            "name": "Conclusion del Modulo",
-            "height": 50,
-            "day": "2023-08-01"
-        },
-        {
-            "name": "EVENTO UPDS",
-            "height": 50,
-            "day": "2023-08-01"
-        }
-    ],
-    "2023-02-04": [
-        {
-            "name": "Item for 2023-02-01 #0",
-            "height": 50,
-            "day": "2023-02-01"
-        }
-    ],
-    "2023-03-06": [
-        {
-            "name": "Item for 2023-03-01 #0",
-            "height": 139,
-            "day": "2023-03-01"
-        }
-    ],
-    "2023-04-07": [
-        {
-            "name": "Item for 2023-04-01 #0",
-            "height": 78,
-            "day": "2023-04-01"
-        },
-        {
-            "name": "Item for 2023-04-01 #1",
-            "height": 50,
-            "day": "2023-04-01"
-        }
-    ],
-    "2023-05-09": [
-        {
-            "name": "Item for 2023-05-01 #0",
-            "height": 50,
-            "day": "2023-05-01"
-        },
-        {
-            "name": "Item for 2023-05-01 #1",
-            "height": 141,
-            "day": "2023-05-01"
-        },
-        {
-            "name": "Item for 2023-05-01 #2",
-            "height": 141,
-            "day": "2023-05-01"
-        }
-    ],
-    "2023-06-11": [
-        {
-            "name": "Item for 2023-06-01 #0",
-            "height": 140,
-            "day": "2023-06-01"
-        },
-        {
-            "name": "Item for 2023-06-01 #1",
-            "height": 91,
-            "day": "2023-06-01"
-        },
-        {
-            "name": "Item for 2023-06-01 #2",
-            "height": 50,
-            "day": "2023-06-01"
-        }
-    ],
-    "2023-07-12": [
-        {
-            "name": "Item for 2023-07-01 #0",
-            "height": 123,
-            "day": "2023-07-01"
-        },
-        {
-            "name": "Item for 2023-07-01 #1",
-            "height": 50,
-            "day": "2023-07-01"
-        },
-        {
-            "name": "Item for 2023-07-01 #2",
-            "height": 64,
-            "day": "2023-07-01"
-        }
-    ],
-    "2023-08-18": [
-        {
-            "name": "Fecha limite de pago",
-            "height": 50,
-            "day": "2023-08-16"
-        }
-    ],
-    "2023-09-02": [
-        {
-            "name": "Item for 2023-09-01 #0",
-            "height": 134,
-            "day": "2023-09-01"
-        }
-    ],
-    "2023-10-05": [
-        {
-            "name": "Item for 2023-10-01 #0",
-            "height": 125,
-            "day": "2023-10-01"
-        },
-        {
-            "name": "Item for 2023-10-01 #1",
-            "height": 50,
-            "day": "2023-10-01"
-        }
-    ],
-    "2023-11-30": [
-        {
-            "name": "Item for 2023-11-01 #0",
-            "height": 50,
-            "day": "2023-11-01"
-        }
-    ],
-    "2023-12-22": [
-        {
-            "name": "Item for 2023-12-01 #0",
-            "height": 50,
-            "day": "2023-12-01"
-        },
-        {
-            "name": "Item for 2023-12-01 #1",
-            "height": 50,
-            "day": "2023-12-01"
-        },
-        {
-            "name": "Item for 2023-12-01 #2",
-            "height": 125,
-            "day": "2023-12-01"
-        }
-    ]
-}
 
 const CalendarioAgenda = () => {
+
+    const DATA = {
+        events: [
+            {
+                title: 'Conclusion del modulo',
+                start: '2023-09-01',
+                end: '2023-09-01',
+                color: 'purple',
+            },
+            {
+                title: 'Inicio de modulo',
+                start: '2023-09-04',
+                end: '2023-09-04',
+                color: 'blue'
+            },
+            {
+                title: 'Evento Upds a nuevos estudiantes',
+                start: '2023-09-04',
+                end: '2023-09-04',
+                color: 'gray'
+            },
+            {
+                title: 'Fecha Limite de Pago',
+                start: '2023-09-15',
+                end: '2023-09-15',
+                color: 'green'
+            },
+            {
+                title: 'Conferencia Rector Upds',
+                start: '2023-09-15',
+                end: '2023-09-15',
+                color: 'gray'
+            },
+            {
+                title: 'Farándula Upds',
+                start: '2023-09-15',
+                end: '2023-09-15',
+                color: 'gray'
+            },
+            {
+                title: 'Descanso Pedagogico',
+                start: '2023-09-18',
+                end: '2023-09-20',
+                color: 'orange'
+            },
+            {
+                title: 'Conclusion del modulo',
+                start: '2023-09-29',
+                end: '2023-09-29',
+                color: 'purple'
+            }
+        ]
+    };
+
+    const fechas: { [key: string]: any } = {};
+
+    DATA.events.forEach(event => {
+        const startDate = new Date(event.start);
+        const endDate = new Date(event.end);
+        const dayDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+
+        for (let i = 0; i <= dayDiff; i++) {
+            const currentDate = new Date(startDate);
+            currentDate.setDate(startDate.getDate() + i);
+            const formattedDate = currentDate.toISOString().split('T')[0];
+
+            if (!fechas[formattedDate]) {
+                fechas[formattedDate] = [];
+            }
+
+            fechas[formattedDate].push({
+                name: event.title,
+                height: 50,
+                day: formattedDate,
+                color: event.color,
+            });
+        }
+    });
+
+    const newMarkedDates: { [key: string]: any } = {};
+
+    DATA.events.forEach(event => {
+        const startDate = new Date(event.start);
+        const endDate = new Date(event.end);
+        const dayDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+
+        for (let i = 0; i <= dayDiff; i++) {
+            const currentDate = new Date(startDate);
+            currentDate.setDate(startDate.getDate() + i);
+            const formattedDate = currentDate.toISOString().split('T')[0];
+
+            if (!newMarkedDates[formattedDate]) {
+                newMarkedDates[formattedDate] = {
+                    dots: []
+                };
+            }
+
+            newMarkedDates[formattedDate].dots.push({
+                color: event.color
+            });
+        }
+    });
+
     const isDarkMode = useThemeColor() === "dark"
     const renderDay = (day: any) => {
         if (day) {
@@ -161,12 +123,13 @@ const CalendarioAgenda = () => {
     const renderItem = (reservation: AgendaEntry, isFirst: boolean) => {
         const fontSize = isFirst ? 16 : 14;
         const color = isFirst ? 'black' : '#43515c';
-
+        console.log(reservation.color)
         return (
             <TouchableOpacity
 
-                className='bg-white dark:bg-secondary-dark p-4 mt-4'
-                onPress={() => Alert.alert(reservation.name)}
+                className={` p-4 mt-2`}
+                style={{ backgroundColor: reservation.color }}
+                onPress={() => Alert.alert(reservation.color)}
 
             >
 
@@ -265,14 +228,7 @@ const CalendarioAgenda = () => {
             ]
         }
     })
-    useEffect(() => {
 
-
-        console.log(Object.values(fechas).forEach(x => {
-            console.log(x)
-
-        }))
-    }, [])
 
     const dotColors = [
         'red',
@@ -315,11 +271,11 @@ const CalendarioAgenda = () => {
         <Agenda
 
             ListEmptyComponent={() => <Texto>GOLA</Texto>}
-            items={dataItem}
+            items={fechas}
             //loadItemsForMonth={this.loadItems}
             //selected={'2023-08-10'}
-            renderList={(p) => <ReservationList {...p} style={isDarkMode ? { backgroundColor: COLORS.dark.background } : {}} />}
-            onCalendarToggled={(s) => console.log(s)}
+            renderList={(p) => <ReservationList {...p} style={isDarkMode ? { backgroundColor: COLORS.dark.background, paddingTop: 10 } : {}} />}
+
             //renderList={(props) => <View {...props} className='flex-1  bg-red-300'><Texto>{JSON.stringify(props.items)}</Texto></View>}
             renderItem={renderItem}
 
@@ -354,7 +310,7 @@ const CalendarioAgenda = () => {
                   '2023-08-25': { color: 'gray' },
                   '2023-08-26': { endingDay: true, color: 'gray' }
               }} */
-            markedDates={markedDates}
+            markedDates={newMarkedDates}
         // monthFormat={'yyyy'}
         // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
         // renderDay={this.renderDay}

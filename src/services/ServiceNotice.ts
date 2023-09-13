@@ -13,8 +13,17 @@ export const getNoticias = async () => {
     return valores;
 }
 
-export const getPaginatedNotice = async (len: number) => {
-    const snapshot = await db.collection('Noticia').orderBy('prioridad',"desc").orderBy("fecha", "desc").limit(len +3).get();
+export const getPaginatedNotice = async (len: number, categoria: string = "") => {
+    let snapshot;
+
+    if (categoria == "") {
+        snapshot = await db.collection('Noticia')
+            .orderBy('prioridad', "desc").orderBy("fecha", "desc").limit(len + 3).get();
+    } else {
+        snapshot = await db.collection('Noticia')
+            .where("categoria", "==", categoria)
+            .orderBy('prioridad', "desc").orderBy("fecha", "desc").limit(len + 3).get();
+    }
 
     const data: INotificacionNotice[] = snapshot.docs.map(doc => ({
         ...doc.data() as INotificacionNotice, id: doc.id,
@@ -25,7 +34,7 @@ export const getPaginatedNotice = async (len: number) => {
 export const getOneNotice = async (id: string) => {
     const snapshot = await db.collection("Noticia").doc(id).get();
 
-    if(snapshot.exists){
+    if (snapshot.exists) {
         return {
             id: snapshot.id,
             ...snapshot.data()
@@ -33,6 +42,6 @@ export const getOneNotice = async (id: string) => {
     }
 
     return null
-   
-    
+
+
 }

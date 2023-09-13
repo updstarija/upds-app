@@ -1,5 +1,6 @@
 export * from './useAuth';
 export * from './useAuthContext';
+export * from './useThemeContext';
 export * from './useBoleta';
 export * from './useCarreraContext';
 export * from './useCarreras';

@@ -6,11 +6,12 @@ export const useNoticias = () => {
     const [data, setData] = useState<INotificacionNotice[]>([])
     const [isLoading, setIsLoading] = useState(false)
 
-    const getData = async () => {
+    const getData = async (categoria: string = "") => {
         setIsLoading(true)
-        const response = await getPaginatedNotice(data.length)
+        const response = await getPaginatedNotice(data.length, categoria)
         setData(response)
         setIsLoading(false)
+        return response
     }
 
     const getOneData = async (id:string)=> {

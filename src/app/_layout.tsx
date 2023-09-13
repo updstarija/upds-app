@@ -1,7 +1,7 @@
 import { toastConfig } from '@/config';
 import { AuthProvider, CarreraProvider } from '@/context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
@@ -12,9 +12,10 @@ import { configStack } from '@/helpers';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { AutocompleteDropdownContextProvider } from 'react-native-autocomplete-dropdown'
 import messaging from '@react-native-firebase/messaging';
+import { ThemeProvider } from '@/context/ThemeContext'
+
 
 const queryClient = new QueryClient();
-
 
 export {
   ErrorBoundary,
@@ -60,7 +61,7 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <CarreraProvider>

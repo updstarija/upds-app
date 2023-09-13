@@ -89,7 +89,7 @@ const Biblioteca = () => {
                     <WebView
                         ref={webViewRef}
                         sharedCookiesEnabled
-                        scalesPageToFit={!isIos ? false : true}
+                        scalesPageToFit={true}
                         injectedJavaScript={INJECTEDJAVASCRIPT}
                         scrollEnabled
                         cacheEnabled

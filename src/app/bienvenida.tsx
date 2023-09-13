@@ -28,7 +28,7 @@ const sliders = [
   {
     title: false,
     image: require("~/assets/images/pages/bienvenida.png"),
-    text: "Chatea con Nosotros.\nRecibe notificaciones sobre nuestros eventos o comunicados"
+    text: "Chatea con Nosotros.\nRecibe notificaciones sobre nuestros eventos o comunicados.\n Y mucho mas"
   },
 ]
 
@@ -65,62 +65,61 @@ const BienvenidaScreen = () => {
 
   const navigateToLogin = async () => {
     router.replace("auth/login")
-
     await AsyncStorage.setItem('bienvenida', 'true')
   }
 
   const Footer = () => {
     return (
-      <ScrollView contentContainerStyle={{ flex: 1 }}>
-        <View
-          style={{
-            height: height * 0.25,
-            justifyContent: 'space-between',
-            paddingHorizontal: 20,
-          }}>
-          <View className='flex-row justify-center mt-5'>
-            {sliders.map((_, index) => (
-              <View
-                key={index}
-                className={`h-[5] bg-[#0D1F46] w-3 rounded mx-[1.5] ${sliderActual === index ? 'w-5 bg-white dark:bg-[#223B82]' : ""}`}
-              />
-            ))}
-          </View>
 
-          <View style={{ marginBottom: 20 }}>
-            {sliderActual == sliders.length - 1 ? (
-              <View style={{ height: 50 }}>
-                <TouchableOpacity
-                  onPress={navigateToLogin}
-                  className="py-3 bg-white dark:bg-[#0D1F46]  rounded">
-                  <Text className="text-xl font-bold text-center text-[#223B82] dark:text-white">Comenzar</Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <View className='flex-row gap-5'>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  className='flex-1 h-[50] items-center justify-center rounded border border-white  dark:border-[#0D1F46]'
-                  onPress={saltarSlider}>
-                  <Text className='font-bold text-white'>
-                    SALTAR
-                  </Text>
-                </TouchableOpacity>
-
-
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={IrSiguienteSlide}
-                  className='flex-1 h-[50] items-center justify-center bg-white dark:bg-[#0D1F46]  rounded'>
-                  <Text className='font-bold text-[#223B82] dark:text-white '>
-                    SIGUIENTE
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
+      <View
+        style={{
+          height: height * 0.25,
+          justifyContent: 'space-between',
+          paddingHorizontal: 20,
+        }}>
+        <View className='flex-row justify-center mt-5'>
+          {sliders.map((_, index) => (
+            <View
+              key={index}
+              className={`h-[5] bg-[#0D1F46] w-3 rounded mx-[1.5] ${sliderActual === index ? 'w-5 bg-white dark:bg-[#223B82]' : ""}`}
+            />
+          ))}
         </View>
-      </ScrollView>
+
+        <View style={{ marginBottom: 20 }}>
+          {sliderActual == sliders.length - 1 ? (
+            <View style={{ height: 50 }}>
+              <TouchableOpacity
+                onPress={navigateToLogin}
+                className="py-3 bg-white dark:bg-[#0D1F46]  rounded">
+                <Text className="text-xl font-bold text-center text-[#223B82] dark:text-white">Comenzar</Text>
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View className='flex-row gap-5'>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                className='flex-1 h-[50] items-center justify-center rounded border border-white  dark:border-[#0D1F46]'
+                onPress={saltarSlider}>
+                <Text className='font-bold text-white'>
+                  SALTAR
+                </Text>
+              </TouchableOpacity>
+
+
+              <TouchableOpacity
+                activeOpacity={0.8}
+                onPress={IrSiguienteSlide}
+                className='flex-1 h-[50] items-center justify-center bg-white dark:bg-[#0D1F46]  rounded'>
+                <Text className='font-bold text-[#223B82] dark:text-white '>
+                  SIGUIENTE
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
+
     );
   };
 
@@ -137,6 +136,7 @@ const BienvenidaScreen = () => {
       <ScrollView contentContainerStyle={{ flex: 1 }}>
         <View className="flex-1  bg-[#223B82] dark:bg-[#040e22] " >
           <FlatList
+            contentContainerStyle={{ marginTop: 40 }}
             ref={ref}
             data={sliders}
             horizontal

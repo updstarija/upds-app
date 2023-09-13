@@ -4,26 +4,20 @@ import {
     TouchableOpacity,
     Image,
     ScrollView,
-    Linking,
-    Alert,
-    View,
+    View
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import {
-    CommonActions,
-    RouteProp,
-    useNavigation,
-} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Texto } from '../../../components';
+import { Button, IconLabel, Texto } from '../../../components';
 import { Platform, Dimensions } from 'react-native'
 import Share from 'react-native-share';
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { Redirect, useLocalSearchParams } from 'expo-router';
 import { useNoticias, useThemeColor } from '@/hooks';
 import { INotificacionNotice } from '@/types';
 import { COLORS } from '~/constants';
 import Spinner from '@/components/ui/Spinner';
+import { openBrowserAsync } from 'expo-web-browser'
 
 export const NoticeDetail = () => {
     const params = useLocalSearchParams<any>()
@@ -41,10 +35,9 @@ export const NoticeDetail = () => {
     const [islike, setIsLike] = useState(false);
     const [likes, setLikes] = useState(noticia?.like || 0)
 
-    const navigator = useNavigation();
+    const [height, setHeight] = useState(0)
 
     const checkIfLiked = async (): Promise<boolean> => {
-        //FIX ID
         const liked = await AsyncStorage.getItem(`liked_noticia_${id}`);
         return liked === 'true';
     };
@@ -71,33 +64,13 @@ export const NoticeDetail = () => {
             });
     };
 
-    const shareNotice = async () => {
-        /*  const ImageBase64 = notice.imagen;
-         try {
-             const shareOptions = {
-                 message: notice.texto,
-                 url: ImageBase64,
-             };
- 
-             await Share.open(shareOptions);
-         } catch (error) {
-             console.log('Error al compartir la imagen:', error);
-         } */
-    };
-
-    const regresar = () => {
-        /*  navigator.dispatch(
-             CommonActions.navigate({
-                 name: 'NoticeScreen',
-             }),
-         ) */
-    }
-
     useEffect(() => {
-
-
         async function init() {
             const data = await getOneData(id)
+            //@ts-ignore
+            Image.getSize(data.imagen, (w, h) => {
+                setHeight(h * (width / w))
+            })
             //@ts-ignore
             setNoticia(data)
             //@ts-ignore
@@ -113,10 +86,7 @@ export const NoticeDetail = () => {
         if (noticia.id) {
             return <View className='flex-1'>
                 <View className=''>
-                    <Image className='mb-6' source={{ uri: noticia.imagen }} height={300} width={width} resizeMode='contain' />
-
-                    <View className='items-center'>
-                    </View>
+                    <Image className='mb-6' source={{ uri: noticia.imagen, }} height={height} width={width} resizeMode='contain' />
 
                     <View className='mb-10 flex-1'>
                         <View className='flex-row justify-evenly'>
@@ -139,24 +109,37 @@ export const NoticeDetail = () => {
                     </View>
                 </View>
 
-                <View className={`flex-1 bg-white dark:bg-secondary-dark items-center border border-gray-100 dark:border-primario shadow-sm shadow-primario `} style={{
+                <View className={`flex-1 bg-white dark:bg-secondary-dark border border-gray-100 dark:border-primario shadow-sm shadow-primario `} style={{
                     borderTopLeftRadius: 50, borderTopRightRadius: 50, elevation: 40, borderBottomWidth: 0
                 }}>
-                    <View className='bg-primario w-80 rounded-xl p-1 mt-[-20px] relative'>
-                        <Texto className={`text-${noticia.texto.length > 30 ? "lg" : "xl"} uppercase text-white text-center`} weight='Bold'>{noticia.titulo}</Texto>
+                    <View className='bg-primario w-80 rounded-xl p-1 mt-[-20px] relative mx-auto'>
+                        <Texto className={`text-${noticia.texto.length > 30 ? "xl" : "xl"} uppercase text-white text-center`} weight='Bold'>{noticia.titulo}</Texto>
 
                         {noticia.prioridad && <>
-                            {/*                <View style={{ borderBottomColor: "#3498db", borderRightWidth: 25, borderBottomWidth: 25, width: 0, height: 0, backgroundColor: "transparent", borderStyle: "solid", borderLeftWidth: 0, borderLeftColor: "transparent", borderRightColor: "transparent", position: "absolute", top: 0, right: 0, transform: [{ rotate: "180deg" }] }} />
- */}
+
                             <View style={{ position: "absolute", top: -5, right: -5, zIndex: 1 }}>
                                 <FontAwesome name={"star"} color={isDark ? "#FFF" : "#3498db"} size={20} />
                             </View>
                         </>}
                     </View>
 
-                    <View className='p-4 fl'>
-                        <Texto className='text-justify dark:text-white' weight='Light'> {noticia.texto}</Texto>
+                    <View className='p-4'>
+                        <IconLabel iconName={"view-dashboard"} textButton={noticia.categoria} />
+                        <Texto className=' dark:text-white mt-4' > {noticia.texto}</Texto>
                     </View>
+
+
+                    <View className='mx-2  flex-1 justify-end my-2'>
+                        <Button
+                            classNameBtn="w-full rounded-xl bg-primario p-2 "
+                            onPress={() => { openBrowserAsync(noticia.url) }}
+                            disabled={isLoading} showLoader>
+                            <Texto className="text-center text-white ">
+                                MAS INFORMACION   <FontAwesome name='send' size={20} />
+                            </Texto>
+                        </Button>
+                    </View>
+
                 </View>
             </View >
         }
@@ -185,7 +168,7 @@ export const NoticeDetail = () => {
 
     return (
         <View className='flex-1 bg-white dark:bg-secondary-dark'>
-            <ScrollView style={{ flex: 1 }} scrollsToTop>
+            <ScrollView style={{ flex: 1 }} scrollsToTop contentContainerStyle={{ flexGrow: 1 }}>
                 <View className='bg-white dark:bg-primario-dark flex-1'>
                     <View className='flex-1'>
                         {render()}
@@ -193,8 +176,8 @@ export const NoticeDetail = () => {
                 </View>
             </ScrollView>
 
-            <View style={{ position: "absolute", bottom: 30, right: 30 }}>
-                <TouchableOpacity onPress={compartirNoticia} className='bg-primario p-4 rounded-full' activeOpacity={0.8}>
+            <View style={{ position: "absolute", bottom: 50, right: 30 }}>
+                <TouchableOpacity onPress={compartirNoticia} className='bg-primario p-4 rounded-full' activeOpacity={0.8} style={{ elevation: 20 }}>
                     <AntDesign name='sharealt' size={20} color={"#FFF"} />
                 </TouchableOpacity>
             </View>

@@ -1,30 +1,102 @@
 import { useEffect } from "react";
-import { View, TouchableOpacity, FlatList, Pressable } from "react-native";
+import { View, Pressable } from "react-native";
 import { NoticeCard } from "@/components/NoticeCard";
-import { LoadingNotice } from "@/components/LoadingNotice";
 import { useNoticias } from "@/hooks";
-import { INotificacionNotice } from "@/types/typeNotice";
 import { LayoutScreen } from "@/layout/LayoutScreen";
 import { Link } from "expo-router";
-import { Texto } from "@/components";
 import { FlashList } from "@shopify/flash-list";
 import Spinner from "@/components/ui/Spinner";
+import React, { useState } from 'react'
+import DropDownPicker from 'react-native-dropdown-picker';
+import { useThemeColor } from '@/hooks';
+import { FontAwesome } from '@expo/vector-icons';
+import { COLORS } from '~/constants';
+import { categorias } from "@/data";
+import { INotificacionNotice } from "@/types";
 
 const Comunicados = () => {
-  const { data, isLoading, getData } = useNoticias();
+  const isDarkMode = useThemeColor() === "dark"
+  const { isLoading, getData } = useNoticias();
+  const [data, setData] = useState<INotificacionNotice[]>([])
+
+  const [openCategoria, setOpenCategoria] = useState(false);
+  const [valueCategoria, setvalueCategoria] = useState("")
+
+  const SelectCategorias = () => {
+    return <DropDownPicker
+      open={openCategoria}
+      value={valueCategoria}
+      searchable
+
+      searchPlaceholder="Busca una categoria"
+      searchTextInputStyle={{ color: isDarkMode ? "#fff" : "#000" }}
+      //@ts-ignore
+      items={categorias}
+      listMode="FLATLIST"
+      onSelectItem={() => setData([])}
+      setOpen={setOpenCategoria}
+      setValue={setvalueCategoria}
+      placeholder="Filtrar por categoria"
+      zIndex={1}
+      ArrowDownIconComponent={() => (
+        <FontAwesome
+          size={18}
+          color={isDarkMode ? "#fff" : "#000"}
+          style={{ paddingHorizontal: 5 }}
+          name="angle-down"
+        />
+      )}
+      ArrowUpIconComponent={() => (
+        <FontAwesome
+          size={18}
+          color={isDarkMode ? "#fff" : "#000"}
+          style={{ paddingHorizontal: 5 }}
+          name="angle-up"
+        />
+      )}
+      TickIconComponent={() => (
+        <FontAwesome
+          size={18}
+          color={isDarkMode ? "#fff" : "#000"}
+          style={{ paddingHorizontal: 5 }}
+          name="check"
+        />
+      )}
+      textStyle={{ color: isDarkMode ? "#fff" : "#000", fontSize: 13 }}
+      style={
+        isDarkMode
+          ? { backgroundColor: COLORS.dark.secondary }
+          : { backgroundColor: "#fff" }
+      }
+      dropDownContainerStyle={
+        isDarkMode && { backgroundColor: COLORS.dark.secondary }
+      }
+    />
+  }
+
+  const getNoticias = () => {
+    getData(valueCategoria).then((x) => {
+      setData(x)
+    })
+  }
 
   useEffect(() => {
-    getData();
-  }, []);
+    getNoticias()
+  }, [valueCategoria]);
 
   return (
     <LayoutScreen title="Comunicados">
       <View className="flex-1 mx-1">
+        <View style={{ zIndex: 5, marginTop: 5 }}>
+          <SelectCategorias />
+        </View>
+
         <FlashList
           data={data}
-          ListHeaderComponentStyle={{ margin: 3 }}
+          //ListHeaderComponent={() => }
+          ListHeaderComponentStyle={{ marginTop: 5 }}
           onEndReachedThreshold={1}
-          onEndReached={getData}
+          onEndReached={getNoticias}
           keyExtractor={(item) => item.id}
           ListFooterComponent={isLoading ? <Spinner showText text="Cargando comunicados" classNameContainer="p-4 items-center" size={25} /> : <View />}
           showsVerticalScrollIndicator={false}
@@ -32,16 +104,6 @@ const Comunicados = () => {
           ItemSeparatorComponent={() => <View className="mb-3" />}
           renderItem={({ item }) => (
             <>
-              {/*
-            <TouchableOpacity
-              onPress={() => handleNoticePress(item)}
-              className="mb-1 px-1"
-            >
-            </TouchableOpacity>
-            */}
-              {/* <View className="bg-primario p-2 mb-2 rounded-xl">
-              <Texto>HOLA</Texto>
-            </View> */}
               <Link href={`/(home)/comunicados/${item.id}`} asChild>
                 <Pressable>
                   <NoticeCard {...item} />

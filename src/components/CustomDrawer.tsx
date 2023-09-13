@@ -81,12 +81,12 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
     const LabelSubItem = (title: string, link: string | undefined, color: string) => {
         return (<View style={{ marginLeft: -25 }} className=' flex-1 justify-between items-center flex-row'>
             <Text style={{
-                color: historyMenu.length == 0 ? "#9e9d9d" : "#000",
+                color,
                 fontFamily: 'LatoRegular',
                 fontSize: 15,
             }}>{title}</Text>
 
-            {!link ? <Ionicons name='chevron-forward' size={15} color={"#Fff"} /> : null}
+            {!link ? <Ionicons name='chevron-forward' size={15} color={color} /> : null}
 
 
 
@@ -153,7 +153,7 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
                         key={x.label}
                         activeBackgroundColor={"#ebeffa"}
                         activeTintColor='#9e9d9d'
-                        inactiveTintColor={historyMenu.length == 0 ? "#9e9d9d" : "#000"}
+                        inactiveTintColor={historyMenu.length == 0 ? "#9e9d9d" : isDarkMode ? "#FFF" : "#000"}
                         onPress={() => {
                             if (x?.link) {
                                 router.push(`${x.link}/${x.label.toLowerCase().replaceAll(" ", "-")}`)
