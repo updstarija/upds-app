@@ -192,8 +192,8 @@ const ChatScreen = () => {
         }
 
         <Modal isVisible={visibleModal}>
-          <View className="bg-white p-4 rounded-lg">
-            <Texto className="text-2xl text-center mt-3 mb-4" weight="Bold">Datos Personales</Texto>
+          <View className="bg-white dark:bg-secondary-dark p-4 rounded-lg">
+            <Texto className="text-2xl dark:text-white text-center mt-3 mb-4" weight="Bold">Datos Personales</Texto>
             <TextField
               control={control}
               label="Nombre Completo"
