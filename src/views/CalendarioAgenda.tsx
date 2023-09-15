@@ -1,139 +1,126 @@
-import React, { Component, useEffect, useRef, useState } from 'react';
-import { Alert, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
-import { Agenda, DateData, AgendaEntry, AgendaSchedule, } from 'react-native-calendars';
-import testIDs from '@/data/testIds';
-import { Texto } from '../components';
+import React, { useMemo, useState } from 'react';
+import { Alert, View, TouchableOpacity, Button as Btn } from 'react-native';
+import { Agenda, AgendaEntry } from 'react-native-calendars';
+import { Button, Texto, Modal, Option } from '../components';
 import ReservationList from 'react-native-calendars/src/agenda/reservation-list';
-import { useThemeColor } from '@/hooks';
+import { useCalendario, useThemeColor } from '@/hooks';
 import { COLORS } from '~/constants';
+import { isSameDay } from 'date-fns'
+import { FloatingAction } from 'react-native-floating-action';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+
+const dayNames = ['Dom.', 'Lun.', 'Mar.', 'Mie.', 'Jue.', 'Vie.', 'Sab.']
+
+const actions = [
+    {
+        text: "Filtrar",
+        name: "filter",
+        icon: <MaterialCommunityIcons name="filter" color="#fff" size={20} />,
+        position: 3
+    },
+    {
+        text: "Informacion",
+        name: "help",
+        icon: <MaterialCommunityIcons name="help-circle" color="#fff" size={20} />,
+        position: 4
+    }
+];
 
 const CalendarioAgenda = () => {
-
-    const DATA = {
-        events: [
-            {
-                title: 'Conclusion del modulo',
-                start: '2023-09-01',
-                end: '2023-09-01',
-                color: 'purple',
-            },
-            {
-                title: 'Inicio de modulo',
-                start: '2023-09-04',
-                end: '2023-09-04',
-                color: 'blue'
-            },
-            {
-                title: 'Evento Upds a nuevos estudiantes',
-                start: '2023-09-04',
-                end: '2023-09-04',
-                color: 'gray'
-            },
-            {
-                title: 'Fecha Limite de Pago',
-                start: '2023-09-15',
-                end: '2023-09-15',
-                color: 'green'
-            },
-            {
-                title: 'Conferencia Rector Upds',
-                start: '2023-09-15',
-                end: '2023-09-15',
-                color: 'gray'
-            },
-            {
-                title: 'Farándula Upds',
-                start: '2023-09-15',
-                end: '2023-09-15',
-                color: 'gray'
-            },
-            {
-                title: 'Descanso Pedagogico',
-                start: '2023-09-18',
-                end: '2023-09-20',
-                color: 'orange'
-            },
-            {
-                title: 'Conclusion del modulo',
-                start: '2023-09-29',
-                end: '2023-09-29',
-                color: 'purple'
-            }
-        ]
-    };
-
-    const fechas: { [key: string]: any } = {};
-
-    DATA.events.forEach(event => {
-        const startDate = new Date(event.start);
-        const endDate = new Date(event.end);
-        const dayDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
-
-        for (let i = 0; i <= dayDiff; i++) {
-            const currentDate = new Date(startDate);
-            currentDate.setDate(startDate.getDate() + i);
-            const formattedDate = currentDate.toISOString().split('T')[0];
-
-            if (!fechas[formattedDate]) {
-                fechas[formattedDate] = [];
-            }
-
-            fechas[formattedDate].push({
-                name: event.title,
-                height: 50,
-                day: formattedDate,
-                color: event.color,
-            });
-        }
-    });
-
-    const newMarkedDates: { [key: string]: any } = {};
-
-    DATA.events.forEach(event => {
-        const startDate = new Date(event.start);
-        const endDate = new Date(event.end);
-        const dayDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
-
-        for (let i = 0; i <= dayDiff; i++) {
-            const currentDate = new Date(startDate);
-            currentDate.setDate(startDate.getDate() + i);
-            const formattedDate = currentDate.toISOString().split('T')[0];
-
-            if (!newMarkedDates[formattedDate]) {
-                newMarkedDates[formattedDate] = {
-                    dots: []
-                };
-            }
-
-            newMarkedDates[formattedDate].dots.push({
-                color: event.color
-            });
-        }
-    });
-
     const isDarkMode = useThemeColor() === "dark"
+    const { data, getEventos, isLoading } = useCalendario({ gestion: "" })
+
+
+    const [filtro, setFiltro] = useState(0)
+    const [modalFiltro, setModalFiltro] = useState(false)
+
+    const fechas: { [key: string]: any } = useMemo(() => {
+        const fechas: { [key: string]: any } = {}
+
+        data.forEach(event => {
+            const startDate = new Date(event.start);
+            const endDate = new Date(event.end);
+            const dayDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+
+            for (let i = 0; i <= dayDiff; i++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + i);
+                const formattedDate = currentDate.toISOString().split('T')[0];
+
+                if (filtro === 0 || (event.tipoCalendario.includes(filtro) && filtro != 0)) {
+
+                    if (!fechas[formattedDate]) {
+                        fechas[formattedDate] = [];
+                    }
+                    fechas[formattedDate].push({
+                        name: event.title,
+                        height: 50,
+                        day: formattedDate,
+                        color: event.color,
+                        description: event.description,
+                        tipoCalendario: event.tipoCalendario
+                    });
+                }
+            }
+        });
+
+        return fechas;
+    }, [data, filtro]);
+
+    const markedDates: { [key: string]: any } = useMemo(() => {
+        const newMarkedDates: { [key: string]: any } = {}
+
+        data.forEach(event => {
+            const startDate = new Date(event.start);
+            const endDate = new Date(event.end);
+            const dayDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+
+            for (let i = 0; i <= dayDiff; i++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(startDate.getDate() + i);
+                const formattedDate = currentDate.toISOString().split('T')[0];
+
+                if (filtro === 0 || (event.tipoCalendario.includes(filtro) && filtro != 0)) {
+                    if (!newMarkedDates[formattedDate]) {
+                        newMarkedDates[formattedDate] = {
+                            dots: []
+                        };
+                    }
+
+                    newMarkedDates[formattedDate].dots.push({
+                        color: event.color
+                    });
+                }
+
+            }
+        });
+
+        return newMarkedDates;
+    }, [data, filtro]);
+
     const renderDay = (day: any) => {
+        const date = new Date(day)
+
         if (day) {
-            return <Text style={styles.customDay}>{day.getDay()}</Text>;
+            return <View className='w-16 items-center justify-center'>
+                <Texto className={`text-black dark:text-gray-300 ${isSameDay(new Date(), date) ? "dark:text-[#6288f5]" : ""} text-3xl`} weight='Light'>{date.toLocaleDateString("es-Es", { day: "2-digit" })}</Texto>
+                <Texto className={`text-black dark:text-gray-300 ${isSameDay(new Date(), date) ? "dark:text-[#6288f5]" : ""}`} weight='Light'>{dayNames[date.getDay()]}</Texto>
+            </View>;
         }
-        return <View style={styles.dayItem} />;
+        return <View className='w-16' />;
     };
 
-    const renderItem = (reservation: AgendaEntry, isFirst: boolean) => {
-        const fontSize = isFirst ? 16 : 14;
-        const color = isFirst ? 'black' : '#43515c';
-        console.log(reservation.color)
+    const renderItem = (reservation: any, isFirst: boolean) => {
         return (
             <TouchableOpacity
-
-                className={` p-4 mt-2`}
+                className={` p-4 mb-2 ${isFirst ? "mt-5" : ""}`}
                 style={{ backgroundColor: reservation.color }}
-                onPress={() => Alert.alert(reservation.color)}
+                onPress={() => Alert.alert(reservation.description)}
 
             >
 
-                <Texto className='text-black dark:text-white'>{reservation.name}</Texto>
+                <Texto className='text-white'>{reservation.name}</Texto>
 
             </TouchableOpacity>
         );
@@ -141,8 +128,8 @@ const CalendarioAgenda = () => {
 
     const renderEmptyDate = () => {
         return (
-            <View style={styles.emptyDate}>
-                <Text>This is empty date!</Text>
+            <View>
+                <Texto>This is empty date!</Texto>
             </View>
         );
     };
@@ -151,199 +138,86 @@ const CalendarioAgenda = () => {
         return r1.name !== r2.name;
     };
 
-    const calendarRef = useRef()
-
-    const [markedDates, setmarkedDates] = useState({
-        '2023-01-05': {
-            'dots': [
-                { 'color': 'red' },
-                { 'color': 'green' }
-            ]
-        },
-        '2023-02-10': {
-            'dots': [
-                { 'color': 'blue' },
-                { 'color': 'yellow' },
-                { 'color': 'purple' }
-            ]
-        },
-        '2023-03-15': {
-            'dots': [
-                { 'color': 'orange' }
-            ]
-        },
-        '2023-04-20': {
-            'dots': [
-                { 'color': 'red' },
-                { 'color': 'green' },
-                { 'color': 'blue' },
-                { 'color': 'yellow' }
-            ]
-        },
-        '2023-05-25': {
-            'dots': [
-                { 'color': 'purple' },
-                { 'color': 'orange' }
-            ]
-        },
-        '2023-06-30': {
-            'dots': [
-                { 'color': 'green' }
-            ]
-        },
-        '2023-07-10': {
-            'dots': [
-                { 'color': 'red' },
-                { 'color': 'blue' },
-                { 'color': 'purple' }
-            ]
-        },
-        '2023-08-15': {
-            'dots': [
-                { 'color': 'orange' }
-            ]
-        },
-        '2023-09-20': {
-            'dots': [
-                { 'color': 'green' },
-                { 'color': 'blue' },
-                { 'color': 'yellow' }
-            ]
-        },
-        '2023-10-25': {
-            'dots': [
-                { 'color': 'purple' },
-                { 'color': 'orange' }
-            ]
-        },
-        '2023-11-30': {
-            'dots': [
-                { 'color': 'red' }
-            ]
-        },
-        '2023-12-05': {
-            'dots': [
-                { 'color': 'green' },
-                { 'color': 'yellow' }
-            ]
-        }
-    })
-
-
-    const dotColors = [
-        'red',
-        'green',
-        'blue',
-        'yellow',
-        'purple',
-        'orange'
-    ];
-
-    const dataItem = {
-        '2023-01-05': generateItems(2),
-        '2023-02-10': generateItems(3),
-        '2023-03-15': generateItems(1),
-        '2023-04-20': generateItems(4),
-        '2023-05-25': generateItems(2),
-        '2023-06-30': generateItems(1),
-        '2023-07-10': generateItems(3),
-        '2023-08-15': generateItems(1),
-        '2023-09-20': generateItems(3),
-        '2023-10-25': generateItems(2),
-        '2023-11-30': generateItems(1),
-        '2023-12-05': generateItems(2)
-    };
-
-    function generateItems(numItems: number) {
-        const items = [];
-        for (let i = 0; i < numItems; i++) {
-            items.push({
-                name: `EVENTO #${i}`,
-                height: 50,
-                day: "2023-08-" + i
-            });
-        }
-        return items;
+    const toggleModalFiltro = () => {
+        setModalFiltro(!modalFiltro)
     }
 
+    const onChangeFiltro = (flt: number) => {
+        if (flt == filtro) setFiltro(0)
+        else setFiltro(flt)
+    }
 
     return (
-        <Agenda
+        <>
+            <Modal isVisible={modalFiltro} >
+                <View>
+                    <View>
+                        <Option active={filtro == 1} onPress={() => onChangeFiltro(1)} icon='calendar' text='PRESENCIAL' justifyBetween />
+                        <View className='mb-2' />
+                        <Option active={filtro == 2} onPress={() => onChangeFiltro(2)} icon='calendar-multiselect' text='SEMIPRESENCIAL' justifyBetween />
+                        <View className='mb-2' />
+                        <Option active={filtro == 3} onPress={() => onChangeFiltro(3)} icon='calendar-star' text='EVENTOS' justifyBetween />
+                    </View>
 
-            ListEmptyComponent={() => <Texto>GOLA</Texto>}
-            items={fechas}
-            //loadItemsForMonth={this.loadItems}
-            //selected={'2023-08-10'}
-            renderList={(p) => <ReservationList {...p} style={isDarkMode ? { backgroundColor: COLORS.dark.background, paddingTop: 10 } : {}} />}
+                    <View className="flex-row justify-between mt-4">
+                        <Button onPress={() => toggleModalFiltro()} classNameBtn="bg-gray-400 dark:bg-primario-dark w-full p-4 rounded-lg">
+                            <Texto className="text-white text-center">CERRAR</Texto>
+                        </Button>
+                        <View />
+                    </View>
+                </View>
+            </Modal>
 
-            //renderList={(props) => <View {...props} className='flex-1  bg-red-300'><Texto>{JSON.stringify(props.items)}</Texto></View>}
-            renderItem={renderItem}
+            <Agenda
+                ListEmptyComponent={() => <Texto>GOLA</Texto>}
+                items={fechas}
+                //loadItemsForMonth={(x) => console.log(x)}
+                //loadItemsForMonth={this.loadItems}
+                //selected={'2023-08-10'}
+                renderList={(p) => <ReservationList {...p} style={isDarkMode ? { backgroundColor: COLORS.dark.background } : {}} />}
+                //renderList={(props) => <View {...props} className='flex-1  bg-red-300'><Texto>{JSON.stringify(props.items)}</Texto></View>}
+                renderItem={renderItem}
+                renderDay={renderDay}
+                renderEmptyDate={renderEmptyDate}
+                rowHasChanged={rowHasChanged}
+                showClosingKnob={true}
+                pastScrollRange={12 - (12 - new Date().getMonth())}
+                futureScrollRange={12 - new Date().getMonth() - 1}
+                renderEmptyData={() => <View className='bg-white dark:bg-primario-dark flex-1'><Texto className='text-center p-5 text-black dark:text-white'>{isLoading ? "CARGANDO EVENTOS" : "NO HAY NIGUN EVENTO DISPONIBLE"}</Texto></View>}
+                markingType={'multi-dot'}
+                calendarStyle={{ backgroundColor: isDarkMode ? COLORS.dark.secondary : "transparent" }}
+                theme={isDarkMode ? {
+                    calendarBackground: COLORS.dark.secondary,
+                    dayTextColor: "#fff",
+                    monthTextColor: "#fff",
+                } : {}}
+                markedDates={markedDates}
 
-            renderEmptyDate={renderEmptyDate}
-            rowHasChanged={rowHasChanged}
-            showClosingKnob={true}
-            pastScrollRange={12 - (12 - new Date().getMonth())}
-            futureScrollRange={12 - new Date().getMonth() - 1}
-            renderEmptyData={() => <View className='bg-white dark:bg-primario-dark flex-1'><Texto className='text-center p-5 text-black dark:text-white'>NO HAY NIGUN EVENTO DISPONIBLE</Texto></View>}
-            markingType={'multi-dot'}
-            calendarStyle={{ backgroundColor: isDarkMode ? COLORS.dark.secondary : "transparent" }}
-            theme={isDarkMode ? {
-                calendarBackground: COLORS.dark.secondary,
-                dayTextColor: "#fff",
-                monthTextColor: "#fff",
+            // monthFormat={'yyyy'}
+            // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
+            // renderDay={this.renderDay}
 
+            // showOnlySelectedDayItems
+            // reservationsKeyExtractor={this.reservationsKeyExtractor}
+            />
 
-            } : {}}
-            /*   markedDates={{
-                  '2023-08-01': {
-                      dots: [
-                          { color: "red" },
-                          { color: "green" }
-                      ]
-                  },
-                  '2023-08-02': { startingDay: true, color: "orange" },
-                  '2023-08-03': { color: "orange" },
-                  '2023-08-04': { endingDay: true, color: 'orange' },
-                  '2023-08-06': { startingDay: true, endingDay: true, color: 'orange' },
-                  '2023-08-22': { endingDay: true, color: 'orange' },
-                  '2023-08-24': { startingDay: true, color: 'gray' },
-                  '2023-08-25': { color: 'gray' },
-                  '2023-08-26': { endingDay: true, color: 'gray' }
-              }} */
-            markedDates={newMarkedDates}
-        // monthFormat={'yyyy'}
-        // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-        // renderDay={this.renderDay}
-        // hideExtraDays={false}
-        // showOnlySelectedDayItems
-        // reservationsKeyExtractor={this.reservationsKeyExtractor}
-        />
+            <FloatingAction
+                overlayColor="#0000006a"
+                actions={actions}
+                distanceToEdge={{ horizontal: 20, vertical: 30 }}
+                onPressItem={name => {
+                    if (name === "filter") {
+                        toggleModalFiltro()
+                    } else if (name === 'imprimir') {
+
+                    } else if (name === "nueva_boleta") {
+
+                    }
+                }}
+            />
+        </>
     );
 }
 
 export default CalendarioAgenda
 
-
-const styles = StyleSheet.create({
-    item: {
-        backgroundColor: 'white',
-        flex: 1,
-        borderRadius: 5,
-        padding: 10,
-        marginRight: 10,
-        marginTop: 17
-    },
-    emptyDate: {
-        height: 15,
-        flex: 1,
-        paddingTop: 30
-    },
-    customDay: {
-        margin: 10,
-        fontSize: 24,
-        color: 'green'
-    },
-    dayItem: {
-        marginLeft: 34
-    }
-});

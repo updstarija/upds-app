@@ -291,13 +291,13 @@ const Stats = () => {
     }
 
     return (
-        <>
+        <View className='bg-white dark:bg-primario-dark '>
             <View className='p-2'>
                 <SelectCarrera />
             </View>
 
             <ScrollView showsVerticalScrollIndicator={false}>
-                <View className='bg-white dark:bg-primario-dark flex-1 border p-2 gap-2'>
+                <View className='flex-1 border px-2 gap-2'>
                     <>
 
                         <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
@@ -358,7 +358,7 @@ const Stats = () => {
                     </>
                 </View>
             </ScrollView>
-        </>
+        </View>
     )
 }
 

@@ -1,5 +1,4 @@
-import { MaterialIcons ,FontAwesome} from '@expo/vector-icons';
-import { ReactElement } from 'react';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
 export interface Menu {
     text: string;
@@ -9,13 +8,12 @@ export interface Menu {
     auth?: boolean
 }
 
-
 export const menuHomeScreen: Menu[] = [
     {
         text: 'UPDS',
         icon: 'institution',
-      //  to: 'https://www.360virtualbo.com/tour/educacion/updstarija',
-      to:"ubicacion",
+        //  to: 'https://www.360virtualbo.com/tour/educacion/updstarija',
+        to: "ubicacion",
         link: false
     },
     {
@@ -94,9 +92,9 @@ export const menuHomeStudent: Menu[] = [
         icon: 'account-tree',
         to: '/historico-materias',
         link: false,
-        auth:true
+        auth: true
     },
-   
+
 ]
 
 export const menuAjustes: Menu[] = [
@@ -105,7 +103,7 @@ export const menuAjustes: Menu[] = [
         text: "Mi perfil",
         to: "perfil",
         link: false,
-        auth:true
+        auth: true
     },
     {
         icon: "notifications",
@@ -115,7 +113,7 @@ export const menuAjustes: Menu[] = [
     },
     {
         icon: "grid-view",
-        text: "Tutoriales",
+        text: "Tutoriales, Guias, Avisos, etc.",
         to: "tutorialConfig",
         link: false
     },
@@ -127,7 +125,7 @@ export const menuAjustes: Menu[] = [
     },
     {
         icon: "article",
-        text: "Terminos de uso",
+        text: "Terminos de Uso",
         to: "terminos",
         link: false
     },
@@ -140,7 +138,7 @@ export const menuAjustes: Menu[] = [
     },
     {
         icon: "info-circle",
-        text: "Acerca de",
+        text: "Acerca de la Aplicación",
         to: "about",
         link: false
     }

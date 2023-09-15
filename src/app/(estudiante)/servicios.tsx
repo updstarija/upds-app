@@ -23,14 +23,6 @@ const data = [
         to: 'https://multipago.com/service/UPDS/first',
         // to: '/multipagos',
         link: true,
-    },
-    {
-        id: '3',
-        title: 'E-LIBRO',
-        description: 'Explora variedad de libros digitales educativos',
-        icon: "menu-book",
-        to: '/biblioteca',
-        link: false,
     }
 ];
 

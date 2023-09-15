@@ -20,11 +20,11 @@ const Ajustes = () => {
                 renderItem={({ item }) => <EnlaceMenu {...item} />}
             />
 
-
+            {/* 
             <Button title='BORRAR LOCALSTORAGE ' onPress={async () => {
                 await AsyncStorage.clear()
                 router.replace("bienvenida")
-            }} />
+            }} /> */}
         </View>
     )
 }
