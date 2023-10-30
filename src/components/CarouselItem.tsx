@@ -1,11 +1,13 @@
+import { INotificacion, INotificacionNotice } from '@/types'
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, Dimensions, Image } from "react-native"
-import Modal from 'react-native-modal'
+import { Image } from 'react-native'
+import { View, Text, StyleSheet, Dimensions } from "react-native"
+
 export const SLIDER_WIDTH = Dimensions.get('window').width
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
 
 
-export const CarouselCardItem = ({ item, index }: { item: any, index: number }) => {
+export const CarouselCardItem = ({ item, index }: { item: INotificacionNotice, index: number }) => {
     // const [visibleModal, setVisibleModal] = useState(false)
 
     return (
@@ -14,13 +16,11 @@ export const CarouselCardItem = ({ item, index }: { item: any, index: number }) 
 
             <View style={styles.container} key={index}>
                 <Image
-                    source={{ uri: item.imgUrl }}
+                    source={{ uri: item.imagen, width: 500, height: 500 }}
                     style={styles.image}
                     resizeMode='cover'
-
+                    width={500}
                 />
-                {/* <Text style={styles.header}>{item.title}</Text>
-            <Text style={styles.body}>{item.body}</Text> */}
             </View>
         </>
 

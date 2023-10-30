@@ -9,3 +9,6 @@ export * from './planEstudio.d';
 export * from './semestre.d';
 export * from './registroHistorico';
 export * from './estadisticasPerfil';
+export * from './instagram';
+export * from './facebook';
+export * from './youtube';

@@ -9,33 +9,28 @@ import { IRegistroHistorico } from '@/types';
 import CONSTANS from 'expo-constants'
 import {
   TooltipProps,
-  TourGuideProvider, // Main provider
-  TourGuideZone, // Main wrapper of highlight component
-  TourGuideZoneByPosition, // Component to use mask on overlay (ie, position absolute)
-  useTourGuideController, // hook to start, etc.
+  TourGuideProvider,
+  TourGuideZone,
+  useTourGuideController,
 } from 'rn-tourguide'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import PagerView from 'react-native-pager-view';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { verTutorial } from '@/helpers';
-
-import Modal from 'react-native-modal'
+import * as Animatable from "react-native-animatable"
 
 const HistoricoMaterias = () => {
   const { valueCarrera } = useCarreraContext();
 
   const [blockScroll, setBlockScroll] = useState(true)
 
-  const [semestreOpen, setSemestreOpen] = useState(-1)
   const { registroHistoricoQuery: data } = useRegistroHistorico({
     carrera: valueCarrera || -1
   })
 
   const {
-    canStart, // a boolean indicate if you can start tour guide
-    start, // a function to start the tourguide
-    stop, // a function  to stopping it
-    eventEmitter, // an object for listening some events
+    canStart,
+    start,
+    getCurrentStep
   } = useTourGuideController()
 
   useEffect(() => {
@@ -90,6 +85,7 @@ const HistoricoMaterias = () => {
     })
     .filter((item) => item !== null) as number[];
 
+  console.log(getCurrentStep()?.order)
   return (
     <View className='flex-1'>
       <FlashList
@@ -106,11 +102,11 @@ const HistoricoMaterias = () => {
           if (typeof item === "string") {
             return <View className='bg-white dark:bg-secondary-dark p-5 shadow'><Texto className='text-black dark:text-white text-center'>{item}</Texto></View>;
           } else {
-            if (index == 2 || index == 3) {
+            if (index == 1 || index == 2) {
               let text = ""
-              if (index == 2) {
+              if (index == 1) {
                 text = "Presiona en el registro para obtener mas informacion acerca de la materia"
-              } else if (index == 3) {
+              } else if (index == 2) {
                 text = "Desliza para obtener acceso a mas funciones"
               }
               return <>
@@ -140,7 +136,7 @@ const App = () => {
   }
 
   return (
-    <TourGuideProvider {...{ borderRadius: 16 }} backdropColor="#000000b3" verticalOffset={isIos ? -100 - CONSTANS.statusBarHeight + 6 : -105} preventOutsideInteraction tooltipComponent={(x) => (
+    <TourGuideProvider {...{ borderRadius: 16 }} backdropColor="#000000b3" verticalOffset={isIos ? -50 - CONSTANS.statusBarHeight + 6 : -105} preventOutsideInteraction tooltipComponent={(x) => (
       <View className="bg-primario dark:bg-secondary-dark p-2 rounded-xl w-72">
         <Texto className="text-white mb-4 text-center mt-2"> {x.currentStep.text}</Texto>
 

@@ -181,7 +181,7 @@ function RootLayoutNav() {
                   <Stack.Screen
                     name="(estudiante)/servicios"
                     //@ts-ignore
-                    options={configStack('Servicios')}
+                    options={configStack('Registro y Pagos')}
                   />
 
                   <Stack.Screen

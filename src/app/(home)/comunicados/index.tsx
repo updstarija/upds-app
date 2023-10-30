@@ -11,8 +11,11 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { useThemeColor } from '@/hooks';
 import { FontAwesome } from '@expo/vector-icons';
 import { COLORS } from '~/constants';
-import { categorias } from "@/data";
+import { categorias, categoriasFaq } from "@/data";
 import { INotificacionNotice } from "@/types";
+import { Texto } from "../../../components";
+
+
 
 const Comunicados = () => {
   const isDarkMode = useThemeColor() === "dark"
@@ -30,10 +33,12 @@ const Comunicados = () => {
 
       searchPlaceholder="Busca una categoria"
       searchTextInputStyle={{ color: isDarkMode ? "#fff" : "#000" }}
-      //@ts-ignore
       items={categorias}
-      listMode="FLATLIST"
-      onSelectItem={() => setData([])}
+      onSelectItem={(x) => {
+        if (x.value != valueCategoria) {
+          setData([])
+        }
+      }}
       setOpen={setOpenCategoria}
       setValue={setvalueCategoria}
       placeholder="Filtrar por categoria"
@@ -62,14 +67,15 @@ const Comunicados = () => {
           name="check"
         />
       )}
+      containerStyle={{ paddingVertical: 5 }}
       textStyle={{ color: isDarkMode ? "#fff" : "#000", fontSize: 13 }}
       style={
-        isDarkMode
-          ? { backgroundColor: COLORS.dark.secondary }
-          : { backgroundColor: "#fff" }
+        [isDarkMode
+          ? { backgroundColor: COLORS.dark.secondary, }
+          : { backgroundColor: "#fff", }]
       }
       dropDownContainerStyle={
-        isDarkMode && { backgroundColor: COLORS.dark.secondary }
+        [isDarkMode && { backgroundColor: COLORS.dark.secondary }]
       }
     />
   }
@@ -87,13 +93,12 @@ const Comunicados = () => {
   return (
     <LayoutScreen title="Comunicados">
       <View className="flex-1 mx-1">
-        <View style={{ zIndex: 5, marginTop: 5 }}>
-          <SelectCategorias />
-        </View>
+
+        <SelectCategorias />
 
         <FlashList
           data={data}
-          //ListHeaderComponent={() => }
+          ListEmptyComponent={<Texto className="text-center">{!isLoading && 'No se han encontrado comunicados'}</Texto>}
           ListHeaderComponentStyle={{ marginTop: 5 }}
           onEndReachedThreshold={1}
           onEndReached={getNoticias}

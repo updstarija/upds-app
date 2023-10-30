@@ -45,7 +45,7 @@ export default function Layout() {
             <MaterialTopTabs.Screen
                 name="index"
                 options={{
-                    title: 'MALLA',
+                    title: 'MALLA CURRICULAR',
                     /*
                  
                   tabBarIcon: ({ color }) => (

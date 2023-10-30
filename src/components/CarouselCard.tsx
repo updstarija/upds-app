@@ -1,11 +1,15 @@
-import React, { useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import Carousel, { Pagination, } from 'react-native-snap-carousel'
 import { SLIDER_WIDTH, ITEM_WIDTH, CarouselCardItem } from './CarouselItem'
 import { Texto } from './ui'
 import Modal from 'react-native-modal'
 import { Alert, Image, Pressable, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
+import { useNoticias, useThemeColor } from '@/hooks'
+import { Data } from '../types/responses/detalleGrupo';
+import { INotificacion, INotificacionNotice } from '@/types'
+import { COLORS } from '~/constants'
 
-const data = [
+const dataPrev = [
     {
         title: "Aenean leo",
         body: "Ut tincidunt tincidunt erat. Sed cursus turpis vitae tortor. Quisque malesuada placerat nisl. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem.",
@@ -33,11 +37,24 @@ export const CarouselCards = () => {
     const [index, setIndex] = React.useState(0)
     const isCarousel = React.useRef<null>(null)
 
-    const [visibleModal, setVisibleModal] = useState(false)
+    const [data, setData] = useState<INotificacionNotice[]>([])
+
+    const isDark = useThemeColor() === "dark"
+
+    const { getData } = useNoticias()
+
+    const getNoticias = async () => {
+        const notis = await getData()
+
+        setData(notis)
+    }
+    useEffect(() => {
+        getNoticias()
+    }, [])
 
     return (
         <View>
-            <Modal isVisible={visibleModal}>
+            {/* <Modal isVisible={visibleModal}>
 
                 <Image
                     source={{ uri: data[index].imgUrl }}
@@ -46,7 +63,7 @@ export const CarouselCards = () => {
 
                 />
 
-            </Modal>
+            </Modal> */}
 
             <Carousel
                 layout="default"
@@ -65,7 +82,7 @@ export const CarouselCards = () => {
                     </Pressable>
                 }}
                 sliderWidth={SLIDER_WIDTH}
-
+                sliderHeight={500}
                 itemWidth={ITEM_WIDTH}
                 onSnapToItem={(index) => setIndex(index)}
                 autoplay
@@ -82,13 +99,14 @@ export const CarouselCards = () => {
             <Pagination
                 dotsLength={data.length}
                 activeDotIndex={index}
+                //@ts-ignore
                 carouselRef={isCarousel}
                 dotStyle={{
                     width: 10,
                     height: 10,
                     borderRadius: 5,
                     marginHorizontal: 0,
-                    backgroundColor: 'rgba(0, 0, 0, 0.92)'
+                    backgroundColor: isDark ? "#FFF" : COLORS.light.background
                 }}
                 inactiveDotOpacity={0.4}
                 inactiveDotScale={0.6}

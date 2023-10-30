@@ -14,7 +14,6 @@ export const Option: React.FC<Props> = ({ icon, text, justifyBetween, active, ..
     const isDark = useThemeColor() == "dark"
 
     return <>
-
         <TouchableOpacity className={`${justifyBetween ? "flex-row-reverse justify-between" : "flex-row"} bg-gray-50  ${active ? "border-[#6288f5] border-[1.5px]" : "border-[.5px] dark:border-[0px] border-gray-300"} dark:bg-secondary-dark  p-5 items-center rounded-lg`}
             style={[
                 { elevation: 5 },

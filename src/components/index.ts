@@ -15,3 +15,4 @@ export * from './VideoPlayer';
 export * from './ui';
 export * from './Counter';
 export * from './CarouselCard';
+export * from './CardCircle';

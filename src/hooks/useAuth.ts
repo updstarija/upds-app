@@ -25,6 +25,7 @@ export const useAuth = () => {
             console.error('HUBO UN ERROR')
         }
 
+        console.log("XD")
 
         try {
             const { data } = await updsApi.post<IResponseLogin>("/auth/login", dataUser)
@@ -61,7 +62,7 @@ export const useAuth = () => {
             const { data } = await updsApi<IResponseLogin>("/auth/perfil")
 
             await AsyncStorage.setItem('usuario', JSON.stringify(data.data));
-          
+
             Toast.show({
                 type: "success",
                 text1: "Bien",
@@ -70,7 +71,7 @@ export const useAuth = () => {
 
             return data.data
         } catch (e: any) {
-            
+
             Toast.show({
                 type: "warning",
                 text1: "Sesion caducada",

@@ -1,18 +1,22 @@
-import { Texto } from '../../../components';
-import { LayoutScreen } from '@/layout/LayoutScreen';
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
     View,
-    Text,
     StyleSheet,
     TouchableOpacity,
-    LayoutAnimation,
     Platform,
     UIManager,
-    Button,
+    Dimensions,
 } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import RenderHTML from 'react-native-render-html';
+import { LayoutScreen } from '@/layout/LayoutScreen';
 import { COLORS } from '~/constants';
+import { Spinner, Texto } from '../../../components';
+import { useFaq, useThemeColor } from '@/hooks';
+import { FlashList } from '@shopify/flash-list';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { IFaq } from '@/types';
+import { FontAwesome } from '@expo/vector-icons';
+import { categorias, categoriasFaq } from '@/data';
 
 
 if (Platform.OS === 'android') {
@@ -20,108 +24,160 @@ if (Platform.OS === 'android') {
         UIManager.setLayoutAnimationEnabledExperimental(true);
     }
 }
-const MacCard: React.FC<{ title: string; detail: string }> = ({
-    title,
-    detail,
+
+const MacCard: React.FC<{ faq: IFaq }> = ({
+    faq
 }) => {
+    const isDark = useThemeColor() === "dark"
+    const [openCollapsed, setOpenCollapsed] = useState(false)
+
+    const width = Dimensions.get("window").width
+
+    const { categoria, descripcion, titulo } = faq
     return (
         <View style={styles.cardContainer}>
             <View style={styles.windowContainer} className='bg-white dark:bg-secondary-dark border'>
-                <View style={styles.titleBar} className='bg-primario'>
-                    <View style={styles.titleBarButton} />
-                    <View style={styles.titleBarButton} />
-                    <View style={styles.titleBarButton} />
+
+                <View className='bg-primario flex-row justify-between h-8 items-center p-2'>
+                    <Texto className='text-white text-sm' weight='Bold'>{categoria}</Texto>
+                    <View className='flex-row'>
+                        <View style={styles.titleBarButton} />
+                        <View style={styles.titleBarButton} />
+                        <View style={styles.titleBarButton} />
+                    </View>
                 </View>
-                <View style={styles.content}>
-                    <Texto className='text-black dark:text-white text-lg mb-2' weight='Bold'>{title}</Texto>
-                    <Texto style={styles.cardText} className='text-black dark:text-white'>{detail}</Texto>
-                </View>
+                <TouchableOpacity style={styles.content} onPress={() => setOpenCollapsed(!openCollapsed)}>
+                    <View className='flex flex-row justify-between items-center'>
+                        <Texto className='text-black dark:text-white text-lg mb-2 flex-1 mr-2' weight='Bold'>{titulo}</Texto>
+                        <FontAwesome
+                            name={!openCollapsed ? 'chevron-down' : 'chevron-up'}
+                            size={20}
+                            color="#fff"
+                        />
+                    </View>
+                    {/*  <Texto style={styles.cardText} className='text-black dark:text-white'>{detail}</Texto> */}
+                    {openCollapsed && <RenderHTML baseStyle={{ color: isDark ? "#FFF" : "#000" }} contentWidth={width} source={{ html: descripcion }} />}
+                </TouchableOpacity>
             </View>
         </View>
     );
 };
-
+``
 const Faq = () => {
-    const [modalVisible, setModalVisible] = useState(false);
-    const [tiel, setTitle] = useState('');
-    const [content, setContent] = useState('');
+    const { isLoading, getFaqs } = useFaq()
+    const isDark = useThemeColor() === "dark"
+    const [data, setData] = useState<IFaq[]>([])
 
-    const handleOpenModal = () => {
-        setModalVisible(true);
-    };
+    const [openCategoria, setOpenCategoria] = useState(false);
+    const [valueCategoria, setvalueCategoria] = useState("")
 
-    const handleCloseModal = () => {
-        setModalVisible(false);
-    };
 
-    const lista = [
-        {
-            title: '¿Hasta qué fecha puedo programar mi materia?',
-            detail:
-                'EL tiempo máximo para programar materia es hasta cuatro días desde que inicia el módulo.',
-        },
-        {
-            title: '¿Cómo puedo programar mi materia?',
-            detail:
-                'Debe visitar el sitio: portal.upds.edu.bo/updsnet luego deberá ingresar a nuestra plataforma con el usuario de Microsoft office 365.',
-        },
-        {
-            title: 'Soy estudiante de la UPDS y deseo reincorporarme',
-            detail:
-                'El primer paso es consultar con el are de Bienestar Estudiantil, si tuviste algún tipo de beca, posteriormente con tu jefe de Carrera para que te ayude a hacer la proyección de materias que llevaras durante el semestre.',
-        },
-        {
-            title: '¿Cómo puedo congelar mi materia?',
-            detail:
-                'Debes comunicarte con Registro para presentar un justificativo que avale tu solicitud, por ejemplo: bole de viaje, certificado de baja médica, certificado de viaje de trabajo, etc. Posteriormente debes presentare con del Decano de tu Facultad.',
-        },
-        {
-            title: 'Para realizar traspaso de Sede',
-            detail:
-                'Debes enviar una carta al are de Archivos de la Universidad Privada Domingo Savio sede Tarija solicitando el traspaso de la sede Tarija a otra sede del país.',
-        },
-        {
-            title:
-                'Para realizar convalidación externa (Cuando el estudiante viene de otra universidad)',
-            detail: `•	Carta de solicitud dirigida a la Universidad Privada Domingo Savio.\n•	Fotocopia simple del carnet de identidad y título de bachiller.\n•	2 ejemplares de certificados de notas originales legalizados.\n•	Programas analíticos legalizados y foliados (fotocopia).\n•	Historial académico legalizado o ficha académica legalizada (fotocopia).\n•	Plan de estudios de la carrera con la carga horaria semestral legalizada.\n•	1 folder amarillo con fastenner y un sobre manila tamaño oficio.\n•	Resolución ministerial de la carrera de la universidad de origen (solo en caso de universidades privadas).`,
-        },
-        {
-            title: '¿Cómo me uno al grupo de WhatsApp de mi materia?',
-            detail:
-                'El enlace a tu grupo de WhatsApp esta disponible en el curso de tu materia en la plataforma Moodle (virtual.upds.edu.bo)',
-        },
-        {
-            title: '¿Cómo puedo ver mis notas en la plataforma?',
-            detail:
-                'Debes ingresar en la pestaña de Calificaciones ubicada en la parte izquierda de la plataforma Moodle',
-        },
-    ];
 
-    const ShowContent = (t: string, c: string) => {
-        setTitle(t);
-        setContent(c);
-    };
+
+
+
+    const renderContent = () => {
+
+        return (
+            <FlashList
+                ListEmptyComponent={<Texto className="text-center dark:text-white">{!isLoading && 'No se han encontrado comunicados'}</Texto>}
+                ListHeaderComponentStyle={{ marginTop: 5 }}
+                onEndReachedThreshold={1}
+                onEndReached={getNoticias}
+                keyExtractor={(item) => item.id}
+                ListFooterComponent={isLoading ? <Spinner showText text="Cargando comunicados" classNameContainer="p-4 items-center" size={25} /> : <View />}
+                showsVerticalScrollIndicator={false}
+                data={data}
+                estimatedItemSize={20}
+
+                renderItem={({ item }) => (
+                    <MacCard faq={item} />
+                )} />
+        )
+        /* return <View style={styles.container}>
+            {data.map((item, index) => (
+                <TouchableOpacity key={item.titulo}>
+                    <MacCard key={index} title={item.titulo} detail={item.descripcion} />
+                </TouchableOpacity>
+            ))}
+        </View> */
+    }
+
+
+
+    const SelectCategorias = () => {
+        return <DropDownPicker
+            open={openCategoria}
+            value={valueCategoria}
+            searchable
+            searchPlaceholder="Busca una categoria"
+            searchTextInputStyle={{ color: isDark ? "#fff" : "#000" }}
+            //@ts-ignore
+            items={categoriasFaq}
+            onSelectItem={(x) => {
+                if (x.value != valueCategoria) {
+                    setData([])
+                }
+            }}
+            setOpen={setOpenCategoria}
+            setValue={setvalueCategoria}
+            placeholder="Filtrar por categoria"
+            zIndex={1}
+            ArrowDownIconComponent={() => (
+                <FontAwesome
+                    size={18}
+                    color={isDark ? "#fff" : "#000"}
+                    style={{ paddingHorizontal: 5 }}
+                    name="angle-down"
+                />
+            )}
+            ArrowUpIconComponent={() => (
+                <FontAwesome
+                    size={18}
+                    color={isDark ? "#fff" : "#000"}
+                    style={{ paddingHorizontal: 5 }}
+                    name="angle-up"
+                />
+            )}
+            TickIconComponent={() => (
+                <FontAwesome
+                    size={18}
+                    color={isDark ? "#fff" : "#000"}
+                    style={{ paddingHorizontal: 5 }}
+                    name="check"
+                />
+            )}
+            containerStyle={{ paddingVertical: 5 }}
+            textStyle={{ color: isDark ? "#fff" : "#000", fontSize: 13 }}
+            style={
+                [isDark
+                    ? { backgroundColor: COLORS.dark.secondary, }
+                    : { backgroundColor: "#fff", }]
+            }
+            dropDownContainerStyle={
+                [isDark && { backgroundColor: COLORS.dark.secondary }]
+            }
+        />
+    }
+
+    const getNoticias = () => {
+        getFaqs(valueCategoria).then((x) => {
+            setData(x)
+        })
+    }
+
+    useEffect(() => {
+        getNoticias()
+    }, [valueCategoria]);
 
     return (
         <LayoutScreen title="Preguntas Frecuentes">
-            <ScrollView showsVerticalScrollIndicator={false} className='mx-1'>
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                    {/* <Button title="Open Modal" onPress={handleOpenModal} /> */}
-                    {/*  <FaqModal
-            title="Este sera un titulo"
-            content="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed consectetur convallis aliquet. Nullam facilisis sem id purus interdum, id iaculis odio fermentum. Phasellus ut neque nec ex bibendum aliquam. Integer sollicitudin ligula at mauris egestas, vitae gravida velit fringilla."
-            visible={modalVisible}
-            onClose={handleCloseModal}
-          /> */}
-                </View>
-                <View style={styles.container}>
-                    {lista.map((item, index) => (
-                        <TouchableOpacity key={item.title}>
-                            <MacCard key={index} title={item.title} detail={item.detail} />
-                        </TouchableOpacity>
-                    ))}
-                </View>
-            </ScrollView>
+            <View className="flex-1 mx-1">
+
+                <SelectCategorias />
+                {renderContent()}
+            </View>
+
         </LayoutScreen >
     );
 };

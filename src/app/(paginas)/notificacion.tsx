@@ -1,10 +1,10 @@
-import { View, Text, Pressable, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { getNotificaciones } from '@/services'
 import { BottomSheet, Button, Spinner, Texto } from '../../components'
 import { INotificacion } from '@/types'
 import { FlashList } from '@shopify/flash-list'
-import { Link, useRouter } from 'expo-router'
+import { useRouter } from 'expo-router'
 import { Feather, FontAwesome5 } from '@expo/vector-icons'
 import { useThemeColor } from '@/hooks'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -114,7 +114,7 @@ const Notificacion
 
 
       return (
-        <TouchableOpacity onPress={() => navigation(item)} className='px-2 py-1 ' style={{ backgroundColor: item.type == "read" ? isDarkMode ? "" : "#FFF" : isDarkMode ? "" : "rgba(34,59,130 / .2)" }}>
+        <TouchableOpacity onPress={() => navigation(item)} className='px-2 py-1 ' style={{ backgroundColor: item.type == "read" ? isDarkMode ? "#0a1f4a" : "#FFF" : isDarkMode ? "" : "rgba(34,59,130 / .2)" }}>
 
           <View className='flex-row justify-between items-center '>
             <View className='flex-1 mr-4'>

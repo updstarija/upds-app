@@ -6,60 +6,84 @@ import { firebase } from '@react-native-firebase/messaging';
 import Toast from 'react-native-toast-message'
 import messaging from '@react-native-firebase/messaging';
 import WebView from 'react-native-webview';
+import { FontAwesome } from '@expo/vector-icons';
+import DropDownPicker from 'react-native-dropdown-picker';
+import { INotificacionNotice } from '@/types';
+import { useNoticias, useThemeColor } from '@/hooks';
+import { COLORS } from '~/constants';
+import { categorias } from '@/data';
+import * as Animatable from "react-native-animatable"
 
 const Busqueda = () => {
 
-    const [loading, setLoading] = useState(false)
-    const [remoteDataSet, setRemoteDataSet] = useState(null)
-    const [selectedItem, setSelectedItem] = useState<null | { id: string }>(null)
-    const [codigo, setCodigo] = useState("")
+    const isDarkMode = useThemeColor() === "dark"
+    const { isLoading, getData } = useNoticias();
+    const [data, setData] = useState<INotificacionNotice[]>([])
 
+    const [openCategoria, setOpenCategoria] = useState(false);
+    const [valueCategoria, setvalueCategoria] = useState("")
 
-    const getToken = async () => {
-        try {
-            const device = await firebase.messaging().getToken();
-            setCodigo(device)
-        } catch (e: any) {
-            Toast.show({
-                type: "error",
-                text1: 'Error',
-                text2: JSON.stringify(e.message)
-            })
-        }
+    const SelectCategorias = () => {
+        return <DropDownPicker
+            open={openCategoria}
+            value={valueCategoria}
+            searchable
+
+            searchPlaceholder="Busca una categoria"
+            searchTextInputStyle={{ color: isDarkMode ? "#fff" : "#000" }}
+            //@ts-ignore
+            items={categorias}
+
+            onSelectItem={(x) => {
+                if (x.value != valueCategoria) {
+                    setData([])
+                }
+            }}
+            setOpen={setOpenCategoria}
+            setValue={setvalueCategoria}
+            placeholder="Filtrar por categoria"
+            zIndex={1}
+            ArrowDownIconComponent={() => (
+                <FontAwesome
+                    size={18}
+                    color={isDarkMode ? "#fff" : "#000"}
+                    style={{ paddingHorizontal: 5 }}
+                    name="angle-down"
+                />
+            )}
+            ArrowUpIconComponent={() => (
+                <FontAwesome
+                    size={18}
+                    color={isDarkMode ? "#fff" : "#000"}
+                    style={{ paddingHorizontal: 5 }}
+                    name="angle-up"
+                />
+            )}
+            TickIconComponent={() => (
+                <FontAwesome
+                    size={18}
+                    color={isDarkMode ? "#fff" : "#000"}
+                    style={{ paddingHorizontal: 5 }}
+                    name="check"
+                />
+            )}
+            textStyle={{ color: isDarkMode ? "#fff" : "#000", fontSize: 13 }}
+            style={
+                isDarkMode
+                    ? { backgroundColor: COLORS.dark.secondary }
+                    : { backgroundColor: "#fff" }
+            }
+            dropDownContainerStyle={
+                isDarkMode && { backgroundColor: COLORS.dark.secondary }
+            }
+        />
     }
 
-    const topicSuscribe = async () => {
-        messaging()
-            .subscribeToTopic('upds')
-            .then(() => {
-                Alert.alert("SUSCRITO")
-            })
-            .catch((e) => {
-                Alert.alert(JSON.stringify(e.message))
-            })
-    }
 
     return (
-        <>
-            <WebView
-
-                scalesPageToFit
-                source={{
-                    html: `
-                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@upds_tarija" data-unique-id="upds_tarija" data-embed-type="creator" style="max-width: 780px; min-width: 288px;" > <section> <a target="_blank" href="https://www.tiktok.com/@upds_tarija?refer=creator_embed">@upds_tarija</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
-                ` }}
-            />
-            {/*  <View className='bg-white flex-1'>
-            <Button title='OBTENER TOKEN' onPress={getToken} />
-            <Button title='SUSCRIBIRSE' onPress={topicSuscribe} />
-
-
-            <View className='border'>
-                <TextInput value={codigo} multiline />
-            </View>
-        </View> */}
-        </>
-
+        <View className='mt-20'>
+            <Animatable.Text animation={"slideOutRight"} duration={3000} iterationDelay={1} iterationCount={"infinite"}>XDD GOLA</Animatable.Text>
+        </View>
     )
 }
 

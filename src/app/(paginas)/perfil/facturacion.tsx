@@ -26,6 +26,33 @@ const Facturacion = () => {
 
         return () => backHandler.remove();
     }, []);
+
+    const deletePaddingScript = `
+        const sleep = (ms = 1500) => {
+            return new Promise(resolve => {
+                setTimeout(resolve, ms)
+            })
+        }
+
+        const deletePadding = () => {
+            const contenido = document.getElementById('contenido')
+
+            if(contenido) {
+                contenido.style.setProperty('padding', '70px 10px', 'important');
+            }
+        }
+
+        (async () => {
+               while(!document.getElementById('contenido')){
+                await sleep()
+               }
+
+               deletePadding()   
+        })()
+    `
+
+
+
     return (
         <>
             {isLoading ? <View style={{ position: "absolute", height: height - CONSTANTS.statusBarHeight, width, zIndex: 999 }}>
@@ -35,17 +62,14 @@ const Facturacion = () => {
             <View renderToHardwareTextureAndroid className='flex-1'>
                 <WebView
                     ref={webViewRef}
-                    onLoad={(x) => {
-                        console.log("FIN")
-                        setIsLoading(false)
-                    }}
-                    sharedCookiesEnabled
-                    cacheEnabled
-
-                    renderError={(s) => <>{ }</>}
-                    //source={{ uri: "https://multipago.com/service/UPDS/first" }}
+                    forceDarkOn
                     source={{ uri: "https://portal.upds.edu.bo/ClienteFactura/MisDatos" }}
-                // style={{ height: 500 }}
+                    onLoad={() => setIsLoading(false)}
+                    sharedCookiesEnabled
+                    injectedJavaScript={deletePaddingScript}
+                    onMessage={(x) => {
+                        console.log(x)
+                    }}
                 />
             </View>
         </>

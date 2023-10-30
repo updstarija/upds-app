@@ -1,11 +1,12 @@
 import React from "react";
 import { Linking, Platform, View, Image, Pressable } from "react-native";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Texto } from "./ui";
 import { COLORS } from "~/constants";
 import { Link } from "expo-router";
 import { useAuthContext, useThemeColor } from "@/hooks";
 import { Menu } from "@/data";
+import { M } from "ts-toolbelt";
 
 
 
@@ -22,6 +23,34 @@ export const CardNavigation: React.FC<Menu> = ({
   const { status } = useAuthContext();
 
   const isIos = Platform.OS === "ios";
+
+
+  const getIcon = () => {
+    if (Object.keys(AntDesign.glyphMap).includes(icon)) {
+      return <AntDesign
+        //@ts-ignore
+        name={icon}
+        size={80}
+        color={isDarkMode ? "#fff" : COLORS.light.background}
+      />
+    } else if (Object.keys(MaterialIcons.glyphMap).includes(icon)) {
+      return <MaterialIcons
+        //@ts-ignore
+        name={icon}
+        size={80}
+        color={isDarkMode ? "#fff" : COLORS.light.background}
+      />
+    }
+    else if (Object.keys(FontAwesome.glyphMap).includes(icon)) {
+      return <FontAwesome
+        //@ts-ignore
+        name={icon}
+        size={80}
+        color={isDarkMode ? "#fff" : COLORS.light.background}
+      />
+    }
+
+  }
 
   return (
     <Link
@@ -41,28 +70,7 @@ export const CardNavigation: React.FC<Menu> = ({
           className={`bg-white dark:bg-secondary-dark h-[150px] w-40 rounded-xl justify-center p-8 items-center ${isIos ? "shadow-md" : ""}`}
           style={{ elevation: 5 }}
         >
-          {icon == "servicios"
-            ? <>
-              <Image
-                source={require("~/assets/images/pages/servicios.png")}
-                width={50}
-                height={50}
-                style={{ width: 90, height: 90 }}
-              />
-            </>
-            :
-            icon == "institution"
-              ? <FontAwesome
-                name={icon}
-                size={80}
-                color={isDarkMode ? "#fff" : COLORS.light.background}
-              />
-              : <MaterialIcons
-                //@ts-ignore
-                name={icon}
-                size={80}
-                color={isDarkMode ? "#fff" : COLORS.light.background}
-              />}
+          {getIcon()}
 
 
 

@@ -103,7 +103,7 @@ export const NoticeDetail = () => {
 
                             <View className='flex-row items-center'>
                                 <AntDesign name='calendar' size={20} color={isDark ? "#FFF" : "#000"} />
-                                <Texto className='ml-1  text-black dark:text-white' weight='Bold'>{new Date(Number(noticia.fecha)).toLocaleDateString("es-Es", { hour: "2-digit", minute: "2-digit" })}</Texto>
+                                <Texto className='ml-1  text-black dark:text-white' weight='Bold'>{new Date(Number(noticia.fecha)).toLocaleDateString("es-Es")}</Texto>
                             </View>
                         </View>
                     </View>
@@ -154,7 +154,14 @@ export const NoticeDetail = () => {
         const ImageBase64 = noticia.imagen;
         try {
             const shareOptions = {
-                message: noticia.texto,
+                message: `📰 *${noticia.titulo}*
+🗓️ *${new Date(noticia.fecha).toLocaleDateString("es-ES")}*
+📚 *${noticia.categoria}*
+
+${noticia.texto}
+
+Mas Informacion: ${noticia.url}
+                `,
                 url: ImageBase64,
             };
 
@@ -184,56 +191,6 @@ export const NoticeDetail = () => {
         </View>
     );
 };
-
-const styles = StyleSheet.create({
-    productImg: {
-        width: 250,
-        height: 250,
-        resizeMode: 'contain',
-    },// OK
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginHorizontal: 40,
-        marginTop: 10,
-    },
-    iconContainer: {
-        flex: 1,
-        alignItems: 'center',
-    },
-    icon: {
-        width: 30,
-        height: 30,
-        marginHorizontal: 0,
-    },
-    statsContainer: {
-        flexDirection: 'row',
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 100
-    },
-    statContainer: {
-        alignItems: 'center',
-
-    },
-    contentSize: {
-        justifyContent: 'center',
-        marginHorizontal: 30,
-        flexDirection: 'row',
-        marginVertical: 30
-    },
-    btnSize: {
-        height: 40,
-        width: 40,
-        borderRadius: 40,
-        borderColor: '#778899',
-        borderWidth: 1,
-        marginHorizontal: 3,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
-});
 
 
 export default NoticeDetail

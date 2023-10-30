@@ -5,12 +5,13 @@ import { Link } from 'expo-router';
 import { openBrowserAsync } from 'expo-web-browser'
 import { COLORS } from '~/constants';
 import { useThemeColor } from '@/hooks';
+import { CardCircle } from '@/components';
 
 const data = [
     {
         id: '1',
         title: 'UPDS NET',
-        description: 'Plataforma universitaria académica',
+        description: 'Registra tu materia.',
         icon: "language",
         to: '/updsnet',
         link: false,
@@ -30,69 +31,50 @@ const data = [
 const Servicios = () => {
     const isDark = useThemeColor() === "dark"
     return (
+        <View className="items-center justify-center flex gap-5 flex-1 dark:bg-primario-dark">
+            {/* <View style={styles.boxStyle}>
+              <Text>Horario de atencion</Text>
+            </View> */}
 
-        <View className='flex-1 items-center justify-center bg-white  dark:bg-primario-dark'>
-            <FlatList
-                //  style={styles.list}
-                contentContainerStyle={styles.listContainer}
-                data={data}
-                numColumns={2}
-                keyExtractor={item => {
-                    return item.id;
-                }}
-                renderItem={post => {
-                    const item = post.item;
-                    return (
+            {data.map(item => (
+                <Link
+                    onPress={async (e) => {
+                        if (item.link) {
+                            e.preventDefault();
+                            await openBrowserAsync(item.to)
+                            return;
+                        }
+                    }}
 
-                        <Link
-                            onPress={async (e) => {
-                                if (item.link) {
-                                    e.preventDefault();
-                                    await openBrowserAsync(item.to)
-                                    return;
-                                }
-                            }}
+                    //@ts-ignore
+                    href={item.to} asChild>
+                    <Pressable >
+                        <CardCircle icon={item.icon} title={item.description} />
+                    </Pressable>
+                </Link>
+            ))}
 
-                            //@ts-ignore
-                            href={item.to} asChild>
-                            <Pressable >
-                                <View className={`w-40 rounded-xl border m-3 border-[#223c8266]  bg-white dark:bg-[#0D1F46]  p-4`}
-                                    style={{ elevation: 20 }}
-                                >
-                                    <View className='items-center h-36 justify-center'>
-                                        {
-                                            item.icon === "dollar"
-                                                ?
-                                                <>
-                                                    <FontAwesome
 
-                                                        //@ts-ignore
-                                                        name={item.icon} size={110} color={isDark ? "#FFF" : COLORS.light.background}
-                                                    />
-                                                </>
-                                                :
-                                                <MaterialIcons
-                                                    //@ts-ignore
-                                                    name={item.icon} size={130} color={isDark ? "#FFF" : COLORS.light.background} />
-                                        }
-                                    </View>
+            {/*  <>
 
-                                    <View >
-                                        <Text className="text-md text-center font-extrabold text-black dark:text-white">
-                                            {item.title}
-                                        </Text>
-                                        <Text className="mt-2 text-center text-black dark:text-white">
-                                            {item.description}{' '}
-                                        </Text>
-                                    </View>
-                                </View>
-                            </Pressable>
-                        </Link>
+                <Link
+                    onPress={async (e) => {
+                        if (item.link) {
+                            e.preventDefault();
+                            await openBrowserAsync(item.to)
+                            return;
+                        }
+                    }}
 
-                    );
-                }}
-            />
+                    //@ts-ignore
+                    href={item.to} asChild>
+                    <Pressable >
+                        <CardCircle icon={"user"} title='TEST' />
+                    </Pressable>
+                </Link>
+            </> */}
         </View>
+
 
     );
 }

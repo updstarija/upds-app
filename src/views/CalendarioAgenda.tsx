@@ -145,6 +145,8 @@ const CalendarioAgenda = () => {
     const onChangeFiltro = (flt: number) => {
         if (flt == filtro) setFiltro(0)
         else setFiltro(flt)
+
+        toggleModalFiltro()
     }
 
     return (

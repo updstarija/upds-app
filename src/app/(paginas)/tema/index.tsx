@@ -11,6 +11,7 @@ import { Feather } from '@expo/vector-icons'
 const Tema = () => {
     const { themeSelected, changeTheme } = useThemeContext()
 
+
     return (
         <View className='bg-white dark:bg-primario-dark flex-1'>
             <View className='mx-1 mt-3'>

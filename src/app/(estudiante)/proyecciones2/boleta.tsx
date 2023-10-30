@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { View, FlatList, Dimensions, TouchableOpacity, Platform, Alert } from "react-native";
+import { View, FlatList, TouchableOpacity, Platform, Alert } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import {
     useAuthContext,
@@ -19,9 +19,9 @@ import { FloatingAction } from "react-native-floating-action";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { printAsync, printToFileAsync } from "expo-print";
 import { shareAsync } from 'expo-sharing';
-import { templateBoleta, templateBoletaV3 } from '@/data/';
+import { templateBoletaV3 } from '@/data/';
 import CONSTANS from 'expo-constants'
-/////////
+
 import {
     TooltipProps,
     TourGuideProvider, // Main provider
@@ -45,7 +45,6 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
     const flatListRef = useRef<FlatList | null>(null);
     const boletaRef = useRef<View | null>(null);
 
-
     const [modalBoleta, setModalBoleta] = useState(false)
     const { userAuth } = useAuthContext()
 
@@ -55,8 +54,6 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
         semestres: false,
         modulos: false,
     })
-
-
 
     const {
         canStart, // a boolean indicate if you can start tour guide

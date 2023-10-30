@@ -48,12 +48,12 @@ export const NoticeCard = (noticia: INotificacionNotice) => {
         <View className="flex-row justify-between mt-2">
           <IconLabel iconName={isLiked ? "like1" : "like2"} textButton={like + " likes"} />
 
-          <IconLabel iconName="calendar" textButton={new Date(Number(fecha)).toLocaleDateString("es-Es", { hour: "2-digit", minute: "2-digit" })} />
+          <IconLabel iconName="calendar" textButton={new Date(Number(fecha)).toLocaleDateString("es-Es")} />
         </View>
       </View>
 
       {noticia.prioridad && <>
-        <View className="rounded-bl-xl" style={{ borderBottomColor: "#3498db", borderRightWidth: 40, borderBottomWidth: 40, width: 0, height: 0, backgroundColor: "transparent", borderStyle: "solid", borderLeftWidth: 0, borderLeftColor: "transparent", borderRightColor: "transparent", position: "absolute", top: 0, right: 0, transform: [{ rotate: "180deg" }] }} />
+        <View style={{ borderBottomColor: "#3498db", borderRightWidth: 40, borderBottomWidth: 40, width: 0, height: 0, backgroundColor: "transparent", borderStyle: "solid", borderLeftWidth: 0, borderLeftColor: "transparent", borderRightColor: "transparent", position: "absolute", top: 0, right: 0, transform: [{ rotate: "180deg" }] }} />
 
         <View style={{ position: "absolute", top: 5, right: 5, zIndex: 1 }}>
           <FontAwesome name={"star"} color={"#FFF"} size={15} />

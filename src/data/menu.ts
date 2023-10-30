@@ -1,8 +1,8 @@
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome, AntDesign } from '@expo/vector-icons';
 
 export interface Menu {
     text: string;
-    icon: keyof typeof MaterialIcons.glyphMap | keyof typeof FontAwesome.glyphMap | "servicios";
+    icon: keyof typeof MaterialIcons.glyphMap | keyof typeof FontAwesome.glyphMap | keyof typeof AntDesign.glyphMap
     to: string;
     link: boolean
     auth?: boolean
@@ -34,15 +34,15 @@ export const menuHomeScreen: Menu[] = [
         to: '/chat',
         link: false
     },
-    {
-        text: 'Test Vocacional',
-        icon: 'engineering',
-        to: '/test-vocacional',
-        link: false
-    },
+    /*   {
+          text: 'Test Vocacional',
+          icon: 'engineering',
+          to: '/test-vocacional',
+          link: false
+      }, */
     {
         text: 'Calendario Academico',
-        icon: 'calendar-today',
+        icon: 'calendar',
         to: '/calendario-academico',
         link: false,
         auth: false
@@ -57,8 +57,8 @@ export const menuHomeStudent: Menu[] = [
         link: false
     },
     {
-        text: 'Servicios',
-        icon: 'servicios',
+        text: 'Registro y Pagos',
+        icon: 'CodeSandbox',
         to: '/servicios',
         link: false
     },

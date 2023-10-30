@@ -40,10 +40,12 @@ const Moodle = () => {
           setIsLoading(false)
         }}
         sharedCookiesEnabled
+        // injectedJavaScript="alert(2)"
         source={{ uri: "https://virtual.upds.edu.bo" }}
         //source={{ uri: "https://portal.upds.edu.bo/ev-docente/#/ev-est/evaluacion/32255" }}
         javaScriptEnabled
         onNavigationStateChange={handleNavigationStateChange}
+        onMessage={() => { }}
       />
 
       {isLoading && <View style={{ position: "absolute", top: "50%", left: "50%" }}>
