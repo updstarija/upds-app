@@ -45,3 +45,21 @@ export const getOneNotice = async (id: string) => {
 
 
 }
+
+export const getTopPriority = async () => {
+
+    const snapshot = await db.collection('Noticia')
+        .orderBy("fecha", "desc")
+        .where("superprioridad", "==", true).get();
+
+    const data: INotificacionNotice[] = snapshot.docs.map(doc => ({
+        ...doc.data() as INotificacionNotice, id: doc.id,
+    }));
+
+    return data
+}
+
+
+export default {
+    getTopPriority
+}

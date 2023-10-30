@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import Carousel, { Pagination, } from 'react-native-snap-carousel'
+import { Pagination, Carousel } from 'react-native-snap-carousel/src/'
 import { SLIDER_WIDTH, ITEM_WIDTH, CarouselCardItem } from './CarouselItem'
 import { Texto } from './ui'
 import Modal from 'react-native-modal'
@@ -52,67 +52,63 @@ export const CarouselCards = () => {
         getNoticias()
     }, [])
 
-    return (
-        <View>
-            {/* <Modal isVisible={visibleModal}>
+    if (data.length == 0) return null
 
-                <Image
-                    source={{ uri: data[index].imgUrl }}
-                    style={{ height: 400 }}
-                    resizeMode='contain'
+    return (
+        <>
+            <View>
+                <Carousel
+                    layout="default"
+                    layoutCardOffset={9}
+                    ref={isCarousel}
+                    data={data}
+                    renderItem={(x) => {
+                        return <Pressable
+                        //onPressIn={() => setVisibleModal(true)}
+                        //onPressOut={() => Alert.alert("FUERA")}
+
+                        // onPress={() => Alert.alert("DENTRp")}
+                        //onPress={() => setVisibleModal(true)}
+                        >
+                            <CarouselCardItem {...x} />
+                        </Pressable>
+                    }}
+                    // itemHeight={500}
+                    sliderWidth={SLIDER_WIDTH}
+                    //  sliderHeight={500}
+                    itemWidth={ITEM_WIDTH}
+                    onSnapToItem={(index) => setIndex(index)}
+                    autoplay
+                    containerCustomStyle={{ marginTop: 20 }}
+                    autoplayDelay={1000}
+                    autoplayInterval={5000}
+                    loop
+                    vertical={false}
+
+                //  useScrollView={true}
+
 
                 />
 
-            </Modal> */}
+                <Pagination
+                    dotsLength={data.length}
+                    activeDotIndex={index}
+                    //@ts-ignore
+                    carouselRef={isCarousel}
+                    dotStyle={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                        marginHorizontal: 0,
+                        backgroundColor: isDark ? "#FFF" : COLORS.light.background
+                    }}
+                    inactiveDotOpacity={0.4}
+                    inactiveDotScale={0.6}
+                    tappableDots={true}
+                />
+            </View>
 
-            <Carousel
-                layout="default"
-                layoutCardOffset={9}
-                ref={isCarousel}
-                data={data}
-                renderItem={(x) => {
-                    return <Pressable
-                    //onPressIn={() => setVisibleModal(true)}
-                    //onPressOut={() => Alert.alert("FUERA")}
-
-                    // onPress={() => Alert.alert("DENTRp")}
-                    //onPress={() => setVisibleModal(true)}
-                    >
-                        <CarouselCardItem {...x} />
-                    </Pressable>
-                }}
-                sliderWidth={SLIDER_WIDTH}
-                sliderHeight={500}
-                itemWidth={ITEM_WIDTH}
-                onSnapToItem={(index) => setIndex(index)}
-                autoplay
-                containerCustomStyle={{ marginTop: 20 }}
-                autoplayDelay={1000}
-                autoplayInterval={5000}
-                loop
-
-            //  useScrollView={true}
-
-
-            />
-
-            <Pagination
-                dotsLength={data.length}
-                activeDotIndex={index}
-                //@ts-ignore
-                carouselRef={isCarousel}
-                dotStyle={{
-                    width: 10,
-                    height: 10,
-                    borderRadius: 5,
-                    marginHorizontal: 0,
-                    backgroundColor: isDark ? "#FFF" : COLORS.light.background
-                }}
-                inactiveDotOpacity={0.4}
-                inactiveDotScale={0.6}
-                tappableDots={true}
-            />
-        </View>
+        </>
 
     )
 }

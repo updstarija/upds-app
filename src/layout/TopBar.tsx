@@ -21,7 +21,7 @@ export const TopBar = () => {
   return (
     <View className="bg-white dark:bg-primario-dark">
       <View className="bg-primario dark:bg-secondary-dark  rounded-b-[50px]  ">
-        <View className="flex-row justify-between px-1 mt-3">
+        <View className="flex-row justify-between px-1 mt-3 items-center">
           <View >
             <DrawerToggleButton tintColor="#fff" />
           </View>

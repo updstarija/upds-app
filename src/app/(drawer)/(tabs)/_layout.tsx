@@ -5,6 +5,7 @@ import { COLORS } from '~/constants';
 import { Layout as LayoutHome } from '@/layout/Layout';
 import { Animated, useColorScheme } from 'react-native';
 import { useThemeColor } from '@/hooks';
+import ModalPriorityNotices from '@/views/ModalPriorityNotices';
 
 
 const av = new Animated.Value(0)
@@ -20,6 +21,9 @@ export default function Layout() {
         }
         style="light"
       />
+
+      <ModalPriorityNotices />
+
 
       <LayoutHome>
         <MaterialTopTabs

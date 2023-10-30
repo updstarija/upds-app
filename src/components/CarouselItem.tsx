@@ -2,6 +2,7 @@ import { INotificacion, INotificacionNotice } from '@/types'
 import React, { useState } from 'react'
 import { Image } from 'react-native'
 import { View, Text, StyleSheet, Dimensions } from "react-native"
+import { Texto } from './ui'
 
 export const SLIDER_WIDTH = Dimensions.get('window').width
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
@@ -12,8 +13,6 @@ export const CarouselCardItem = ({ item, index }: { item: INotificacionNotice, i
 
     return (
         <>
-
-
             <View style={styles.container} key={index}>
                 <Image
                     source={{ uri: item.imagen, width: 500, height: 500 }}
@@ -21,6 +20,10 @@ export const CarouselCardItem = ({ item, index }: { item: INotificacionNotice, i
                     resizeMode='cover'
                     width={500}
                 />
+                <View className='absolute bottom-0 left-0 bg-black/70 w-full p-2 rounded-b-lg'>
+                    <Texto numberOfLines={1}>{item.titulo}</Texto>
+                </View>
+
             </View>
         </>
 
@@ -32,7 +35,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 10,
         width: ITEM_WIDTH,
-
+        position: "relative",
         shadowColor: "#000",
         shadowOffset: {
             width: 0,

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { INotificacionNotice } from "@/types"
 import { getOneNotice, getPaginatedNotice } from '@/services';
+import noticeService from '@/services/ServiceNotice';
 
 export const useNoticias = () => {
     const [data, setData] = useState<INotificacionNotice[]>([])
@@ -14,17 +15,29 @@ export const useNoticias = () => {
         return response
     }
 
-    const getOneData = async (id:string)=> {
+    const getOneData = async (id: string) => {
         setIsLoading(true)
         const response = await getOneNotice(id)
         setIsLoading(false)
-       return response
+        return response
     }
+
+
+    const getPriorityNotices = async () => {
+        setIsLoading(true)
+        const response = await noticeService.getTopPriority()
+        setData(response)
+        setIsLoading(false)
+        return response
+    }
+
+
 
     return {
         data,
         isLoading,
         getData,
-        getOneData
+        getOneData,
+        getPriorityNotices
     }
 }

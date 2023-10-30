@@ -10,7 +10,7 @@ interface Props extends TouchableOpacityProps {
     justifyBetween?: boolean
 }
 
-export const Option: React.FC<Props> = ({ icon, text, justifyBetween, active, ...props }) => {
+export const Option: React.FC<Props> = ({ icon, text, justifyBetween = false, active, ...props }) => {
     const isDark = useThemeColor() == "dark"
 
     return <>

@@ -64,7 +64,7 @@ const MacCard: React.FC<{ faq: IFaq }> = ({
 };
 ``
 const Faq = () => {
-    const { isLoading, getFaqs } = useFaq()
+    const { isLoading, getFaqs, getFaqsV2, data: dataV2, setLastDocument, setData: setDataV2 } = useFaq()
     const isDark = useThemeColor() === "dark"
     const [data, setData] = useState<IFaq[]>([])
 
@@ -74,7 +74,9 @@ const Faq = () => {
 
 
 
-
+    useEffect(() => {
+        getFaqsV2(valueCategoria)
+    }, [valueCategoria]);
 
     const renderContent = () => {
 
@@ -82,13 +84,16 @@ const Faq = () => {
             <FlashList
                 ListEmptyComponent={<Texto className="text-center dark:text-white">{!isLoading && 'No se han encontrado comunicados'}</Texto>}
                 ListHeaderComponentStyle={{ marginTop: 5 }}
-                onEndReachedThreshold={1}
-                onEndReached={getNoticias}
+                onEndReachedThreshold={0.1}
+                //  onEndReached={getNoticias}
+                onEndReached={() => {
+                    if (!isLoading) getFaqsV2(valueCategoria)
+                }}
                 keyExtractor={(item) => item.id}
                 ListFooterComponent={isLoading ? <Spinner showText text="Cargando comunicados" classNameContainer="p-4 items-center" size={25} /> : <View />}
                 showsVerticalScrollIndicator={false}
-                data={data}
-                estimatedItemSize={20}
+                data={dataV2}
+                estimatedItemSize={600}
 
                 renderItem={({ item }) => (
                     <MacCard faq={item} />
@@ -103,8 +108,6 @@ const Faq = () => {
         </View> */
     }
 
-
-
     const SelectCategorias = () => {
         return <DropDownPicker
             open={openCategoria}
@@ -116,7 +119,8 @@ const Faq = () => {
             items={categoriasFaq}
             onSelectItem={(x) => {
                 if (x.value != valueCategoria) {
-                    setData([])
+                    setLastDocument(undefined)
+                    setDataV2([])
                 }
             }}
             setOpen={setOpenCategoria}
@@ -160,21 +164,24 @@ const Faq = () => {
         />
     }
 
-    const getNoticias = () => {
-        getFaqs(valueCategoria).then((x) => {
-            setData(x)
-        })
-    }
+    /*     const getNoticias = () => {
+            getFaqs(valueCategoria).then((x) => {
+                setData(x)
+            })
+        }
+    
+        useEffect(() => {
+            getNoticias()
+        }, [valueCategoria]); */
 
-    useEffect(() => {
-        getNoticias()
-    }, [valueCategoria]);
+
 
     return (
         <LayoutScreen title="Preguntas Frecuentes">
             <View className="flex-1 mx-1">
 
                 <SelectCategorias />
+
                 {renderContent()}
             </View>
 
