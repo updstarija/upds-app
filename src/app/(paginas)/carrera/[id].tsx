@@ -36,18 +36,42 @@ const EvaluacionDocente = () => {
     }, []);
 
     const INJECTED_JAVASCRIPT = `
+    var meta = document.createElement('meta');
+    meta.name = 'viewport';
+    meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
+    document.getElementsByTagName('head')[0].appendChild(meta);
+    
     document.querySelector('[data-elementor-type="header"]').remove()
     document.querySelector('[data-elementor-type="footer"]').remove()
    const secciones =  document.querySelectorAll('[data-elementor-type="single"] > section')
-   secciones[0].remove()
-   secciones[1].remove()
-   secciones[2].remove()
-   secciones[4].remove()
-   secciones[11].remove()
 
-   const xd = document.querySelectorAll('.fa-user-graduate')
-   xd[0].parentElement.parentElement.parentElement.parentElement.remove()
-   xd[1].parentElement.parentElement.parentElement.parentElement.remove()
+   secciones[3].scrollIntoView({
+    block: 'start' // Puedes ajustar esto según tu preferencia (start, center, end, nearest)
+  });
+
+
+  setTimeout(() => {
+    secciones[2].style.display = 'none'
+   /*  secciones[0].style.visibility = 'hidden'
+  secciones[1].style.visibility = 'hidden'
+  secciones[2].style.visibility = 'hidden'
+  secciones[4].style.visibility = 'hidden'
+  secciones[11].style.visibility = 'hidden'  */
+
+  const xd = document.querySelectorAll('.fa-user-graduate')
+xd[0].parentElement.parentElement.parentElement.parentElement.remove()
+ xd[1].parentElement.parentElement.parentElement.parentElement.remove()
+
+  }, 2000);
+
+
+
+
+
+
+  // const xd = document.querySelectorAll('.fa-user-graduate')
+  // xd[0].parentElement.parentElement.parentElement.parentElement.remove()
+  // xd[1].parentElement.parentElement.parentElement.parentElement.remove()
 
     `
 
@@ -65,11 +89,8 @@ const EvaluacionDocente = () => {
                         onLoad={(x) => {
                             setIsLoading(false)
                         }}
-                        sharedCookiesEnabled
-                        cacheEnabled
                         injectedJavaScript={INJECTED_JAVASCRIPT}
                         source={{ uri: `https://www.upds.edu.bo/carrera/${id}` }}
-                        javaScriptEnabled
                         onMessage={() => { }}
                     />
                 </View>
