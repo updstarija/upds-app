@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, ScrollView } from "react-native";
+import { View, StyleSheet, ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { MaterialIcons } from "@expo/vector-icons";
+import Share from "react-native-share";
+import { FontAwesome } from "@expo/vector-icons";
+import { openURL } from "expo-linking";
+import { FlashList } from "@shopify/flash-list";
+import { Image } from 'expo-image'
 import { VideoPlayer } from "@/components/VideoPlayer";
 import {
   IResponseFacebook,
@@ -10,21 +14,13 @@ import {
   Video,
 } from "@/types";
 import { useRedesSociales, useThemeColor } from "@/hooks";
-import { LayoutScreen } from "@/layout/LayoutScreen";
 import { COLORS } from "~/constants";
-import { Texto } from "../../components";
-import Spinner from "@/components/ui/Spinner";
-import { openURL } from "expo-linking";
-import { FlashList } from "@shopify/flash-list";
-import { Image } from 'expo-image'
+import { LayoutScreen } from "@/layout/LayoutScreen";
+import { Button, Texto, Spinner } from "../../components";
 
 const RedesSociales = () => {
   const isDark = useThemeColor() === "dark";
-  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
-  const { data, isLoading, isError, getVideosYoutTube } = useRedesSociales<
-    Video[]
-  >([]);
   const instagramApi = useRedesSociales<IResponseInstagram>(
     {} as IResponseInstagram
   );
@@ -43,19 +39,8 @@ const RedesSociales = () => {
     youtubeApi.getVideosYoutTube();
   }, []);
 
-  useEffect(() => {
-    getVideosYoutTube();
-  }, []);
 
   const [videoPlayer, setVideoPlayer] = useState(false);
-
-  const handleShowModalVideo = () => {
-    setVideoPlayer(true);
-  };
-
-  const handleCloseModalVideo = () => {
-    setVideoPlayer(false);
-  };
 
   const renderYt = () => {
     if (youtubeApi.isLoading) return <Spinner style={{ height: 200 }} />;
@@ -77,21 +62,28 @@ const RedesSociales = () => {
 
     return (
       <FlashList
-        data={youtubeApi.data.items}
+        data={[...youtubeApi.data.items, "VER MAS"]}
+        keyExtractor={(item) => typeof item === "string" ? item : item.id.videoId}
         estimatedItemSize={250}
-        keyExtractor={(item) => item.id.videoId}
         contentContainerStyle={{ padding: 10 }}
         horizontal
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View className="mr-2" />}
         renderItem={({ item }) => {
           return (
-            <CardSocial
-              description={item.snippet.title}
-              showImageReplace={item.snippet.liveBroadcastContent !== "none"}
-              url={`https://www.youtube.com/watch?v=${item.id.videoId}`}
-              image={item.snippet.thumbnails.medium.url}
-            />
+            <>
+              {typeof item === "string"
+                ?
+                <VerMasCard url="https://www.youtube.com/@universidadprivadadomingos3411/videos" />
+                :
+                <CardSocial
+                  description={item.snippet.title}
+                  showImageReplace={item.snippet.liveBroadcastContent !== "none"}
+                  url={`https://www.youtube.com/watch?v=${item.id.videoId}`}
+                  image={item.snippet.thumbnails.medium.url}
+                />
+              }
+            </>
           );
         }}
       />
@@ -118,21 +110,29 @@ const RedesSociales = () => {
 
     return (
       <FlashList
-        data={facebookApi.data.data}
+        data={[...facebookApi.data.data, "VER MAS"]}
+        keyExtractor={(item) => typeof item === "string" ? item : item.id}
         estimatedItemSize={250}
-        keyExtractor={(item) => item.id}
         contentContainerStyle={{ padding: 10 }}
         horizontal
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View className="mr-2" />}
         renderItem={({ item }) => {
           return (
-            <CardSocial
-              description={item.message || ""}
+            <>
+              {typeof item === "string"
+                ?
+                <VerMasCard url="https://www.facebook.com/universidadprivadadomingosaviotarija" />
+                :
+                <CardSocial
+                  description={item.message || ""}
 
-              url={item.permalink_url}
-              image={item.full_picture}
-            />
+                  url={item.permalink_url}
+                  image={item.full_picture}
+                />
+              }
+            </>
+
           );
         }}
       />
@@ -159,21 +159,27 @@ const RedesSociales = () => {
 
     return (
       <FlashList
-        data={instagramApi.data.data}
+        data={[...instagramApi.data.data, "VER MAS"]}
         estimatedItemSize={250}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => typeof item === "string" ? item : item.id}
         contentContainerStyle={{ padding: 10 }}
         horizontal
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View className="mr-2" />}
-        renderItem={({ item }) => {
+        renderItem={({ item, index }) => {
           return (
-            <CardSocial
-              description={item.caption || ""}
-              showImageReplace={item.media_type === "VIDEO"}
-              url={item.permalink}
-              image={item.media_url}
-            />
+            <>
+              {typeof item === "string"
+                ?
+                <VerMasCard url="https://www.instagram.com/upds_tarija" />
+                :
+                <CardSocial
+                  description={item.caption || ""}
+                  showImageReplace={item.media_type === "VIDEO"}
+                  url={item.permalink}
+                  image={item.media_url}
+                />}
+            </>
           );
         }}
       />
@@ -182,13 +188,7 @@ const RedesSociales = () => {
 
   return (
     <LayoutScreen title="Redes Sociales">
-      <VideoPlayer
-        title={selectedVideo?.id.videoId || "_"}
-        visible={videoPlayer}
-        onClose={handleCloseModalVideo}
-      />
-
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <View>
             <View
@@ -395,43 +395,61 @@ const CardSocial: React.FC<Props> = ({
   const isDark = useThemeColor() === "dark";
   const [isLoadingImage, setIsLoadingImage] = useState(true)
 
+  const compartirPost = async () => {
+
+    try {
+      const shareOptions = {
+        message: `
+${description}
+${url}
+`,
+      };
+
+      await Share.open(shareOptions);
+    } catch (error) {
+      console.log('Error al compartir la imagen:', error);
+    }
+  }
+
+
   return (
     <TouchableOpacity
       onPress={() => openURL(url)}
       style={styles.cardContainer}
       className="bg-white dark:bg-secondary-dark flex-col justify-between  "
     >
-      <TouchableOpacity onPress={() => { }}>
-        {showImageReplace ? (
-          <View
-            className="flex items-center justify-center p-2"
-          >
-            {isDark ? (
-              <Image
-                source={require(`~/assets/images/app/logo-dark.png`)}
-                style={[{ width: 200, height: 190 }]}
-                contentFit="contain"
-              />
-            ) : (
-              <Image
-                source={require(`~/assets/images/app/logo-light.png`)}
-                style={[{ width: 200, height: 190 }]}
-                contentFit="contain"
-              />
-            )}
-          </View>
-        ) : (
 
-          <Image
-            source={image}
-            //   defaultSource={require(`~/assets/images/app/logo-dark.png`)}
-            className="w-full h-52 rounded-t-md"
-            contentFit="cover"
-            placeholder={require(`~/assets/images/app/logo-dark.png`)}
-          />
+      {showImageReplace ? (
+        <View
+          className="flex items-center justify-center p-2"
+        >
+          {isDark ? (
+            <Image
+              source={require(`~/assets/images/app/logo-dark.png`)}
+              style={[{ width: 200, height: 190 }]}
+              contentFit="contain"
+            />
+          ) : (
+            <Image
+              source={require(`~/assets/images/app/logo-light.png`)}
+              style={[{ width: 200, height: 190 }]}
+              contentFit="contain"
+            />
+          )}
+        </View>
+      ) : (
 
-        )}
-      </TouchableOpacity>
+        <Image
+          source={image}
+          //   defaultSource={require(`~/assets/images/app/logo-dark.png`)}
+          className="w-full h-52 rounded-t-md"
+          contentFit="cover"
+          //placeholder={require(`~/assets/images/app/logo-dark.png`)}
+          placeholder={blurhash}
+        />
+
+      )}
+
 
       <View className="p-2 flex-1">
         <Texto
@@ -441,52 +459,39 @@ const CardSocial: React.FC<Props> = ({
           {description}
         </Texto>
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              margin: 5,
-            }}
-          >
-            <MaterialIcons name="thumb-up-off-alt" size={16} color="#4267B2" />
-            <Texto
-              style={{
-                fontSize: 10,
-                fontWeight: "bold",
-                marginLeft: 5,
-              }}
-              className="text-black dark:text-white"
-            >
-              Me gusta
-            </Texto>
-          </View>
 
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <MaterialIcons name="share" size={16} color="#4267B2" />
-            <Texto
-              style={{
-                fontSize: 10,
-                fontWeight: "bold",
-                marginLeft: 5,
-              }}
-              className="text-black dark:text-white"
-            >
-              Compartir
+        <TouchableOpacity onPress={compartirPost}>
+          <View
+            className=" rounded bg-primario flex-row items-center justify-center p-1">
+            <Texto className="text-center text-lg text-white mr-2">
+              COMPARTIR
             </Texto>
+
+            <FontAwesome name="share-alt" size={20} color={"#FFF"} />
           </View>
-        </View>
+        </TouchableOpacity>
+
+
       </View>
 
 
     </TouchableOpacity>
   );
 };
+
+const VerMasCard: React.FC<{ url: string }> = ({ url }) => {
+  return (
+    <TouchableOpacity style={styles.cardContainer} onPress={() => openURL(url)}>
+      <View className="flex-1 items-center justify-center">
+        <View className="w-16 h-16 rounded-full bg-primario dark:bg-secondary-dark items-center justify-center">
+          <FontAwesome name="plus" color={"#FFF"} size={30} />
+        </View>
+
+        <Texto className="dark:text-white mt-4 text-xl" weight="Bold">Ver Mas</Texto>
+      </View>
+    </TouchableOpacity>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {

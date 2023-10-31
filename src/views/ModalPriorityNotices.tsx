@@ -1,43 +1,21 @@
 import { useEffect, useState } from 'react';
-import { View, useWindowDimensions } from 'react-native';
+import { Pressable, View, useWindowDimensions } from 'react-native';
 import Modal from 'react-native-modal'
 import { Texto } from '../components';
-import { FlashList } from '@shopify/flash-list';
 import { Image } from 'expo-image';
 
 import Carousel from 'react-native-reanimated-carousel';
 import { useNoticias } from '@/hooks';
-import { AntDesign, FontAwesome } from '@expo/vector-icons';
-
-const sliders = [
-    {
-        title: true,
-        image: require("~/assets/images/pages/bienvenida.png"),
-        text: "Descubre, aprende y conecta con nosotros."
-    },
-    {
-        title: false,
-        image: require("~/assets/images/pages/bienvenida.png"),
-        text: "Realiza tu proyeccion de materias."
-    },
-    {
-        title: false,
-        image: require("~/assets/images/pages/bienvenida.png"),
-        text: " Consulta tu registro academico."
-    },
-    {
-        title: false,
-        image: require("~/assets/images/pages/bienvenida.png"),
-        text: "Chatea con Nosotros.\nRecibe notificaciones sobre nuestros eventos o comunicados.\n Y mucho mas"
-    },
-]
-
+import { AntDesign } from '@expo/vector-icons';
+import PaginationDot from 'react-native-animated-pagination-dot'
+import { COLORS } from '~/constants';
+import { Link } from 'expo-router';
 
 const ModalPriorityNotices = () => {
     const [isVisible, setIsVisible] = useState(true)
     const { width, height } = useWindowDimensions()
-
     const { getPriorityNotices, data, isLoading } = useNoticias()
+    const [activeIndex, setActiveIndex] = useState(0)
 
     useEffect(() => {
         getPriorityNotices()
@@ -47,31 +25,10 @@ const ModalPriorityNotices = () => {
 
     return (
         <>
-            <Modal isVisible={isVisible} onBackdropPress={() => setIsVisible(false)}>
+            <Modal isVisible={isVisible}>
                 <View
                 //className='bg-primario dark:bg-secondary-dark rounded-xl'
                 >
-                    {/*  <FlashList
-                        horizontal
-                        data={sliders}
-                        showsHorizontalScrollIndicator={false}
-                        renderItem={({ item }) => (
-                            <View style={{ width: width - 70, height: height / 2 }}>
-                                <Image
-                                    source={item.image}
-                                    className='w-[90%] h-[90%]'
-                                    contentFit='contain'
-
-                                />
-
-                                <Texto className='text-white'>dwadwd awdaw</Texto>
-                            </View>
-                        )}
-                        // estimatedListSize={{``}}
-                        estimatedItemSize={400}
-                        pagingEnabled
-                    /> */}
-
                     <View className=''>
                         <Carousel
                             style={
@@ -85,11 +42,12 @@ const ModalPriorityNotices = () => {
                             vertical
                             mode='vertical-stack'
 
+                            // onProgressChange={(_, absoluteProgress) => (progressValue.value = absoluteProgress)}
                             modeConfig={{
                                 snapDirection: "left",
-                                stackInterval: 200,
-                                moveSize: 500
-
+                                stackInterval: 18,
+                                scaleInterval: 0.08,
+                                moveSize: width + 100,
                             }}
                             loop
                             width={width - 40}
@@ -97,30 +55,45 @@ const ModalPriorityNotices = () => {
                             autoPlay
                             data={data}
                             autoPlayInterval={data.length == 1 ? 999999 : 3000}
-                            scrollAnimationDuration={3000}
-                            //  onSnapToItem={(index) => console.log('current index:', index)}
+                            scrollAnimationDuration={2000}
+                            onSnapToItem={(index) => setActiveIndex(index)}
                             renderItem={({ index, item }) => (
-                                <View
-                                    className='flex-1 relative'
+                                <Link href={`/comunicados/${item.id}`} asChild>
+                                    <Pressable className='flex-1' onPress={() => setIsVisible(false)}>
+                                        <View
+                                            className='flex-1 relative'
 
-                                >
-                                    <Image
-                                        source={item.imagen}
-                                        className='w-full h-full opacity-100'
-                                        contentFit='cover'
+                                        >
+                                            <Image
+                                                source={item.imagen}
+                                                className='w-full h-full opacity-100 rounded-lg'
+                                                contentFit='cover'
 
 
-                                    />
+                                            />
 
-                                    <View className='absolute bottom-0 left-0 bg-black/60 w-full p-3 '>
-                                        <Texto numberOfLines={2} weight='Bold' className='text-white uppercase'>{item.titulo}</Texto>
-                                    </View>
-                                </View>
+                                            <View className='absolute bottom-0 left-0 bg-black/60 w-full p-3 '>
+                                                <Texto numberOfLines={2} weight='Bold' className='text-white uppercase'>{item.titulo}</Texto>
+                                            </View>
+                                        </View>
+                                    </Pressable>
+                                </Link>
                             )}
                         />
                     </View>
                     <View className='absolute top-[-10] z-10 right-[-20] '>
                         <AntDesign.Button name='closecircle' size={30} color={"#FFF"} backgroundColor={"transparent"} style={{ padding: 0 }} onPress={() => setIsVisible(false)} />
+                    </View>
+
+
+                    <View className='items-center'>
+                        <PaginationDot
+                            activeDotColor={COLORS.light.background}
+                            inactiveDotColor='#ccc'
+                            curPage={activeIndex}
+                            maxPage={data.length}
+                        />
+
                     </View>
                 </View>
 
@@ -129,4 +102,9 @@ const ModalPriorityNotices = () => {
     )
 }
 
+
+
+
+
 export default ModalPriorityNotices
+

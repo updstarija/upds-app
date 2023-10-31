@@ -1,13 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Pagination, Carousel } from 'react-native-snap-carousel/src/'
 import { SLIDER_WIDTH, ITEM_WIDTH, CarouselCardItem } from './CarouselItem'
-import { Texto } from './ui'
+import { Spinner, Texto } from './ui'
 import Modal from 'react-native-modal'
 import { Alert, Image, Pressable, TouchableOpacity, TouchableWithoutFeedback, View } from 'react-native'
 import { useNoticias, useThemeColor } from '@/hooks'
 import { Data } from '../types/responses/detalleGrupo';
 import { INotificacion, INotificacionNotice } from '@/types'
 import { COLORS } from '~/constants'
+import { Link } from 'expo-router'
+import { FontAwesome } from '@expo/vector-icons'
 
 const dataPrev = [
     {
@@ -37,25 +39,33 @@ export const CarouselCards = () => {
     const [index, setIndex] = React.useState(0)
     const isCarousel = React.useRef<null>(null)
 
-    const [data, setData] = useState<INotificacionNotice[]>([])
-
     const isDark = useThemeColor() === "dark"
 
-    const { getData } = useNoticias()
+    const { getData, isLoading, data } = useNoticias()
 
-    const getNoticias = async () => {
-        const notis = await getData()
-
-        setData(notis)
-    }
     useEffect(() => {
-        getNoticias()
+        getData()
     }, [])
 
+    if (isLoading) return <Spinner style={{ height: 200 }} />;
     if (data.length == 0) return null
 
     return (
         <>
+            <View className='flex-row justify-between'>
+                <Texto className='text ml-5 pt-2 dark:text-white' weight='Bold'>Mas Relevante</Texto>
+
+                <Link href='/comunicados/' className='pt-2 mr-5 flex-row'>
+                    <View className='flex-row items-center justify-between'>
+                        <Texto className='dark:text-white '>Ver Mas</Texto>
+                        <View style={{ marginLeft: 10 }}>
+                            <FontAwesome name='chevron-right' size={15} color={isDark ? "#FFF" : "#000"} />
+                        </View>
+                    </View>
+                </Link>
+
+            </View>
+
             <View>
                 <Carousel
                     layout="default"

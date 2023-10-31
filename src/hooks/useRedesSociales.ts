@@ -12,12 +12,14 @@ const YT_CHANNEL_ID = "UCf2Y_ZZGKCje37gLDIbEGzA"
 
 const ACCESS_TOKEN = {
     INSTRAGRAM: "IGQWRQRzVyZAlpJUGNPLXBTQ1IxNjNLeklyakhxb1NJX0w2RDhtZAXk5VmlnRkNad1V0VVV0eXZAyNmZASN0hXbHlTSHJhZATNTUTlsVjZAyS0xaTmd5YkJFa1NsV3c0WUdMM1RDcktJbmRrUmFHWUlrMm5kLUR4WGZAsMWcZD",
-    FACEBOOK: "EAANtLRpy09cBO9XnFRUXMyqXEFGffq8ZAmO2ll5XMTidf5nCFFvRhvMQVZCZAWZB1ecLWv7svtEdaueKtGwA8ZByIww9lak7Iy3amxswJuGLwBZCS6O9dGZBAZAeIxKUEM3kPu5wcZBWWvxiWSIorJHBKEXXbpI3s3hUbShTeorh1fGLGKVZCLmZBYz5SPdz3ZCLOTS3AiiazmQ58xRqCxLT7c29evNV7iniGZByqdXUtsdjy"
+    FACEBOOK: "EAANtLRpy09cBO9XnFRUXMyqXEFGffq8ZAmO2ll5XMTidf5nCFFvRhvMQVZCZAWZB1ecLWv7svtEdaueKtGwA8ZByIww9lak7Iy3amxswJuGLwBZCS6O9dGZBAZAeIxKUEM3kPu5wcZBWWvxiWSIorJHBKEXXbpI3s3hUbShTeorh1fGLGKVZCLmZBYz5SPdz3ZCLOTS3AiiazmQ58xRqCxLT7c29evNV7iniGZByqdXUtsdjy",
+    FACEBOOK_PERMANENT: "EAANtLRpy09cBO34OD1hVlKoGKogwyZC5GSLDHwb2k3QHE0OyiNCbLnNQN4kpoCw2jV8VTcgIZAeGCuCijZALjMNwkaTL9tyFSzobvbUyMzHssZBaJRqeZBBIXEjvZBMPqf4sfdCzFART2wvz128DOL7GFfhQXZALoXzablqVcrOG33Fsv3gwyEHYlYypftP4hemZA3AezTZCj1Lwr3lz8zGakYriCwpHyhojLAg4KYoUh",
+    FACEBOOK_PERMANENT2: "EAAIzTHSY74wBOZC2ST5NZASdliNZCffA1r1w3GxdzxWNAE5D5WQZB6gMZCGWCMkYXmmPUpOqisgaHvhc7RfTbkxH4fnXEtr1HWZBdZC32GwKIKvrR1Cx68brHn4ZB3wWEkbQh48hP97nvwD4kvTvZB1LeY8ZAMv6LoNs5P8ZBb1f2vwnZBVz4dzT0t1Cpl3nwLWXsuGgDYZAHefoB8HxVBadx",
 }
 
 const API_URLS = {
     INSTAGRAM: `https://graph.instagram.com/me/media?fields=id,caption,media_type,media_url,permalink,timestamp&limit=6&access_token=${ACCESS_TOKEN.INSTRAGRAM}`,
-    FACEBOOK: `https://graph.facebook.com/v17.0/me/feed?fields=id%2Cmessage%2Ccreated_time%2Cpermalink_url%2Cshares%2Creactions%2Cfull_picture&access_token=${ACCESS_TOKEN.FACEBOOK}`,
+    FACEBOOK: `https://graph.facebook.com/v17.0/me/feed?fields=id%2Cmessage%2Ccreated_time%2Cpermalink_url%2Cshares%2Creactions%2Cfull_picture&limit=6&access_token=${ACCESS_TOKEN.FACEBOOK_PERMANENT}`,
     YOUTUBE: `https://www.googleapis.com/youtube/v3/search?key=${YT_API_KEY}&channelId=${YT_CHANNEL_ID}&part=snippet,id&order=date&maxResults=6&type=video`
 }
 
@@ -52,10 +54,10 @@ export const useRedesSociales = <T>(initialData: T) => {
         setIsError(false)
 
         try {
-            /*   const response = await fetch(API_URLS.FACEBOOK);
-              const datosFacebook: T = await response.json(); */
+            const response = await fetch(API_URLS.FACEBOOK);
+            const datosFacebook: T = await response.json();
 
-            setData(facebookMock as T)
+            setData(datosFacebook as T)
 
             return facebookMock
         } catch (error) {
@@ -71,8 +73,8 @@ export const useRedesSociales = <T>(initialData: T) => {
         setIsLoading(true)
         setIsError(false)
         try {
-            /*  const response = await fetch(API_URLS.INSTAGRAM);
-             const datosInsta: IResponseInstagram = await response.json(); */
+            const response = await fetch(API_URLS.INSTAGRAM);
+            const datosInsta: IResponseInstagram = await response.json();
             /*  console.log(4)
              const x = datosInsta.data.map(async (ig) => {
                  if (ig.media_type === "VIDEO") {
@@ -91,7 +93,7 @@ export const useRedesSociales = <T>(initialData: T) => {
              })
              const data = await Promise.all(x) */
 
-            setData(instaMockup as T)
+            setData(datosInsta as T)
             // setData(instaMockup as T)
 
             return instaMockup

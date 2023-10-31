@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react';
 import {
-    StyleSheet,
     TouchableOpacity,
     Image,
     ScrollView,
-    View
+    View,
+    Platform, Dimensions
 } from 'react-native';
-import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Button, IconLabel, Texto } from '../../../components';
-import { Platform, Dimensions } from 'react-native'
+import firestore from '@react-native-firebase/firestore';
 import Share from 'react-native-share';
-import { AntDesign, FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { Redirect, useLocalSearchParams } from 'expo-router';
-import { useNoticias, useThemeColor } from '@/hooks';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
+import { Redirect, Stack, useLocalSearchParams } from 'expo-router';
+import { openBrowserAsync } from 'expo-web-browser'
+import { Button, IconLabel, Texto } from '../../../components';
 import { INotificacionNotice } from '@/types';
+import { useNoticias, useThemeColor } from '@/hooks';
 import { COLORS } from '~/constants';
 import Spinner from '@/components/ui/Spinner';
-import { openBrowserAsync } from 'expo-web-browser'
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export const NoticeDetail = () => {
     const params = useLocalSearchParams<any>()
@@ -171,24 +171,36 @@ Mas Informacion: ${noticia.url}
         }
     }
 
-    if (isLoading) return <Spinner size={50} text='Cargando Noticia' showText />
+    if (isLoading) return <Spinner size={50} text='Cargando Comunicado' showText />
 
     return (
-        <View className='flex-1 bg-white dark:bg-secondary-dark'>
-            <ScrollView style={{ flex: 1 }} scrollsToTop contentContainerStyle={{ flexGrow: 1 }}>
-                <View className='bg-white dark:bg-primario-dark flex-1'>
-                    <View className='flex-1'>
-                        {render()}
-                    </View>
-                </View>
-            </ScrollView>
+        <>
+            <Stack.Screen
 
-            <View style={{ position: "absolute", bottom: 50, right: 30 }}>
-                <TouchableOpacity onPress={compartirNoticia} className='bg-primario p-4 rounded-full' activeOpacity={0.8} style={{ elevation: 20 }}>
-                    <AntDesign name='sharealt' size={20} color={"#FFF"} />
-                </TouchableOpacity>
-            </View>
-        </View>
+                options={{
+                    headerShown: false,
+                    headerStyle: {
+                        backgroundColor: "transparent"
+                    }
+                }}
+            />
+
+            <SafeAreaView className='flex-1 bg-white dark:bg-secondary-dark'>
+                <ScrollView style={{ flex: 1 }} scrollsToTop contentContainerStyle={{ flexGrow: 1 }}>
+                    <View className='bg-white dark:bg-primario-dark flex-1'>
+                        <View className='flex-1'>
+                            {render()}
+                        </View>
+                    </View>
+                </ScrollView>
+
+                <View style={{ position: "absolute", bottom: 50, right: 30 }}>
+                    <TouchableOpacity onPress={compartirNoticia} className='bg-primario p-4 rounded-full' activeOpacity={0.8} style={{ elevation: 20 }}>
+                        <AntDesign name='sharealt' size={20} color={"#FFF"} />
+                    </TouchableOpacity>
+                </View>
+            </SafeAreaView>
+        </>
     );
 };
 

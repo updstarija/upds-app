@@ -1,8 +1,9 @@
 import { INotificacion, INotificacionNotice } from '@/types'
 import React, { useState } from 'react'
-import { Image } from 'react-native'
+import { Image, Pressable } from 'react-native'
 import { View, Text, StyleSheet, Dimensions } from "react-native"
 import { Texto } from './ui'
+import { Link } from 'expo-router'
 
 export const SLIDER_WIDTH = Dimensions.get('window').width
 export const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7)
@@ -12,20 +13,22 @@ export const CarouselCardItem = ({ item, index }: { item: INotificacionNotice, i
     // const [visibleModal, setVisibleModal] = useState(false)
 
     return (
-        <>
-            <View style={styles.container} key={index}>
-                <Image
-                    source={{ uri: item.imagen, width: 500, height: 500 }}
-                    style={styles.image}
-                    resizeMode='cover'
-                    width={500}
-                />
-                <View className='absolute bottom-0 left-0 bg-black/70 w-full p-2 rounded-b-lg'>
-                    <Texto numberOfLines={1}>{item.titulo}</Texto>
-                </View>
+        <Link href={`/comunicados/${item.id}`} asChild>
+            <Pressable>
+                <View style={styles.container} key={index}>
+                    <Image
+                        source={{ uri: item.imagen, width: 500, height: 500 }}
+                        style={styles.image}
+                        resizeMode='cover'
+                        width={500}
+                    />
+                    <View className='absolute bottom-0 left-0 bg-black/70 w-full p-2 rounded-b-lg'>
+                        <Texto numberOfLines={1}>{item.titulo}</Texto>
+                    </View>
 
-            </View>
-        </>
+                </View>
+            </Pressable>
+        </Link>
 
     )
 }

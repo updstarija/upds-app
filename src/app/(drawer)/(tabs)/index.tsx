@@ -1,8 +1,7 @@
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { menuHomeScreen } from '@/data';
-import { CardNavigation, CarouselCards, Texto } from '../../../components/';
-import { Link } from 'expo-router';
-import { FontAwesome } from '@expo/vector-icons';
+import { CardNavigation, CarouselCards } from '../../../components/';
+
 
 
 export default function TabOneScreen() {
@@ -23,19 +22,6 @@ export default function TabOneScreen() {
           ))}
         </View>
 
-        <View className='flex-row justify-between'>
-          <Texto className='text ml-5 pt-2 dark:text-white' weight='Bold'>Mas Relevante</Texto>
-
-          <Link href='/comunicados/' className='pt-2 mr-5 flex-row'>
-            <View className='flex-row items-center justify-between'>
-              <Texto className='dark:text-white '>Ver Mas</Texto>
-              <View style={{ marginLeft: 10 }}>
-                <FontAwesome name='chevron-right' size={15} color={"#000"} />
-              </View>
-            </View>
-          </Link>
-
-        </View>
         <CarouselCards />
       </ScrollView>
     </View>
