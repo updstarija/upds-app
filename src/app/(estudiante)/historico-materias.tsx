@@ -1,22 +1,21 @@
-import { View, Text, Platform } from 'react-native';
-import { DetalleMateriaV2 } from '@/views/historico-materias';
-import { useCarreraContext, useRegistroHistorico } from '@/hooks';
 import { useState, useMemo, useEffect } from 'react';
-import { FlashList } from '@shopify/flash-list';
-import { Texto } from '../../components';
-import Spinner from '@/components/ui/Spinner';
-import { IRegistroHistorico } from '@/types';
-import CONSTANS from 'expo-constants'
+import { View, Text, Platform } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   TooltipProps,
   TourGuideProvider,
   TourGuideZone,
   useTourGuideController,
 } from 'rn-tourguide'
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FlashList } from '@shopify/flash-list';
+import CONSTANS from 'expo-constants'
+import { useCarreraContext, useRegistroHistorico } from '@/hooks';
+import { Texto } from '../../components';
+import Spinner from '@/components/ui/Spinner';
+import { DetalleMateriaV2 } from '@/views/historico-materias';
+import { IRegistroHistorico } from '@/types';
 import { verTutorial } from '@/helpers';
-import * as Animatable from "react-native-animatable"
 
 const HistoricoMaterias = () => {
   const { valueCarrera } = useCarreraContext();
@@ -30,7 +29,8 @@ const HistoricoMaterias = () => {
   const {
     canStart,
     start,
-    getCurrentStep
+    tourKey,
+
   } = useTourGuideController()
 
   useEffect(() => {
@@ -54,8 +54,6 @@ const HistoricoMaterias = () => {
   }, [canStart, data.isLoading, data.isError]) // 👈 don't miss it!
 
 
-
-
   const newRegistroHistorico = useMemo(() => {
     if (data.isLoading || data.isError) return []
 
@@ -70,22 +68,19 @@ const HistoricoMaterias = () => {
     return newData
   }, [data?.data?.data])
 
+  const stickyHeaderIndices = newRegistroHistorico.map((item, index) => {
+    if (typeof item === "string") {
+      return index;
+    } else {
+      return null;
+    }
+  }).filter((item) => item !== null) as number[];
+
   if (data.isLoading) return <Spinner />;
   if (data.isError) return <Text className='text-white'>HUBO UN ERROR..</Text>;
 
 
 
-  const stickyHeaderIndices = newRegistroHistorico
-    .map((item, index) => {
-      if (typeof item === "string") {
-        return index;
-      } else {
-        return null;
-      }
-    })
-    .filter((item) => item !== null) as number[];
-
-  console.log(getCurrentStep()?.order)
   return (
     <View className='flex-1'>
       <FlashList
@@ -122,7 +117,6 @@ const HistoricoMaterias = () => {
   );
 };
 
-//-145
 const App = () => {
   const isIos = Platform.OS === "ios";
   const [tutorialEnCurso, setTutorialEnCurso] = useState(false)
@@ -136,59 +130,38 @@ const App = () => {
   }
 
   return (
-    <TourGuideProvider {...{ borderRadius: 16 }} backdropColor="#000000b3" verticalOffset={isIos ? -50 - CONSTANS.statusBarHeight + 6 : -105} preventOutsideInteraction tooltipComponent={(x) => (
-      <View className="bg-primario dark:bg-secondary-dark p-2 rounded-xl w-72">
-        <Texto className="text-white mb-4 text-center mt-2"> {x.currentStep.text}</Texto>
+    <>
+      {/*  <TourGuideProvider {...{ borderRadius: 16 }} backdropColor="#000000b3" verticalOffset={isIos ? -50 - CONSTANS.statusBarHeight + 6 : -105} preventOutsideInteraction tooltipComponent={(x) => (
+        <View className="bg-primario dark:bg-secondary-dark p-2 rounded-xl w-72">
+          <Texto className="text-white mb-4 text-center mt-2"> {x.currentStep.text}</Texto>
 
-        <View className="flex-row gap-4 justify-evenly">
-          {!x.isLastStep && <TouchableOpacity onPress={() => onSkipOrFinishTutorial(x)}>
-            <Texto className="text-white">Saltar</Texto>
-          </TouchableOpacity>}
-
-          {!x.isFirstStep && <TouchableOpacity onPress={x.handlePrev}>
-            <Texto className="text-white">Anterior</Texto>
-          </TouchableOpacity>}
-
-          {!x.isLastStep ? <TouchableOpacity onPress={x.handleNext}>
-            <Texto className="text-white">Siguiente</Texto>
-          </TouchableOpacity>
-            :
-            <TouchableOpacity onPress={() => onSkipOrFinishTutorial(x)}>
-              <Texto className="text-white">Terminar</Texto>
+          <View className="flex-row gap-4 justify-evenly">
+            {!x.isLastStep && <TouchableOpacity onPress={() => onSkipOrFinishTutorial(x)}>
+              <Texto className="text-white">Saltar</Texto>
             </TouchableOpacity>}
-        </View>
 
-      </View>)}>
+            {!x.isFirstStep && <TouchableOpacity onPress={x.handlePrev}>
+              <Texto className="text-white">Anterior</Texto>
+            </TouchableOpacity>}
+
+            {!x.isLastStep ? <TouchableOpacity onPress={x.handleNext}>
+              <Texto className="text-white">Siguiente</Texto>
+            </TouchableOpacity>
+              :
+              <TouchableOpacity onPress={() => onSkipOrFinishTutorial(x)}>
+                <Texto className="text-white">Terminar</Texto>
+              </TouchableOpacity>}
+          </View>
+
+        </View>)}>
+
+
+
+
+      </TourGuideProvider> */}
 
       <HistoricoMaterias />
-
-      {/* <Modal isVisible={isVisible} className='justify-end' backdropOpacity={.3} onBackdropPress={() => setIsVisible(false)}>
-        <View className='bg-white dark:bg-[#183064] items-center justify-center p-4 rounded-2xl'>
-          <Texto>HOLA</Texto>
-        </View>
-      </Modal>
- */}
-      {/* <Modal isVisible>
-
-
-        <PagerView initialPage={0} className='bg-red-400' style={{ height: 200 }}>
-
-          <View key={"0"}>
-            <Texto className='text-white'>HOLA</Texto>
-          </View>
-
-          <View key={"1"}>
-            <Texto className='text-white'>HOLA</Texto>
-          </View>
-
-          <View key={"2"}>
-            <Texto className='text-white'>HOLA</Texto>
-          </View>
-        </PagerView>
-
-      </Modal> */}
-
-    </TourGuideProvider>
+    </>
   )
 }
 

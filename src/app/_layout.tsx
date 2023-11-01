@@ -5,7 +5,7 @@ import { DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, View } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
 import { configStack } from '@/helpers';
@@ -13,7 +13,9 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { AutocompleteDropdownContextProvider } from 'react-native-autocomplete-dropdown'
 import messaging from '@react-native-firebase/messaging';
 import { ThemeProvider } from '@/context/ThemeContext'
-
+import { TourGuideProvider } from 'rn-tourguide';
+import { Texto } from '@/components';
+import CONSTANS from 'expo-constants'
 
 const queryClient = new QueryClient();
 
@@ -62,194 +64,198 @@ function RootLayoutNav() {
 
   return (
     <ThemeProvider>
+
+
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <CarreraProvider>
             <BottomSheetModalProvider>
               <AutocompleteDropdownContextProvider>
-                <Stack>
-                  <Stack.Screen name="index" options={{ headerShown: false }} />
-                  <Stack.Screen name="auth/login" options={{ headerShown: false }} />
-                  <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
-                  <Stack.Screen name="bienvenida" options={{ headerShown: false }} />
+                <TourGuideProvider {...{ borderRadius: 16 }} backdropColor="#000000b3" preventOutsideInteraction verticalOffset={CONSTANS.statusBarHeight}>
+                  <Stack>
+                    <Stack.Screen name="index" options={{ headerShown: false }} />
+                    <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+                    <Stack.Screen name="(drawer)" options={{ headerShown: false }} />
+                    <Stack.Screen name="bienvenida" options={{ headerShown: false }} />
 
 
 
-                  <Stack.Screen
-                    name="(paginas)/carrera/[id]"
-                    //@ts-ignore
-                    options={configStack('Carrera')}
-                  />
+                    <Stack.Screen
+                      name="(paginas)/carrera/[id]"
+                      //@ts-ignore
+                      options={configStack('Carrera')}
+                    />
 
-                  <Stack.Screen name="(paginas)/notificacion"
-                    //@ts-ignore
-                    options={{ ...configStack('Notificaciones') }} />
-
-
-                  <Stack.Screen name="(paginas)/perfil"
-                    //@ts-ignore
-                    options={{ ...configStack('Perfil') }} />
-
-                  <Stack.Screen name="(paginas)/about/index"
-                    //@ts-ignore
-                    options={{ ...configStack('Acerca de la aplicacion') }} />
-
-                  <Stack.Screen name="(paginas)/politica/index"
-                    //@ts-ignore
-                    options={{ ...configStack('Politica de Privacidad') }} />
+                    <Stack.Screen name="(paginas)/notificacion"
+                      //@ts-ignore
+                      options={{ ...configStack('Notificaciones') }} />
 
 
-                  <Stack.Screen name="(paginas)/notificacionConfig/index"
-                    //@ts-ignore
-                    options={{ ...configStack('Ajuste de Notificaciones') }} />
+                    <Stack.Screen name="(paginas)/perfil"
+                      //@ts-ignore
+                      options={{ ...configStack('Perfil') }} />
 
-                  <Stack.Screen name="(paginas)/terminos/index"
-                    //@ts-ignore
-                    options={{ ...configStack('Terminos de Uso') }} />
-                  <Stack.Screen name="(paginas)/tema/index"
-                    //@ts-ignore
-                    options={{ ...configStack('Ajustes de Tema') }} />
+                    <Stack.Screen name="(paginas)/about/index"
+                      //@ts-ignore
+                      options={{ ...configStack('Acerca de la aplicacion') }} />
 
-                  <Stack.Screen name="(paginas)/tutorialConfig/index"
-                    //@ts-ignore
-                    options={{ ...configStack('Ajustes de Tutoriales') }} />
+                    <Stack.Screen name="(paginas)/politica/index"
+                      //@ts-ignore
+                      options={{ ...configStack('Politica de Privacidad') }} />
 
 
-                  <Stack.Screen name="(paginas)/calendario-academico/index"
-                    //@ts-ignore
-                    options={{ ...configStack('Calendario Academico') }} />
+                    <Stack.Screen name="(paginas)/notificacionConfig/index"
+                      //@ts-ignore
+                      options={{ ...configStack('Ajuste de Notificaciones') }} />
 
-                  <Stack.Screen name="(paginas)/tutorial/index"
-                    //@ts-ignore
-                    options={{ ...configStack('Tutoriales') }} />
+                    <Stack.Screen name="(paginas)/terminos/index"
+                      //@ts-ignore
+                      options={{ ...configStack('Terminos de Uso') }} />
+                    <Stack.Screen name="(paginas)/tema/index"
+                      //@ts-ignore
+                      options={{ ...configStack('Ajustes de Tema') }} />
 
-                  <Stack.Screen name="(paginas)/faq/index"
-                    //@ts-ignore
-                    options={{ ...configStack('Preguntas Frecuentes') }} />
-
-                  <Stack.Screen
-                    name="(home)/redes-sociales"
-                    //@ts-ignore
-                    options={configStack('Redes Sociales')}
-                  />
-
-                  <Stack.Screen
-                    name="(home)/comunicados/index"
-                    //@ts-ignore
-                    options={configStack('Comunicados')}
-                  />
-
-                  <Stack.Screen
-                    name="(home)/comunicados/[id]"
-                    //@ts-ignore
-                    options={configStack('Comunicado')}
-                  />
-
-                  {/* FIX: NO DISPONINLE */}
-                  <Stack.Screen
-                    name="(home)/upds-responde"
-                    //@ts-ignore
-                    options={configStack('UPDS Responde')}
-                  />
-
-                  <Stack.Screen
-                    name="(home)/chat"
-                    //@ts-ignore
-                    options={configStack('Chat UPDS')}
-                  />
+                    <Stack.Screen name="(paginas)/tutorialConfig/index"
+                      //@ts-ignore
+                      options={{ ...configStack('Ajustes de Tutoriales') }} />
 
 
+                    <Stack.Screen name="(paginas)/calendario-academico/index"
+                      //@ts-ignore
+                      options={{ ...configStack('Calendario Academico') }} />
 
-                  <Stack.Screen
-                    name="(home)/test-vocacional"
-                    //@ts-ignore
-                    options={configStack('Test Vocacional')}
-                  />
+                    <Stack.Screen name="(paginas)/tutorial/index"
+                      //@ts-ignore
+                      options={{ ...configStack('Tutoriales') }} />
 
-                  <Stack.Screen
-                    name="(home)/ubicacion"
-                    //@ts-ignore
-                    options={configStack('Ubicacion')}
-                  />
+                    <Stack.Screen name="(paginas)/faq/index"
+                      //@ts-ignore
+                      options={{ ...configStack('Preguntas Frecuentes') }} />
 
-                  <Stack.Screen
-                    name="(estudiante)/ayuda"
-                    //@ts-ignore
-                    options={configStack('AYUDA')}
-                  />
+                    <Stack.Screen
+                      name="(home)/redes-sociales"
+                      //@ts-ignore
+                      options={configStack('Redes Sociales')}
+                    />
 
-                  <Stack.Screen
-                    name="(estudiante)/servicios"
-                    //@ts-ignore
-                    options={configStack('Registro y Pagos')}
-                  />
+                    <Stack.Screen
+                      name="(home)/comunicados/index"
+                      //@ts-ignore
+                      options={configStack('Comunicados')}
+                    />
 
-                  <Stack.Screen
-                    name="(estudiante)/proyecciones"
-                    //@ts-ignore
-                    options={configStack('Proyecciones')}
-                  />
+                    <Stack.Screen
+                      name="(home)/comunicados/[id]"
+                      //@ts-ignore
+                      options={configStack('Comunicado')}
+                    />
 
-                  <Stack.Screen
-                    name="(estudiante)/proyecciones2"
-                    //@ts-ignore
-                    options={configStack('Proyecciones')}
-                  />
+                    {/* FIX: NO DISPONINLE */}
+                    <Stack.Screen
+                      name="(home)/upds-responde"
+                      //@ts-ignore
+                      options={configStack('UPDS Responde')}
+                    />
 
-                  <Stack.Screen
-                    name="(estudiante)/historico-materias"
-                    //@ts-ignore
-                    options={configStack('Historico de Materias')}
-                  />
+                    <Stack.Screen
+                      name="(home)/chat"
+                      //@ts-ignore
+                      options={configStack('Chat UPDS')}
+                    />
 
-                  <Stack.Screen
-                    name="(paginas-externas)/moodle/index"
-                    //@ts-ignore
-                    options={configStack('Plataforma Moodle')}
-                  />
 
-                  <Stack.Screen
-                    name="(paginas-externas)/multipagos"
-                    //@ts-ignore
-                    options={configStack('Multipagos')}
-                  />
 
-                  <Stack.Screen
-                    name="(paginas-externas)/moodle/[id]"
-                    //@ts-ignore
-                    options={configStack('Moodle Aula')}
-                  />
+                    <Stack.Screen
+                      name="(home)/test-vocacional"
+                      //@ts-ignore
+                      options={configStack('Test Vocacional')}
+                    />
 
-                  <Stack.Screen
-                    name="(paginas-externas)/evaluacion/index"
-                    //@ts-ignore
-                    options={configStack('Plataforma Moodle')}
-                  />
-                  <Stack.Screen
-                    name="(paginas-externas)/evaluacion/[id]"
-                    //@ts-ignore
-                    options={configStack('Evaluacion Docente')}
-                  />
+                    <Stack.Screen
+                      name="(home)/ubicacion"
+                      //@ts-ignore
+                      options={configStack('Ubicacion')}
+                    />
 
-                  <Stack.Screen
-                    name="(paginas-externas)/updsnet"
-                    //@ts-ignore
-                    options={configStack('UpdsNet')}
-                  />
+                    <Stack.Screen
+                      name="(estudiante)/ayuda"
+                      //@ts-ignore
+                      options={configStack('AYUDA')}
+                    />
 
-                  {/*     <Stack.Screen
+                    <Stack.Screen
+                      name="(estudiante)/servicios"
+                      //@ts-ignore
+                      options={configStack('Registro y Pagos')}
+                    />
+
+                    <Stack.Screen
+                      name="(estudiante)/proyecciones"
+                      //@ts-ignore
+                      options={configStack('Proyecciones')}
+                    />
+
+                    <Stack.Screen
+                      name="(estudiante)/proyecciones2"
+                      //@ts-ignore
+                      options={configStack('Proyecciones')}
+                    />
+
+                    <Stack.Screen
+                      name="(estudiante)/historico-materias"
+                      //@ts-ignore
+                      options={configStack('Historico de Materias')}
+                    />
+
+                    <Stack.Screen
+                      name="(paginas-externas)/moodle/index"
+                      //@ts-ignore
+                      options={configStack('Plataforma Moodle')}
+                    />
+
+                    <Stack.Screen
+                      name="(paginas-externas)/multipagos"
+                      //@ts-ignore
+                      options={configStack('Multipagos')}
+                    />
+
+                    <Stack.Screen
+                      name="(paginas-externas)/moodle/[id]"
+                      //@ts-ignore
+                      options={configStack('Moodle Aula')}
+                    />
+
+                    <Stack.Screen
+                      name="(paginas-externas)/evaluacion/index"
+                      //@ts-ignore
+                      options={configStack('Plataforma Moodle')}
+                    />
+                    <Stack.Screen
+                      name="(paginas-externas)/evaluacion/[id]"
+                      //@ts-ignore
+                      options={configStack('Evaluacion Docente')}
+                    />
+
+                    <Stack.Screen
+                      name="(paginas-externas)/updsnet"
+                      //@ts-ignore
+                      options={configStack('UpdsNet')}
+                    />
+
+                    {/*     <Stack.Screen
                     name="(paginas-externas)/ubicacion"
                     //@ts-ignore
                     options={configStack('Ubicacion')}
                   />
  */}
 
-                  <Stack.Screen
-                    name="(paginas-externas)/biblioteca"
-                    //@ts-ignore
-                    options={configStack('Biblioteca')}
-                  />
-                </Stack>
+                    <Stack.Screen
+                      name="(paginas-externas)/biblioteca"
+                      //@ts-ignore
+                      options={configStack('Biblioteca')}
+                    />
+                  </Stack>
+                </TourGuideProvider>
               </AutocompleteDropdownContextProvider>
 
             </BottomSheetModalProvider>
@@ -259,5 +265,6 @@ function RootLayoutNav() {
       </QueryClientProvider>
       <Toast config={toastConfig} />
     </ThemeProvider>
+
   );
 }

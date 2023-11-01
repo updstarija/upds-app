@@ -1,20 +1,18 @@
 import { useState, useMemo, useCallback, useRef, memo, useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, View, Dimensions } from 'react-native';
+import { View, Dimensions } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
-import { Texto, Button, Etiqueta, Spinner, BottomSheet } from '../../components';
-import { IRegistroHistorico, Turno } from '@/types';
+import { Texto, Etiqueta, Spinner, BottomSheet, Button } from '../../components';
+import { IRegistroHistorico } from '@/types';
 import { useDetalleGrupoMateria, useThemeColor } from '@/hooks';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { etiquetas } from '@/data';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
-import Animated from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { formatFechaDMY } from '@/helpers';
 import { differenceInMonths } from 'date-fns';
 import { RequisitoMateria } from '../proyecciones';
 
-const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
 interface Props {
   materia: IRegistroHistorico;
@@ -574,7 +572,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
 
   return (
     <View className='bg-white dark:bg-secondary-dark'>
-      {/*   <Swipeable
+      <Swipeable
         ref={swipeRef}
         enabled={plan.estado.id >= 0 && plan.estado.id != 6}
         renderRightActions={rightContent}
@@ -603,12 +601,12 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
           </View>
         </>}
 
-      </Swipeable> */}
+      </Swipeable>
 
 
 
 
-      {/*   <BottomSheetModal
+      <BottomSheetModal
         ref={bottomSheetModalRef}
         index={0}
         snapPoints={snapPoints}
@@ -621,9 +619,9 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
             {renderContentSheetModal()}
           </>
         )}
-      </BottomSheetModal> */}
+      </BottomSheetModal>
 
-      <BottomSheet content={<>
+      {/*  <BottomSheet content={<>
         <View style={{ position: "relative", overflow: "hidden" }}>
           <View
             className={`px-3 py-4 flex-row justify-between items-center bg-white dark:bg-secondary-dark
@@ -657,7 +655,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
             semestre: "4",
 
           }} />
-      </BottomSheet>
+      </BottomSheet> */}
 
 
     </View>
