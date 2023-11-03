@@ -1,5 +1,5 @@
+import { Toast } from '@/ui';
 import { BaseToastProps } from 'react-native-toast-message';
-import { Toast } from '@/components';
 
 export const toastConfig = {
   success: (props: BaseToastProps) => <Toast type="success" {...props} />,

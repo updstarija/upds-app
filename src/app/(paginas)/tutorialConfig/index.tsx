@@ -2,7 +2,7 @@ import { View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Checkbox from 'expo-checkbox'
-import { Texto } from '../../../components'
+import { Texto } from '@/ui';
 import { COLORS } from '~/constants'
 
 type Tutoriales = "t-boleta" | "t-historico-materias" | "i-materias"

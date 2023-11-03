@@ -1,11 +1,11 @@
-export interface INotificacion{
+export interface INotificacion {
     fecha: Date;
     hora: string;
-    mensaje:string;
+    mensaje: string;
     tipo: string;
-    titulo:string;
-    id:string;
+    titulo: string;
+    id: string;
     type?: "read" | "delete" | ""
-    to?:string
-    param?:string
+    to?: string
+    param?: string
 }

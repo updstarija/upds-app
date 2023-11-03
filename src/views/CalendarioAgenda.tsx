@@ -1,14 +1,14 @@
-import React, { useMemo, useState } from 'react';
-import { Alert, View, TouchableOpacity, Button as Btn } from 'react-native';
-import { Agenda, AgendaEntry } from 'react-native-calendars';
-import { Button, Texto, Modal, Option } from '../components';
-import ReservationList from 'react-native-calendars/src/agenda/reservation-list';
-import { useCalendario, useThemeColor } from '@/hooks';
-import { COLORS } from '~/constants';
-import { isSameDay } from 'date-fns'
+import { useMemo, useState } from 'react';
+import { Alert, View, TouchableOpacity } from 'react-native';
 import { FloatingAction } from 'react-native-floating-action';
+import { Agenda, AgendaEntry } from 'react-native-calendars';
+import ReservationList from 'react-native-calendars/src/agenda/reservation-list';
+import { isSameDay } from 'date-fns'
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { COLORS } from '~/constants';
+import { useCalendario, useThemeColor } from '@/hooks';
+import { Button, Option } from '@/components';
+import { Modal, Texto } from '@/ui';
 
 const dayNames = ['Dom.', 'Lun.', 'Mar.', 'Mie.', 'Jue.', 'Vie.', 'Sab.']
 
@@ -19,17 +19,11 @@ const actions = [
         icon: <MaterialCommunityIcons name="filter" color="#fff" size={20} />,
         position: 3
     },
-    {
-        text: "Informacion",
-        name: "help",
-        icon: <MaterialCommunityIcons name="help-circle" color="#fff" size={20} />,
-        position: 4
-    }
 ];
 
 const CalendarioAgenda = () => {
     const isDarkMode = useThemeColor() === "dark"
-    const { data, getEventos, isLoading } = useCalendario({ gestion: "" })
+    const { data, isLoading } = useCalendario({ gestion: "" })
 
 
     const [filtro, setFiltro] = useState(0)
@@ -117,11 +111,8 @@ const CalendarioAgenda = () => {
                 className={` p-4 mb-2 ${isFirst ? "mt-5" : ""}`}
                 style={{ backgroundColor: reservation.color }}
                 onPress={() => Alert.alert(reservation.description)}
-
             >
-
                 <Texto className='text-white'>{reservation.name}</Texto>
-
             </TouchableOpacity>
         );
     };

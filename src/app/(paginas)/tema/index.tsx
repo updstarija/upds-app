@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useThemeColor, useThemeContext } from '@/hooks'
 import { Menu } from '@/data'
 import { Platform } from 'react-native'
-import { Option, Texto } from '../../../components'
+import { Option } from '../../../components'
 import { Feather } from '@expo/vector-icons'
 
 const Tema = () => {

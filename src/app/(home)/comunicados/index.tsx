@@ -1,23 +1,20 @@
-import { useEffect } from "react";
-import { View, Pressable } from "react-native";
-import { NoticeCard } from "@/components/NoticeCard";
+import { useEffect, useState } from "react";
+import { View, Pressable, useWindowDimensions } from "react-native";
+import DropDownPicker from 'react-native-dropdown-picker';
+import { FlashList } from "@shopify/flash-list";
+import { FontAwesome } from '@expo/vector-icons';
+import { Link } from "expo-router";
+import { COLORS } from '~/constants';
 import { useNoticias } from "@/hooks";
 import { LayoutScreen } from "@/layout/LayoutScreen";
-import { Link } from "expo-router";
-import { FlashList } from "@shopify/flash-list";
-import Spinner from "@/components/ui/Spinner";
-import React, { useState } from 'react'
-import DropDownPicker from 'react-native-dropdown-picker';
 import { useThemeColor } from '@/hooks';
-import { FontAwesome } from '@expo/vector-icons';
-import { COLORS } from '~/constants';
-import { categorias, categoriasFaq } from "@/data";
 import { INotificacionNotice } from "@/types";
-import { Texto } from "../../../components";
-
-
+import { NoticeCard, Spinner } from "@/components";
+import { Texto } from "@/ui";
+import { categorias } from "@/data";
 
 const Comunicados = () => {
+  const { width } = useWindowDimensions()
   const isDarkMode = useThemeColor() === "dark"
   const { isLoading, getData } = useNoticias();
   const [data, setData] = useState<INotificacionNotice[]>([])
@@ -100,18 +97,23 @@ const Comunicados = () => {
           data={data}
           ListEmptyComponent={<Texto className="text-center">{!isLoading && 'No se han encontrado comunicados'}</Texto>}
           ListHeaderComponentStyle={{ marginTop: 5 }}
-          onEndReachedThreshold={1}
+          numColumns={width > 1000 ? 2 : 1}
+          onEndReachedThreshold={0.1}
           onEndReached={getNoticias}
           keyExtractor={(item) => item.id}
           ListFooterComponent={isLoading ? <Spinner showText text="Cargando comunicados" classNameContainer="p-4 items-center" size={25} /> : <View />}
           showsVerticalScrollIndicator={false}
           estimatedItemSize={100}
-          ItemSeparatorComponent={() => <View className="mb-3" />}
-          renderItem={({ item }) => (
+          ItemSeparatorComponent={() => <View className="h-2" />}
+          renderItem={({ item, index }) => (
             <>
-              <Link href={`/(home)/comunicados/${item.id}`} asChild>
-                <Pressable>
-                  <NoticeCard {...item} />
+              <Link href={`/(home)/comunicados/${item.id}`} asChild className="w-full" >
+                <Pressable >
+                  <View style={{
+                    marginRight: width > 1000 ? index % 2 == 0 ? 10 : 0 : 0
+                  }}>
+                    <NoticeCard {...item} />
+                  </View>
                 </Pressable>
               </Link>
             </>

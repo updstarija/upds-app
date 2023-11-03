@@ -1,56 +1,50 @@
-import { View, Text, BackHandler, useColorScheme, Dimensions } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
-import { WebView, WebViewNavigation } from "react-native-webview";
-import Spinner from "@/components/ui/Spinner";
-import { Texto } from "../../../components";
+import { useEffect, useRef, useState } from "react";
+import { View, BackHandler, useWindowDimensions } from "react-native";
+import { WebView } from "react-native-webview";
+import CONSTANTS from 'expo-constants'
+import { Spinner } from "@/components";
 
 const Moodle = () => {
-  const webViewRef = useRef<WebView>(null);
+  const { width, height } = useWindowDimensions()
   const [isLoading, setIsLoading] = useState(true)
+  const [canGoBack, setCanGoBack] = useState(false)
 
-  const handleNavigationStateChange = (newNavState: WebViewNavigation) => {
-
-  };
+  const webViewRef = useRef<WebView>(null);
 
   const handleBackButtonPress = () => {
-    if (webViewRef.current) {
-      webViewRef.current.goBack();
-      return true; // Indica que el evento ha sido manejado
-    }
-    return false; // Permite el comportamiento predeterminado de retroceso de la aplicación
+    if (canGoBack) webViewRef?.current?.goBack()
+    return canGoBack
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
       handleBackButtonPress
     );
 
-
     return () => backHandler.remove();
-  }, []);
-
-  const height = Dimensions.get("window").height
+  }, [canGoBack]);
 
   return (
     <>
-      <WebView
-        ref={webViewRef}
-        onLoad={(x) => {
-          setIsLoading(false)
-        }}
-        sharedCookiesEnabled
-        // injectedJavaScript="alert(2)"
-        source={{ uri: "https://virtual.upds.edu.bo" }}
-        //source={{ uri: "https://portal.upds.edu.bo/ev-docente/#/ev-est/evaluacion/32255" }}
-        javaScriptEnabled
-        onNavigationStateChange={handleNavigationStateChange}
-        onMessage={() => { }}
-      />
+      <View className='flex-1'>
+        {isLoading ? <View style={{ position: "absolute", height: height - CONSTANTS.statusBarHeight, width, zIndex: 999 }}>
+          <Spinner />
+        </View> : null}
 
-      {isLoading && <View style={{ position: "absolute", top: "50%", left: "50%" }}>
-        <Spinner classNameContainer="" />
-      </View>}
+        <View renderToHardwareTextureAndroid className='flex-1'>
+          <WebView
+            ref={webViewRef}
+            onLoad={(x) => {
+              setIsLoading(false)
+            }}
+            sharedCookiesEnabled
+            source={{ uri: "https://virtual.upds.edu.bo" }}
+            onMessage={() => { }}
+            onNavigationStateChange={(x) => setCanGoBack(x.canGoBack)}
+          />
+        </View>
+      </View>
     </>
   );
 };

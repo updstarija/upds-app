@@ -1,4 +1,4 @@
-import { TouchableOpacity, ActivityIndicator, TouchableOpacityProps } from 'react-native';
+import { TouchableOpacity, ActivityIndicator } from 'react-native';
 
 
 interface Props {

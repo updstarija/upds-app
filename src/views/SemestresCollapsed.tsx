@@ -3,7 +3,7 @@ import { ActivityIndicator, View } from 'react-native';
 //import Collapsible from 'react-native-collapsible';
 
 import { useCarreraContext, usePlanEstudio } from '@/hooks';
-import { Texto } from '../components/ui';
+import { Texto } from '../ui';
 import { Button } from '@/components';
 import { ISemestre } from '@/types';
 import { FontAwesome } from '@expo/vector-icons';

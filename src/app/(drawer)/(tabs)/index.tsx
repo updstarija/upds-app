@@ -1,29 +1,43 @@
-import { ScrollView, View } from 'react-native';
+import { FlatList, ScrollView, View } from 'react-native';
 import { menuHomeScreen } from '@/data';
 import { CardNavigation, CarouselCards } from '../../../components/';
+import { CarouselPriorityNotices } from '@/views';
 
 
 
 export default function TabOneScreen() {
   return (
-    <View className=" flex-1 bg-white dark:bg-primario-dark">
-      {/* <Texto className='text-red-400'>HOLA MUNDO</Texto>
-      <Text style={styles.title}>Tab One1</Text> */}
-      {/* <View style={styles.separator} lightColor="#eee" darkColor="rgba(255,255,255,0.1)" /> */}
-      {/* <EditScreenInfo path="app/(tabs)/index.tsx" /> */}
-      <ScrollView showsVerticalScrollIndicator={false} className="">
+    <View className="bg-white dark:bg-primario-dark  flex-1 ">
+      <FlatList
+        data={null}
+        ListHeaderComponent={
+          <>
+            <View className="flex flex-row  flex-wrap items-center justify-evenly mt-5 max-w-2xl mx-auto w-full">
+              {menuHomeScreen.map(menu => (
+                <View className="mb-5 mr-2" key={menu.text}>
+                  <CardNavigation {...menu} />
+                </View>
+              ))}
+            </View>
 
-        <View className="flex flex-row  flex-wrap items-center justify-evenly mt-5">
+            <CarouselPriorityNotices />
+            {/*             <CarouselCards /> */}
+          </>
+        }
+        renderItem={null}
+      />
+      {/* 
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View className="flex flex-row  flex-wrap items-center justify-evenly mt-5 max-w-2xl mx-auto w-full">
           {menuHomeScreen.map(menu => (
             <View className="mb-5 mr-2" key={menu.text}>
-              {/* @ts-ignore */}
               <CardNavigation {...menu} />
             </View>
           ))}
         </View>
 
         <CarouselCards />
-      </ScrollView>
+      </ScrollView> */}
     </View>
   );
 }

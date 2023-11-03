@@ -1,7 +1,7 @@
 import React from "react";
 import { Linking, Platform, View, Image, Pressable } from "react-native";
 import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { Texto } from "./ui";
+import { Texto } from "../ui";
 import { COLORS } from "~/constants";
 import { Link } from "expo-router";
 import { useAuthContext, useThemeColor } from "@/hooks";
@@ -67,14 +67,12 @@ export const CardNavigation: React.FC<Menu> = ({
     >
       <Pressable>
         <View
-          className={`bg-white dark:bg-secondary-dark h-[150px] w-40 rounded-xl justify-center p-8 items-center ${isIos ? "shadow-md" : ""}`}
+          className={`bg-white dark:bg-secondary-dark h-40 w-40 lg:h-52  lg:w-52 rounded-xl justify-center p-8 items-center ${isIos ? "shadow-md" : ""}`}
           style={{ elevation: 5 }}
         >
           {getIcon()}
 
-
-
-          <Texto className="mt-2 text-primario dark:text-white text-center">
+          <Texto className="mt-2 text-primario dark:text-white text-center lg:text-lg">
             {text}
           </Texto>
         </View>

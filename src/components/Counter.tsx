@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
-import { Texto } from './ui'
+import { Texto } from '../ui'
 
 interface Props {
     max: number

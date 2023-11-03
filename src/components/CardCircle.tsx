@@ -1,6 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { Texto } from "./ui";
+import { Texto } from "../ui";
 import { COLORS } from "~/constants";
 import { useThemeColor } from "@/hooks";
 
@@ -24,7 +24,7 @@ export const CardCircle: React.FC<Props> = ({ icon, title }) => {
                             //@ts-ignore
                             name={icon}
                             size={110}
-                            color={isDark ? "#FFF" : COLORS.light.background}
+                            color="#FFF"
                         />
                     </>
                 ) : (
@@ -32,7 +32,7 @@ export const CardCircle: React.FC<Props> = ({ icon, title }) => {
                         //@ts-ignore
                         name={icon}
                         size={120}
-                        color={isDark ? "#FFF" : COLORS.light.background}
+                        color="#FFF"
                     />
                 )}
             </View>

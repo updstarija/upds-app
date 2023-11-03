@@ -2,25 +2,22 @@ import { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Share from "react-native-share";
+import { FlashList } from "@shopify/flash-list";
 import { FontAwesome } from "@expo/vector-icons";
 import { openURL } from "expo-linking";
-import { FlashList } from "@shopify/flash-list";
-import { Image } from 'expo-image'
-import { VideoPlayer } from "@/components/VideoPlayer";
+import { Image } from "expo-image";
+import { COLORS } from "~/constants";
+import { useRedesSociales, useThemeColor } from "@/hooks";
 import {
   IResponseFacebook,
   IResponseInstagram,
   IResponseYoutbe,
-  Video,
 } from "@/types";
-import { useRedesSociales, useThemeColor } from "@/hooks";
-import { COLORS } from "~/constants";
+import { Spinner } from "@/components";
 import { LayoutScreen } from "@/layout/LayoutScreen";
-import { Button, Texto, Spinner } from "../../components";
+import { Texto } from "@/ui";
 
 const RedesSociales = () => {
-  const isDark = useThemeColor() === "dark";
-
   const instagramApi = useRedesSociales<IResponseInstagram>(
     {} as IResponseInstagram
   );
@@ -38,7 +35,6 @@ const RedesSociales = () => {
   useEffect(() => {
     youtubeApi.getVideosYoutTube();
   }, []);
-
 
   const [videoPlayer, setVideoPlayer] = useState(false);
 
@@ -63,7 +59,9 @@ const RedesSociales = () => {
     return (
       <FlashList
         data={[...youtubeApi.data.items, "VER MAS"]}
-        keyExtractor={(item) => typeof item === "string" ? item : item.id.videoId}
+        keyExtractor={(item) =>
+          typeof item === "string" ? item : item.id.videoId
+        }
         estimatedItemSize={250}
         contentContainerStyle={{ padding: 10 }}
         horizontal
@@ -72,17 +70,18 @@ const RedesSociales = () => {
         renderItem={({ item }) => {
           return (
             <>
-              {typeof item === "string"
-                ?
+              {typeof item === "string" ? (
                 <VerMasCard url="https://www.youtube.com/@universidadprivadadomingos3411/videos" />
-                :
+              ) : (
                 <CardSocial
                   description={item.snippet.title}
-                  showImageReplace={item.snippet.liveBroadcastContent !== "none"}
+                  showImageReplace={
+                    item.snippet.liveBroadcastContent !== "none"
+                  }
                   url={`https://www.youtube.com/watch?v=${item.id.videoId}`}
                   image={item.snippet.thumbnails.medium.url}
                 />
-              }
+              )}
             </>
           );
         }}
@@ -111,7 +110,7 @@ const RedesSociales = () => {
     return (
       <FlashList
         data={[...facebookApi.data.data, "VER MAS"]}
-        keyExtractor={(item) => typeof item === "string" ? item : item.id}
+        keyExtractor={(item) => (typeof item === "string" ? item : item.id)}
         estimatedItemSize={250}
         contentContainerStyle={{ padding: 10 }}
         horizontal
@@ -120,19 +119,16 @@ const RedesSociales = () => {
         renderItem={({ item }) => {
           return (
             <>
-              {typeof item === "string"
-                ?
+              {typeof item === "string" ? (
                 <VerMasCard url="https://www.facebook.com/universidadprivadadomingosaviotarija" />
-                :
+              ) : (
                 <CardSocial
                   description={item.message || ""}
-
                   url={item.permalink_url}
                   image={item.full_picture}
                 />
-              }
+              )}
             </>
-
           );
         }}
       />
@@ -161,7 +157,7 @@ const RedesSociales = () => {
       <FlashList
         data={[...instagramApi.data.data, "VER MAS"]}
         estimatedItemSize={250}
-        keyExtractor={(item) => typeof item === "string" ? item : item.id}
+        keyExtractor={(item) => (typeof item === "string" ? item : item.id)}
         contentContainerStyle={{ padding: 10 }}
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -169,16 +165,16 @@ const RedesSociales = () => {
         renderItem={({ item, index }) => {
           return (
             <>
-              {typeof item === "string"
-                ?
+              {typeof item === "string" ? (
                 <VerMasCard url="https://www.instagram.com/upds_tarija" />
-                :
+              ) : (
                 <CardSocial
                   description={item.caption || ""}
                   showImageReplace={item.media_type === "VIDEO"}
                   url={item.permalink}
                   image={item.media_url}
-                />}
+                />
+              )}
             </>
           );
         }}
@@ -210,8 +206,6 @@ const RedesSociales = () => {
 
             {renderYt()}
 
-            {/* ------------------------------------------------------------------------------------------------- */}
-            {/* FACEBOOK */}
             <View
               style={{
                 flexDirection: "row",
@@ -230,8 +224,7 @@ const RedesSociales = () => {
             </View>
 
             {renderFacebook()}
-            {/* ------------------------------------------------------------------------------------------------- */}
-            {/* INSTAGRAM */}
+
             <View
               style={{
                 flexDirection: "row",
@@ -248,127 +241,8 @@ const RedesSociales = () => {
                 Instagram
               </Texto>
             </View>
+
             {renderInstagram()}
-            {/* ------------------------------------------------------------------------------------------------- */}
-            {/* <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginLeft: 10,
-                marginTop: 10,
-              }}>
-              <Image
-                source={require('~/assets/images/pages/youtube.png')}
-                style={{width: 30, height: 30}}
-              />
-              <Text style={{fontWeight: 'bold'}}>Youtube</Text>
-            </View>
-
-            <FlatList
-              data={facebookList}
-              keyExtractor={item => item.id}
-              horizontal={true}
-              showsHorizontalScrollIndicator={false}
-              renderItem={({item}) => {
-                return (
-                  <View style={styles.cardContainer}>
-                    <View style={styles.cardHeader}>
-                      <Image
-                        source={require('~/assets/images/pages/updsfacebook.jpeg')}
-                        style={styles.imagePerfil}
-                      />
-                      <Text style={{fontSize: 11, marginLeft: 5}}>
-                        UPDS - Sede Tarija
-                      </Text>
-                    </View>
-                    <Text numberOfLines={1} style={{fontSize: 10}}>
-                      Lorem ipsum dolor sit amet consectetur adipisicing elit
-                    </Text>
-
-                    <View>
-                      <YoutubeIframe
-                        height={85}
-                        play={false}
-                        videoId={'84WIaK3bl_s'}
-                        webViewProps={{
-                          mediaPlaybackRequiresUserAction: false,
-                          allowsInlineMediaPlayback: false,
-                          source: {
-                            baseUrl: '',
-                            html: `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/84WIaK3bl_s?autoplay=1&controls=2" frameborder="0" allowfullscreen></iframe>`,
-                          },
-                        }}
-                      />
-                    </View>
-
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                      }}>
-                      <View
-                        style={{
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          margin: 5,
-                        }}>
-                        <Icon
-                          name="thumb-up-off-alt"
-                          size={16}
-                          color="#4267B2"
-                        />
-                        <Text
-                          style={{
-                            fontSize: 10,
-                            fontWeight: 'bold',
-                            marginLeft: 5,
-                          }}>
-                          Me gusta
-                        </Text>
-                      </View>
-                      <View
-                        style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Icon name="share" size={16} color="#4267B2" />
-                        <Text
-                          style={{
-                            fontSize: 10,
-                            fontWeight: 'bold',
-                            marginLeft: 5,
-                          }}>
-                          Conpartir
-                        </Text>
-                      </View>
-                    </View>
-                  </View>
-                );
-              }}
-            /> */}
-
-            {/* 
-            <View renderToHardwareTextureAndroid className="flex-1">
-              <WebView
-                containerStyle={{ flex: 1, height: 500 }}
-                style={{ flex: 1, height: 500 }}
-                scalesPageToFit
-                source={{
-                  html: `
-                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@upds_tarija" data-unique-id="upds_tarija" data-embed-type="creator" style="max-width: 780px; min-width: 288px;" > <section> <a target="_blank" href="https://www.tiktok.com/@upds_tarija?refer=creator_embed">@upds_tarija</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
-                ` }}
-              />
-
-              <Texto>GOLA</Texto>
-            </View> */}
-
-            {/* <View renderToHardwareTextureAndroid className="flex-1">
-              <WebView
-                containerStyle={{ flex: 1, height: 500 }}
-                source={{
-                  html: `
-    <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@upds_tarija" data-unique-id="upds_tarija" data-embed-type="creator" > <section> <a target="_blank" href="https://www.tiktok.com/@upds_tarija?refer=creator_embed">@upds_tarija</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>
-    ` }}
-              />
-
-              <Texto>GOLA</Texto>
-            </View> */}
           </View>
         </View>
       </ScrollView>
@@ -384,7 +258,7 @@ interface Props {
 }
 
 const blurhash =
-  '|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[';
+  "|rF?hV%2WCj[ayj[a|j[az_NaeWBj@ayfRayfQfQM{M|azj[azf6fQfQfQIpWXofj[ayj[j[fQayWCoeoeaya}j[ayfQa{oLj?j[WVj[ayayj[fQoff7azayj[ayj[j[ayofayayayj[fQj[ayayj[ayfjj[j[ayjuayj[";
 
 const CardSocial: React.FC<Props> = ({
   description,
@@ -393,10 +267,8 @@ const CardSocial: React.FC<Props> = ({
   showImageReplace = false,
 }) => {
   const isDark = useThemeColor() === "dark";
-  const [isLoadingImage, setIsLoadingImage] = useState(true)
 
   const compartirPost = async () => {
-
     try {
       const shareOptions = {
         message: `
@@ -407,10 +279,9 @@ ${url}
 
       await Share.open(shareOptions);
     } catch (error) {
-      console.log('Error al compartir la imagen:', error);
+      console.log("Error al compartir la imagen:", error);
     }
-  }
-
+  };
 
   return (
     <TouchableOpacity
@@ -418,11 +289,8 @@ ${url}
       style={styles.cardContainer}
       className="bg-white dark:bg-secondary-dark flex-col justify-between  "
     >
-
       {showImageReplace ? (
-        <View
-          className="flex items-center justify-center p-2"
-        >
+        <View className="flex items-center justify-center p-2">
           {isDark ? (
             <Image
               source={require(`~/assets/images/app/logo-dark.png`)}
@@ -438,7 +306,6 @@ ${url}
           )}
         </View>
       ) : (
-
         <Image
           source={image}
           //   defaultSource={require(`~/assets/images/app/logo-dark.png`)}
@@ -447,9 +314,7 @@ ${url}
           //placeholder={require(`~/assets/images/app/logo-dark.png`)}
           placeholder={blurhash}
         />
-
       )}
-
 
       <View className="p-2 flex-1">
         <Texto
@@ -459,10 +324,8 @@ ${url}
           {description}
         </Texto>
 
-
         <TouchableOpacity onPress={compartirPost}>
-          <View
-            className=" rounded bg-primario flex-row items-center justify-center p-1">
+          <View className=" rounded bg-primario flex-row items-center justify-center p-1">
             <Texto className="text-center text-lg text-white mr-2">
               COMPARTIR
             </Texto>
@@ -470,28 +333,26 @@ ${url}
             <FontAwesome name="share-alt" size={20} color={"#FFF"} />
           </View>
         </TouchableOpacity>
-
-
       </View>
-
-
     </TouchableOpacity>
   );
 };
 
 const VerMasCard: React.FC<{ url: string }> = ({ url }) => {
   return (
-    <TouchableOpacity style={styles.cardContainer} onPress={() => openURL(url)}>
+    <TouchableOpacity className="bg-white dark:bg-primario-dark flex-col justify-between  " style={styles.cardContainer} onPress={() => openURL(url)}>
       <View className="flex-1 items-center justify-center">
         <View className="w-16 h-16 rounded-full bg-primario dark:bg-secondary-dark items-center justify-center">
           <FontAwesome name="plus" color={"#FFF"} size={30} />
         </View>
 
-        <Texto className="dark:text-white mt-4 text-xl" weight="Bold">Ver Mas</Texto>
+        <Texto className="dark:text-white mt-4 text-xl" weight="Bold">
+          Ver Mas
+        </Texto>
       </View>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -4,7 +4,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { useCarreraContext, useCarreras, useThemeColor } from '@/hooks';
 import { FontAwesome } from '@expo/vector-icons';
 import { COLORS } from '~/constants';
-import { Texto } from '@/components';
+import { Texto } from '@/ui';
 
 export const SelectCarrera = () => {
     const isDarkMode = useThemeColor() === "dark"

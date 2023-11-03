@@ -1,21 +1,22 @@
-import { View, Text, Platform, Dimensions, BackHandler } from 'react-native'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import { View, BackHandler, useWindowDimensions } from 'react-native'
+import { useEffect, useRef, useState } from 'react'
 import { WebView } from 'react-native-webview';
-import { Spinner, Texto } from '@/components';
-import { useAuthContext, useThemeColor } from '@/hooks';
 import { COLORS } from '~/constants';
 import CONSTANTS from 'expo-constants'
+import { useAuthContext, useThemeColor } from '@/hooks';
+import { Spinner, } from '@/components';
 
 const Biblioteca = () => {
-    const INJECTEDJAVASCRIPT = `const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=0.5, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); `
-
-    const isIos = Platform.OS == "ios"
+    const { width, height } = useWindowDimensions()
     const isDark = useThemeColor() === "dark"
-    const { width, height } = Dimensions.get("window")
+
     const [isLoadingSession, setIsLoadingSession] = useState(true)
     const [isLoadingWeb, setIsLoadingWeb] = useState(true)
+    const [canGoBack, setCanGoBack] = useState(false)
+
     const webViewRef = useRef<WebView>(null);
 
+    const INJECTEDJAVASCRIPT = `const meta = document.createElement('meta'); meta.setAttribute('content', 'width=device-width, initial-scale=0.5, maximum-scale=0.5, user-scalable=0'); meta.setAttribute('name', 'viewport'); document.getElementsByTagName('head')[0].appendChild(meta); `
 
     const { userAuth: { usuario: { emailOffice365 } } } = useAuthContext()
 
@@ -52,20 +53,14 @@ const Biblioteca = () => {
         setIsLoadingSession(false)
     }
 
+    const handleBackButtonPress = () => {
+        if (canGoBack) webViewRef?.current?.goBack()
+        return canGoBack
+    };
+
     useEffect(() => {
         getSessionElibro()
     }, [])
-
-
-
-
-    const handleBackButtonPress = () => {
-        if (webViewRef.current) {
-            webViewRef.current.goBack();
-            return true;
-        }
-        return false;
-    };
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener(
@@ -73,9 +68,9 @@ const Biblioteca = () => {
             handleBackButtonPress
         );
 
-
         return () => backHandler.remove();
-    }, []);
+    }, [canGoBack]);
+
     return (
         <View className='flex-1'>
             {!isLoadingSession && isLoadingWeb ? <View style={{ position: "absolute", height: height - CONSTANTS.statusBarHeight, width, zIndex: 999 }}>
@@ -88,17 +83,13 @@ const Biblioteca = () => {
                 <View renderToHardwareTextureAndroid className='flex-1'>
                     <WebView
                         ref={webViewRef}
-                        sharedCookiesEnabled
-                        scalesPageToFit={true}
-                        injectedJavaScript={INJECTEDJAVASCRIPT}
-                        scrollEnabled
-                        cacheEnabled
                         onLoad={(x) => {
-                            console.log("LOAD")
                             setIsLoadingWeb(false)
                         }}
-                        style={{ backgroundColor: isDark ? COLORS.dark.background : "#FFF" }}
+                        sharedCookiesEnabled
                         source={{ uri: urlELibro }}
+                        onMessage={() => { }}
+                        onNavigationStateChange={(x) => setCanGoBack(x.canGoBack)}
                     />
                 </View>}
         </View>

@@ -1,4 +1,4 @@
-import { View, Text, TouchableWithoutFeedback } from 'react-native'
+import { View } from 'react-native'
 import React, { PropsWithChildren } from 'react'
 import RNModal, { ModalProps } from 'react-native-modal'
 

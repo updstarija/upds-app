@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Pressable, View, useWindowDimensions } from 'react-native';
 import Modal from 'react-native-modal'
-import { Texto } from '../components';
 import { Image } from 'expo-image';
 
 import Carousel from 'react-native-reanimated-carousel';
@@ -10,6 +9,7 @@ import { AntDesign } from '@expo/vector-icons';
 import PaginationDot from 'react-native-animated-pagination-dot'
 import { COLORS } from '~/constants';
 import { Link } from 'expo-router';
+import { Texto } from '@/ui';
 
 const ModalPriorityNotices = () => {
     const [isVisible, setIsVisible] = useState(true)
@@ -27,6 +27,7 @@ const ModalPriorityNotices = () => {
         <>
             <Modal isVisible={isVisible}>
                 <View
+                    className="max-w-lg mx-auto w-full"
                 //className='bg-primario dark:bg-secondary-dark rounded-xl'
                 >
                     <View className=''>
@@ -34,8 +35,8 @@ const ModalPriorityNotices = () => {
                             style={
                                 {
                                     width: "100%",
-                                    justifyContent: "center"
-                                    ,
+                                    justifyContent: "center",
+                                    maxWidth: 500,
                                     alignItems: "center"
                                 }
                             }
@@ -50,7 +51,7 @@ const ModalPriorityNotices = () => {
                                 moveSize: width + 100,
                             }}
                             loop
-                            width={width - 40}
+                            width={width > 1000 ? 500 : width - 40}
                             height={height - 200}
                             autoPlay
                             data={data}
@@ -84,8 +85,6 @@ const ModalPriorityNotices = () => {
                     <View className='absolute top-[-10] z-10 right-[-20] '>
                         <AntDesign.Button name='closecircle' size={30} color={"#FFF"} backgroundColor={"transparent"} style={{ padding: 0 }} onPress={() => setIsVisible(false)} />
                     </View>
-
-
                     <View className='items-center'>
                         <PaginationDot
                             activeDotColor={COLORS.light.background}

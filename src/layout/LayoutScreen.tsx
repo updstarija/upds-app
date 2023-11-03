@@ -12,7 +12,7 @@ export const LayoutScreen: React.FC<Props> = ({ children, title }) => {
                 <Text className="text-2xl text-primario dark:text-white font-bold uppercase">{title}</Text>
             </View> */}
 
-      <View className="flex-1">{children}</View>
+      <View className="flex-1 max-w-3xl mx-auto w-full">{children}</View>
     </SafeAreaView>
   );
 };

@@ -1,6 +1,6 @@
 import { View, Text, Platform, ScrollView, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { Texto } from '../../../components'
+import { Texto } from '@/ui';
 import { Picker } from '@react-native-picker/picker';
 import { LineChart, PieChart } from 'react-native-gifted-charts'
 import { useCarreraContext, useProgreso, usePromedio, useThemeColor } from '@/hooks'
@@ -10,7 +10,7 @@ import { COLORS } from '~/constants';
 import { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Counter from '@/components/Counter';
 import CircularProgress from 'react-native-circular-progress-indicator'
-import Spinner from '@/components/ui/Spinner';
+import Spinner from '@/components/Spinner';
 
 const Stats = () => {
     const isIos = Platform.OS === "ios"

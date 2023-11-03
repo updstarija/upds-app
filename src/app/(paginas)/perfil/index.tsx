@@ -1,6 +1,6 @@
 import { ScrollView, View } from 'react-native';
 import { useAuthContext, useThemeColor } from '@/hooks';
-import { Texto } from '../../../components';
+import { Texto } from '@/ui';;
 import { FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { formatCumpleanios, nombreCompleto } from '@/helpers';
 
@@ -28,7 +28,7 @@ const Perfil = () => {
                 </View>
 
 
-                <View className='mt-10 bg-white dark:bg-primario-dark flex-1 rounded-3xl p-4'>
+                <View className='mt-10 bg-white dark:bg-primario-dark flex-1 rounded-3xl p-4 max-w-2xl mx-auto w-full'>
                     <View className='mt-5'>
                         <View>
                             <Texto className='text-center text-black dark:text-white text-xl' weight='Bold'>INFORMACION PERSONAL</Texto>

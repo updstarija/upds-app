@@ -1,8 +1,8 @@
-import { useState, useMemo, useCallback, useRef, memo, Children } from 'react';
-import { ActivityIndicator, Touchable, TouchableHighlight, TouchableOpacity, TouchableOpacityProps, View, useColorScheme } from 'react-native';
+import { useState, useMemo, useCallback, useRef, memo } from 'react';
+import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
 
 import { useThemeColor } from '@/hooks';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, BottomSheetView, useBottomSheetDynamicSnapPoints } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView, useBottomSheetDynamicSnapPoints } from '@gorhom/bottom-sheet';
 
 
 interface Props {
@@ -73,11 +73,12 @@ export const BottomSheet: React.FC<Props> = memo(({ content, children, snapPoint
                 backdropComponent={renderBackdrop}
                 handleIndicatorStyle={{ backgroundColor: '#0D1F46' }}
                 backgroundStyle={{ backgroundColor: isDarkMode ? '#040e22' : '#fff' }}>
-                <BottomSheetView
+                <BottomSheetScrollView
+                    showsVerticalScrollIndicator={false}
                 //onLayout={handleContentLayout}
                 >
                     {children}
-                </BottomSheetView>
+                </BottomSheetScrollView>
 
             </BottomSheetModal>
 

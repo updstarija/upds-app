@@ -7,17 +7,16 @@ import {
   InputToolbar,
   Composer
 } from "react-native-gifted-chat";
-import Icon from "@expo/vector-icons/MaterialCommunityIcons";
-import { useAuthContext, useChat, useThemeColor } from "@/hooks";
-import messagin, { firebase } from "@react-native-firebase/messaging";
-import { COLORS } from "~/constants";
-import { Button, Spinner, TextField, Texto } from "../../components";
-import { FontAwesome } from "@expo/vector-icons";
-import Modal from 'react-native-modal'
 import { useForm } from "react-hook-form";
-import { nombreCompleto } from '../../helpers/nombreCompleto';
-import { router } from "expo-router";
+import Modal from 'react-native-modal'
+import { firebase } from "@react-native-firebase/messaging";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { router } from "expo-router";
+import { COLORS } from "~/constants";
+import { useAuthContext, useChat, useThemeColor } from "@/hooks";
+import { Button, Spinner, TextField } from "@/components";
+import { Texto } from "@/ui";
 
 const ChatScreen = () => {
   {
@@ -99,7 +98,7 @@ const ChatScreen = () => {
       return (
         <Send {...props} containerStyle={{ borderWidth: 0 }}>
           <View>
-            <Icon
+            <MaterialCommunityIcons
               name="send-circle"
               size={35}
               color={isDarkMode ? "#FFF" : COLORS.light.background}

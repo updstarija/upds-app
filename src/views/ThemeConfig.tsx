@@ -1,13 +1,12 @@
-import { useEffect, useRef, useState } from 'react'
-import { View, ActivityIndicator, Platform } from 'react-native'
+import { useEffect, useRef } from 'react'
+import { View, Platform } from 'react-native'
 import PagerView from 'react-native-pager-view'
-import { Feather } from '@expo/vector-icons'
-import { Texto } from '../components/ui';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Feather } from '@expo/vector-icons'
 import { useColorScheme as useColorWind } from 'nativewind'
-import { COLORS } from '~/constants';
 import { useThemeColor, useThemeContext } from '@/hooks';
-import { ColorSchemeSystem } from 'nativewind/dist/style-sheet/color-scheme';
+import { COLORS } from '~/constants';
+import { Texto } from '../ui';
 
 const typeThemes = {
     0: "light",
@@ -23,11 +22,8 @@ enum ThemeEnum {
 export const ThemeConfig = () => {
     const { themeSelected, changeTheme } = useThemeContext()
 
-    const { colorScheme, setColorScheme } = useColorWind()
-    const isDark = useThemeColor() == "dark"
+    const { colorScheme } = useColorWind()
     const isDarkMode = colorScheme === "dark"
-    const isIos = Platform.OS == "ios"
-
 
     const pagerViewRef = useRef<PagerView>(null)
 

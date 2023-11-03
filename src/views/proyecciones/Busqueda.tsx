@@ -11,7 +11,7 @@ import { RequisitoMateria } from './RequisitoMateria'
 import { MateriaProyeccion } from '@/types'
 import { etiquetas } from '@/data'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import Spinner from '@/components/ui/Spinner'
+import Spinner from '@/components/Spinner'
 
 type IconProp = keyof typeof FontAwesome.glyphMap;
 

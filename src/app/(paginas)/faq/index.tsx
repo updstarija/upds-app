@@ -10,13 +10,14 @@ import {
 import RenderHTML from 'react-native-render-html';
 import { LayoutScreen } from '@/layout/LayoutScreen';
 import { COLORS } from '~/constants';
-import { Spinner, Texto } from '../../../components';
+import { Spinner } from '@/components';
 import { useFaq, useThemeColor } from '@/hooks';
 import { FlashList } from '@shopify/flash-list';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { IFaq } from '@/types';
 import { FontAwesome } from '@expo/vector-icons';
 import { categorias, categoriasFaq } from '@/data';
+import { Texto } from '@/ui';
 
 
 if (Platform.OS === 'android') {

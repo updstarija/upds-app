@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
-import { CommonActions, useNavigation } from '@react-navigation/native';
-import { Image, TouchableOpacity, View, FlatList, Dimensions, StyleSheet, ScrollView } from 'react-native'
-import { SafeAreaView, Text } from 'react-native'
+import { useNavigation } from '@react-navigation/native';
+import { Image, TouchableOpacity, View, FlatList, Dimensions, ScrollView } from 'react-native'
+import { Text } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';

@@ -1,11 +1,10 @@
-import { View, Text } from 'react-native'
+import { View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { ScrollView } from 'react-native-gesture-handler'
 import { requestPermissionsAsync } from "expo-notifications"
-import { request } from 'react-native-permissions'
 import Checkbox from 'expo-checkbox'
 import { COLORS } from '~/constants'
-import { Texto } from '../../../components'
+import { Texto } from '@/ui';
 import { FontAwesome } from '@expo/vector-icons'
 import { useThemeColor } from '@/hooks'
 import messagin from '@react-native-firebase/messaging';

@@ -1,9 +1,10 @@
-import { View, Text, BackHandler, useColorScheme, Dimensions } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
-import { WebView, WebViewNavigation } from "react-native-webview";
-import Spinner from "@/components/ui/Spinner";
-import { Texto } from "../../../components";
+import { useEffect, useRef, useState } from "react";
+import { View, BackHandler, useWindowDimensions } from "react-native";
+import { WebView, } from "react-native-webview";
 import { Redirect, useLocalSearchParams } from "expo-router";
+import CONSTANTS from 'expo-constants'
+import { Spinner } from "@/components";
+import { Texto } from "@/ui";
 
 const MoodleCourse = () => {
     const params = useLocalSearchParams<any>()
@@ -11,55 +12,52 @@ const MoodleCourse = () => {
     if (!params.id) return <Redirect href={"/moodle"} />
     const { id } = params
 
-    const webViewRef = useRef<WebView>(null);
+    const { width, height } = useWindowDimensions()
     const [isLoading, setIsLoading] = useState(true)
+    const [canGoBack, setCanGoBack] = useState(false)
 
-    const color = useColorScheme();
-
-    const handleNavigationStateChange = (newNavState: WebViewNavigation) => {
-        // Verifica si el WebView puede retroceder o no
-        const canGoBack = newNavState.canGoBack;
-
-        // Actualiza el estado de retroceso o realiza otras acciones según sea necesario
-        // ...
-    };
+    const webViewRef = useRef<WebView>(null);
 
     const handleBackButtonPress = () => {
-        if (webViewRef.current) {
-            webViewRef.current.goBack();
-            return true; // Indica que el evento ha sido manejado
-        }
-        return false; // Permite el comportamiento predeterminado de retroceso de la aplicación
+        if (canGoBack) webViewRef?.current?.goBack()
+        return canGoBack
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         const backHandler = BackHandler.addEventListener(
             "hardwareBackPress",
             handleBackButtonPress
         );
 
-
         return () => backHandler.remove();
-    }, []);
-
-    const height = Dimensions.get("window").height
+    }, [canGoBack]);
 
     return (
         <>
-            <WebView
-                ref={webViewRef}
-                onLoad={(x) => {
-                    setIsLoading(false)
-                }}
-                className="bg-primario-dark"
-                sharedCookiesEnabled
-                source={{ uri: `https://portal.upds.edu.bo/ev-docente/#/ev-est/evaluacion/${id}` }}
-                onNavigationStateChange={handleNavigationStateChange}
-            />
+            <View className='flex-1 bg-white dark:bg-primario-dark'>
+                {isLoading ? <View style={{ position: "absolute", height: height - CONSTANTS.statusBarHeight, width, zIndex: 999 }}>
+                    <Spinner />
+                </View> : null}
 
-            {isLoading && <View style={{ position: "absolute", top: "50%", left: "50%" }}>
-                <Spinner classNameContainer="" />
-            </View>}
+                <View renderToHardwareTextureAndroid className='flex-1'>
+                    <WebView
+                        ref={webViewRef}
+                        onLoad={(x) => {
+                            setIsLoading(false)
+                        }}
+                        sharedCookiesEnabled
+                        source={{ uri: `https://portal.upds.edu.bo/ev-docente/#/ev-est/evaluacion/${id}` }}
+                        renderError={(e) => (
+                            <View>
+                                <Texto>Oh. Ha ocurrido un problema :(</Texto>
+                                <Texto>Si el problema persiste contactanos</Texto>
+                            </View>
+                        )}
+                        onMessage={() => { }}
+                        onNavigationStateChange={(x) => setCanGoBack(x.canGoBack)}
+                    />
+                </View>
+            </View>
         </>
     );
 };

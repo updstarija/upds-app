@@ -1,19 +1,12 @@
 import {
     Pressable,
     StyleSheet,
-    Text,
     View,
-    useColorScheme,
 } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
-
-import { useNavigation } from "@react-navigation/native";
-import { useEffect } from "react";
-import { LayoutScreen } from "@/layout/LayoutScreen";
 import { Link } from "expo-router";
-import { useThemeColor } from "@/hooks";
-import { Texto } from "../../components";
-
+import { MaterialIcons } from "@expo/vector-icons";
+import { LayoutScreen } from "@/layout/LayoutScreen";
+import { Texto } from "@/ui";
 
 const Ayuda = () => {
     return (

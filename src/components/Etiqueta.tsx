@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { Texto } from './ui';
+import { Texto } from '../ui';
 
 interface Props {
   color: string;

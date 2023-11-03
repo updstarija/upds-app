@@ -2,9 +2,7 @@ import { View, Text, ScrollView } from 'react-native';
 import { DetallePlanSemestre } from '@/views/historico-materias';
 import { useCarreraContext, useSemestres } from '@/hooks';
 import { useState } from 'react';
-import { FlashList } from '@shopify/flash-list';
-import { Texto } from '@/components';
-import Spinner from '@/components/ui/Spinner';
+import Spinner from '@/components/Spinner';
 import { SelectCarrera } from '@/views/SelectCarrera';
 
 const HistoricoMaterias = () => {

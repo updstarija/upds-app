@@ -1,9 +1,5 @@
-import { View, Text } from 'react-native'
-import React, { useState } from 'react'
-import { Calendar, LocaleConfig } from 'react-native-calendars';
-import { useThemeColor } from '@/hooks';
-import { COLORS } from '~/constants';
-import { ExpandableCalendarScreen } from '@/views/Calendario';
+import { View } from 'react-native'
+import { LocaleConfig } from 'react-native-calendars';
 import CalendarioAgenda from '@/views/CalendarioAgenda';
 
 
@@ -32,8 +28,6 @@ LocaleConfig.defaultLocale = 'es';
 
 
 const CalendarioAcademico = () => {
-    const [selected, setSelected] = useState('');
-    const isDarkMode = useThemeColor() === "dark"
     return (
         <View className='bg-white dark:bg-primario-dark flex-1'>
             {/* <ExpandableCalendarScreen /> */}

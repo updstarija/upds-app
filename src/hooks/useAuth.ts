@@ -15,12 +15,14 @@ export const useAuth = () => {
             const data = fetch("https://tarija.upds.edu.bo/ApiProyecciones/api/auth/login", {
                 body: JSON.stringify(dataUser),
                 method: "POST"
-            }).then(() => {
-                console.log('--------------------------------------------------------')
-                console.log('SE COMPLETO EL FETCH')
-                console.log('--------------------------------------------------------')
+            }).then((x) => x.json())
+                .then(x => {
+                    console.log((x));
+                    console.log('--------------------------------------------------------')
+                    console.log('SE COMPLETO EL FETCH')
+                    console.log('--------------------------------------------------------')
 
-            })
+                })
         } catch {
             console.error('HUBO UN ERROR')
         }

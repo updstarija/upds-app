@@ -1,11 +1,10 @@
 import { View } from 'react-native'
 import { useCarreraContext, usePlanEstudio } from '@/hooks';
-import { Spinner, Texto } from '../../components/ui';
-import { Button } from '@/components';
+import { Button, Spinner } from '@/components';
 import { ISemestre } from '@/types';
-import { DetalleMateria } from './DetalleMateria';
 import { FontAwesome } from '@expo/vector-icons';
 import DetalleMateriaV2 from './DetalleMateriaV2';
+import { Texto } from '@/ui';
 
 interface Props {
   semestre: ISemestre;
@@ -35,7 +34,7 @@ export const DetallePlanSemestre: React.FC<Props> = ({ semestre, active, onChang
     return (
       <View>
         {data.data.data.map(plan => (
-          <DetalleMateriaV2 materia={plan} key={plan.id} />
+          <DetalleMateriaV2 materia={plan} key={plan.id} view='requisitos' />
         ))}
       </View>
     );

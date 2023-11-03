@@ -1,9 +1,6 @@
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Image, Pressable, Linking } from 'react-native'
-import React from 'react'
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { View, StyleSheet, Pressable } from 'react-native'
 import { Link } from 'expo-router';
 import { openBrowserAsync } from 'expo-web-browser'
-import { COLORS } from '~/constants';
 import { useThemeColor } from '@/hooks';
 import { CardCircle } from '@/components';
 
@@ -38,6 +35,7 @@ const Servicios = () => {
 
             {data.map(item => (
                 <Link
+                    key={item.id}
                     onPress={async (e) => {
                         if (item.link) {
                             e.preventDefault();
@@ -47,7 +45,8 @@ const Servicios = () => {
                     }}
 
                     //@ts-ignore
-                    href={item.to} asChild>
+                    href={item.to}
+                    asChild>
                     <Pressable >
                         <CardCircle icon={item.icon} title={item.description} />
                     </Pressable>

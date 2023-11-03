@@ -1,20 +1,19 @@
-import { View, Text, BackHandler, Dimensions } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { View, BackHandler, Alert, useWindowDimensions } from 'react-native'
 import WebView from 'react-native-webview'
-import { Spinner } from '@/components';
 import CONSTANTS from 'expo-constants'
+import { Spinner } from "@/components";
 
 const Facturacion = () => {
-    const webViewRef = useRef<WebView>(null);
+    const { width, height } = useWindowDimensions()
     const [isLoading, setIsLoading] = useState(true)
-    const { width, height } = Dimensions.get("window")
+    const [canGoBack, setCanGoBack] = useState(false)
+
+    const webViewRef = useRef<WebView>(null);
 
     const handleBackButtonPress = () => {
-        if (webViewRef.current) {
-            webViewRef.current.goBack();
-            return true;
-        }
-        return false;
+        if (canGoBack) webViewRef?.current?.goBack()
+        return canGoBack
     };
 
     useEffect(() => {
@@ -23,9 +22,8 @@ const Facturacion = () => {
             handleBackButtonPress
         );
 
-
         return () => backHandler.remove();
-    }, []);
+    }, [canGoBack]);
 
     const deletePaddingScript = `
         const sleep = (ms = 1500) => {
@@ -51,6 +49,9 @@ const Facturacion = () => {
         })()
     `
 
+    useEffect(() => {
+        Alert.alert("Datos de Facturacion", "Edita los datos de facturacion")
+    }, [])
 
 
     return (
@@ -62,14 +63,14 @@ const Facturacion = () => {
             <View renderToHardwareTextureAndroid className='flex-1'>
                 <WebView
                     ref={webViewRef}
-                    forceDarkOn
-                    source={{ uri: "https://portal.upds.edu.bo/ClienteFactura/MisDatos" }}
-                    onLoad={() => setIsLoading(false)}
-                    sharedCookiesEnabled
-                    injectedJavaScript={deletePaddingScript}
-                    onMessage={(x) => {
-                        console.log(x)
+                    onLoad={(x) => {
+                        setIsLoading(false)
                     }}
+                    injectedJavaScript={deletePaddingScript}
+                    sharedCookiesEnabled
+                    source={{ uri: "https://portal.upds.edu.bo/ClienteFactura/MisDatos" }}
+                    onMessage={() => { }}
+                    onNavigationStateChange={(x) => setCanGoBack(x.canGoBack)}
                 />
             </View>
         </>

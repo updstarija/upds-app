@@ -20,3 +20,4 @@ export * from './useRegistroHistorico';
 export * from './useEstadisticasPerfil';
 export * from './useCalendario';
 export * from './useFaq';
+export * from './useNotification';

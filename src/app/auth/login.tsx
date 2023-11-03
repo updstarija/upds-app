@@ -17,7 +17,7 @@ import { useAuth, useAuthContext, useThemeColor } from '@/hooks';
 import { IFormLogin } from '@/types';
 import { COLORS } from '~/constants';
 import { Button, TextField } from '@/components';
-import { Texto } from '../../components/ui';
+import { Texto } from '../../ui';
 import { useState } from 'react';
 
 
@@ -313,7 +313,7 @@ const Login = () => {
             <View></View>
           )}
 
-          <TouchableOpacity onPress={omitirLogin}>
+          <TouchableOpacity onPress={omitirLogin} className='p-4 pr-0'>
             <Texto className="text-white opacity-80">Omitir por ahora</Texto>
           </TouchableOpacity>
         </View>
@@ -331,13 +331,13 @@ const Login = () => {
             />
           )}
 
-          <Texto className="text-xl text-white" weight="Bold">
+          <Texto className="text-xl text-white lg:text-3xl" weight="Bold">
             Inicia sesion con tu cuenta
           </Texto>
         </View>
 
         <View
-          className="bg-white dark:bg-secondary-dark mt-5 flex-1 px-8 pt-8"
+          className="bg-white dark:bg-secondary-dark mt-5 flex-1 px-8 pt-8 max-w-2xl mx-auto w-full"
           style={{ borderTopLeftRadius: 50, borderTopRightRadius: 50 }}>
 
           <TextField

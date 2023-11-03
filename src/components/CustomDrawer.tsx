@@ -16,7 +16,7 @@ import {
 import { ThemeConfig } from "@/views";
 import { useAuthContext, useThemeColor } from "@/hooks";
 import { router } from "expo-router";
-import { Texto } from "./ui";
+import { Texto } from "../ui";
 import { menuFacultades } from "@/data";
 
 const CustomDrawer = (props: DrawerContentComponentProps) => {

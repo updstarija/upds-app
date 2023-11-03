@@ -1,29 +1,32 @@
 import { useState, useMemo, useCallback, useRef, memo, useEffect } from 'react';
 import { View, Dimensions } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
-import { Texto, Etiqueta, Spinner, BottomSheet, Button } from '../../components';
-import { IRegistroHistorico } from '@/types';
+import { IRegistroHistorico, Turno } from '@/types';
 import { useDetalleGrupoMateria, useThemeColor } from '@/hooks';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { etiquetas } from '@/data';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { formatFechaDMY } from '@/helpers';
 import { differenceInMonths } from 'date-fns';
+import { Button, Etiqueta, Spinner } from '../../components';
 import { RequisitoMateria } from '../proyecciones';
+import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { BottomSheet, CustomBottomSheetModal, Texto } from '@/ui';
 
+const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
 interface Props {
   materia: IRegistroHistorico;
+  view: "detalle-materia" | "requisitos"
 }
 
-export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
+export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan, view }) => {
   const isDarkMode = useThemeColor() === 'dark';
   const width = Dimensions.get("window").width
 
-  //const bottomSheetModalRef = useRef<BottomSheetModal>(null);
-  const bottomSheetModalRef = useRef<any>(null);
   const [visibleModal, setVisibleModal] = useState(false);
   const snapPoints = useMemo(() => {
     if (plan.estado.id == 0) return ["40%"]
@@ -38,29 +41,6 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
     enabled: visibleModal,
   });
 
-  const handlePresentModalPress = useCallback(() => {
-    bottomSheetModalRef.current?.present();
-  }, []);
-
-  const handleSheetChanges = useCallback((index: number) => {
-    if (index >= 0) setVisibleModal(true);
-    else setVisibleModal(false);
-  }, []);
-
-  const renderBackdrop = useCallback(
-    (props: any) => (
-      <>
-
-        <BottomSheetBackdrop
-          {...props}
-          disappearsOnIndex={-1}
-          appearsOnIndex={2}
-        />
-
-      </>
-    ),
-    [],
-  );
 
   const customDataPoint = () => {
     return (
@@ -190,20 +170,20 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
 
   const renderContentSheetModal = () => {
     if (data.isLoading) return <>
-      <View className="p-28">
+      <View className="h-96">
         <Spinner />
       </View>
     </>
 
     if (data.isError) return <>
       <View className="p-28">
-        <Texto>HUBO UN ERROR</Texto>
+        <Texto className='text-white'>HUBO UN ERROR</Texto>
       </View>
     </>
 
 
-    return <BottomSheetScrollView showsVerticalScrollIndicator={false}>
-      <View className="flex gap-y-4 p-5 flex-1">
+    return <View>
+      <View className="flex gap-y-4 flex-1">
         <Texto
           className="text-center text-xl text-black dark:text-white"
           weight="Bold">
@@ -466,7 +446,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
           </View>
         }
       </View>
-    </BottomSheetScrollView>
+    </View>
   }
 
   const leftContent = () => {
@@ -566,13 +546,18 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
     )
   }
 
-  useEffect(() => {
+  /* useEffect(() => {
+
     swipeRef.current?.openRight()
-  }, [swipeRef])
+  }, [swipeRef]) */
+
+
+
+
 
   return (
     <View className='bg-white dark:bg-secondary-dark'>
-      <Swipeable
+      {/*  <Swipeable
         ref={swipeRef}
         enabled={plan.estado.id >= 0 && plan.estado.id != 6}
         renderRightActions={rightContent}
@@ -601,12 +586,12 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
           </View>
         </>}
 
-      </Swipeable>
+      </Swipeable> */}
 
 
 
 
-      <BottomSheetModal
+      {/*  <BottomSheetModal
         ref={bottomSheetModalRef}
         index={0}
         snapPoints={snapPoints}
@@ -619,7 +604,89 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan }) => {
             {renderContentSheetModal()}
           </>
         )}
-      </BottomSheetModal>
+      </BottomSheetModal> */}
+
+      {
+        view === "detalle-materia"
+          ?
+          <CustomBottomSheetModal
+            onPressButton={() => {
+
+              setVisibleModal(true)
+            }}
+            content={
+              <>
+                <Swipeable
+                  ref={swipeRef}
+                  enabled={plan.estado.id >= 0 && plan.estado.id != 6}
+                  renderRightActions={rightContent}
+                  renderLeftActions={leftContent}>
+                  <View style={{ position: "relative", overflow: "hidden" }}>
+                    <View
+                      className={`px-3 py-4 flex-row justify-between items-center bg-white dark:bg-secondary-dark
+          `}
+
+                    >
+                      <Texto className="text-center text-black dark:text-white">{plan.nombre}</Texto>
+                      <Texto className="text-center text-black dark:text-white">
+                        {plan.estado.id < 0 ? "S/C" : plan.nota}
+                      </Texto>
+                    </View>
+                  </View>
+
+
+                  {isValidMateria && <>
+                    <View style={{ borderBottomColor: etiquetas[plan.estado.id].color, borderRightWidth: 25, borderBottomWidth: 25, width: 0, height: 0, backgroundColor: "transparent", borderStyle: "solid", borderLeftWidth: 0, borderLeftColor: "transparent", borderRightColor: "transparent", position: "absolute", top: 0, right: 0, transform: [{ rotate: "180deg" }] }} />
+
+                    <View style={{ position: "absolute", top: 1, right: 1, zIndex: 999 }}>
+                      <FontAwesome name={etiquetas[plan.estado.id].icon} color={"#FFF"} />
+                    </View>
+                  </>}
+
+                </Swipeable>
+              </>
+            }
+            touchableProps={{ activeOpacity: 0.8 }}
+            snapPointsProp={plan.estado.id == 0 ? [] : ['35%', '60%', '90%']}>
+            {renderContentSheetModal()}
+          </CustomBottomSheetModal>
+          :
+          <BottomSheet content={<>
+            <View style={{ position: "relative", overflow: "hidden" }}>
+              <View
+                className={`px-3 py-4 flex-row justify-between items-center bg-white dark:bg-secondary-dark
+          `}
+              >
+                <Texto className="text-center text-black dark:text-white">{plan.nombre}</Texto>
+                <Texto className="text-center text-black dark:text-white">
+                  {plan.estado.id < 0 ? "S/C" : plan.nota}
+                </Texto>
+              </View>
+            </View>
+
+
+            {isValidMateria && <>
+              <View style={{ borderBottomColor: etiquetas[plan.estado.id].color, borderRightWidth: 25, borderBottomWidth: 25, width: 0, height: 0, backgroundColor: "transparent", borderStyle: "solid", borderLeftWidth: 0, borderLeftColor: "transparent", borderRightColor: "transparent", position: "absolute", top: 0, right: 0, transform: [{ rotate: "180deg" }] }} />
+
+              <View style={{ position: "absolute", top: 1, right: 1, zIndex: 999 }}>
+                <FontAwesome name={etiquetas[plan.estado.id].icon} color={"#FFF"} />
+              </View>
+            </>}
+          </>} touchableProps={{ activeOpacity: 0.8 }} snapPointsProp={["40%"]}>
+            <RequisitoMateria
+              //@ts-ignore
+              materia={{
+                carrera: "awd",
+                estado: plan.estado,
+                id: plan.id,
+                materia: plan.nombre,
+                materiaAdmId: plan.id,
+                modulo: "",
+                semestre: "4",
+
+              }} />
+          </BottomSheet>
+      }
 
       {/*  <BottomSheet content={<>
         <View style={{ position: "relative", overflow: "hidden" }}>

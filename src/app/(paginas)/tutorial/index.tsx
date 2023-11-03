@@ -1,4 +1,3 @@
-import { Texto } from '@/components';
 import { LayoutScreen } from '@/layout/LayoutScreen';
 import React, { useState } from 'react';
 import {

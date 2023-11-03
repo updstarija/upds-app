@@ -1,8 +1,7 @@
 import { IResponseMateriaProyecion } from "@/types";
 import { updsApi } from "./config";
 
-export const getMateriasProyeccion = async (carrera: number, semestre: number, modulo: number,buscarMateria:number=0) => {
-    //FIX URL -> /materia/proyeccion
+export const getMateriasProyeccion = async (carrera: number, semestre: number, modulo: number, buscarMateria: number = 0) => {
     const { data } = await updsApi<IResponseMateriaProyecion>("/materia/proyeccion", {
         params: {
             carreraId: carrera,
@@ -11,7 +10,6 @@ export const getMateriasProyeccion = async (carrera: number, semestre: number, m
             buscarMateria
         }
     });
-
     return data
 }
 
@@ -23,7 +21,6 @@ interface Params {
 export const addMateriaProyeccion = async (body: Params) => {
     try {
         const { data } = await updsApi.post("/proyeccion/materia", body);
-
         return data
     }
     catch (error: any) {

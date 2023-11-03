@@ -1,5 +1,5 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message'
 
 export const updsApi = axios.create({
@@ -19,18 +19,14 @@ updsApi.interceptors.request.use(
             return null
         }
 
-        console.log('BUSCANDO TOKEN')
         const token = await getToken()
-        console.log('SE ENCONTRO EL TOKEN')
 
         config.headers["Authorization"] = `Bearer ${token}`
-        // config.headers["Authorization"] = `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiYXNlV2ViQXBpU3ViamVjdCIsImp0aSI6IjUxMTNhOTQ5LTk0YmUtNDJlOC1iNTQxLTNiNGNmN2VjYjQzNyIsImlhdCI6IjEwLzA3LzIwMjMgNDo1Mzo1MyIsIklkIjoiMTIwOTcyIiwiRG9jdW1lbnRvSWRlbnRpZGFkIjoiMTI3NTU2MTEiLCJleHAiOjE2OTE2NDMyMzMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcwMDgvIiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzAwOC8ifQ.7ymtzSW1tScHmpYsucydYffCnPxAO9QPjIghGL87d6U`
         return config
     },
     //     if (token) config.headers["Authorization"] = `Bearer ${token}`
     (error) => {
-
-        console.log(error.response, 'ERROR REQUEST')
+        console.log('ERROR EN REQUEST', error.response)
         Toast.show({
             type: "error",
             text1: 'Error',
@@ -42,12 +38,9 @@ updsApi.interceptors.request.use(
 )
 
 updsApi.interceptors.response.use(
-    (config) => {
-        console.log('intercepto response')
-        return config
-    },
+    (config) => config,
     (error) => {
-        console.log(error.response, "ERROR RESPONSE")
+        console.log('ERROR EN RESPONSE', error.response)
 
         if (error.response.status === 401) {
             Toast.show({

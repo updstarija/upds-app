@@ -1,18 +1,19 @@
-import { BackHandler, View } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { BackHandler, View, useWindowDimensions } from "react-native";
 import WebView from "react-native-webview";
-import Spinner from "@/components/ui/Spinner";
+import CONSTANTS from 'expo-constants'
+import { Spinner } from "@/components";
 
 const Updsnet = () => {
-  const webViewRef = useRef<WebView>(null);
+  const { width, height } = useWindowDimensions()
   const [isLoading, setIsLoading] = useState(true)
+  const [canGoBack, setCanGoBack] = useState(false)
+
+  const webViewRef = useRef<WebView>(null);
 
   const handleBackButtonPress = () => {
-    if (webViewRef.current) {
-      webViewRef.current.goBack();
-      return true;
-    }
-    return false;
+    if (canGoBack) webViewRef?.current?.goBack()
+    return canGoBack
   };
 
   useEffect(() => {
@@ -21,27 +22,30 @@ const Updsnet = () => {
       handleBackButtonPress
     );
 
-
     return () => backHandler.remove();
-  }, []);
+  }, [canGoBack]);
 
   return (
     <>
-      <WebView
-        ref={webViewRef}
-        onLoad={(x) => {
-          setIsLoading(false)
-        }}
-        sharedCookiesEnabled
-        //source={{ uri: "https://portal.upds.edu.bo/ev-docente/#/ev-est/evaluacion/32255" }}
-        javaScriptEnabled
-        source={{ uri: "https://portal.upds.edu.bo/updsnet/5.8/" }}
-        renderError={(s) => <>{ }</>}
-      />
 
-      {isLoading && <View style={{ position: "absolute", top: "50%", left: "50%" }}>
-        <Spinner classNameContainer="" />
-      </View>}
+      <View className='flex-1'>
+        {isLoading ? <View style={{ position: "absolute", height: height - CONSTANTS.statusBarHeight, width, zIndex: 999 }}>
+          <Spinner />
+        </View> : null}
+
+        <View renderToHardwareTextureAndroid className='flex-1'>
+          <WebView
+            ref={webViewRef}
+            onLoad={(x) => {
+              setIsLoading(false)
+            }}
+            sharedCookiesEnabled
+            source={{ uri: "https://portal.upds.edu.bo/updsnet/5.8/" }}
+            onMessage={() => { }}
+            onNavigationStateChange={(x) => setCanGoBack(x.canGoBack)}
+          />
+        </View>
+      </View>
     </>
   );
 };

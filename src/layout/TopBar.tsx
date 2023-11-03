@@ -1,10 +1,11 @@
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { DrawerToggleButton } from '@react-navigation/drawer';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
-import { Texto } from '../components';
+
 import { useAuthContext } from '@/hooks';
 import * as Animatable from "react-native-animatable"
+import { Texto } from '@/ui';
 
 export const TopBar = () => {
   const { status } = useAuthContext()
@@ -19,7 +20,7 @@ export const TopBar = () => {
   };
 
   return (
-    <View className="bg-white dark:bg-primario-dark">
+    <View className="bg-white dark:bg-primario-dark ">
       <View className="bg-primario dark:bg-secondary-dark  rounded-b-[50px]  ">
         <View className="flex-row justify-between px-1 mt-3 items-center">
           <View >
@@ -27,9 +28,9 @@ export const TopBar = () => {
           </View>
 
           <View className='flex-row'>
-            <Link className='mr-4' href='/notificacion'>
-              <View className='relative'>
-                <MaterialIcons name="notifications" color={'#FFF'} size={20} />
+            <Link className='mr-4' href='/notificacion' >
+              <View className=''>
+                <MaterialIcons name="notifications" color={'#FFF'} size={23} />
                 <Animatable.View animation={{
                   from: {
                     transform: [
@@ -47,6 +48,7 @@ export const TopBar = () => {
 
               </View>
             </Link>
+
 
             {status === "autenticado" && <Link className='mr-4' href='/perfil'>
               <FontAwesome name='user-circle-o' size={20} color="#fff" />

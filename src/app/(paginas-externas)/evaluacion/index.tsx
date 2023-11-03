@@ -1,7 +1,7 @@
 import { View, Text, BackHandler, useColorScheme, Dimensions } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { WebView, WebViewNavigation } from "react-native-webview";
-import Spinner from "@/components/ui/Spinner";
+import Spinner from "@/components/Spinner";
 import { Texto } from "../../../components";
 
 const Evaluacion = () => {

@@ -1,6 +1,6 @@
 import { View, Text, useWindowDimensions } from 'react-native'
 import React from 'react'
-import { Texto } from '../../../components'
+import { Texto } from '@/ui';
 import { ScrollView } from 'react-native-gesture-handler'
 import RenderHTML from 'react-native-render-html'
 import { useThemeColor } from '@/hooks'

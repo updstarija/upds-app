@@ -1,6 +1,7 @@
-import { View, Text } from 'react-native'
 import React from 'react'
-import { Texto } from '../../components'
+import { View } from 'react-native'
+import { Texto } from '@/ui'
+
 
 const TestVocacional = () => {
     return (

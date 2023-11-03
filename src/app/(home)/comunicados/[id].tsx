@@ -12,12 +12,12 @@ import Share from 'react-native-share';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import { Redirect, Stack, useLocalSearchParams } from 'expo-router';
 import { openBrowserAsync } from 'expo-web-browser'
-import { Button, IconLabel, Texto } from '../../../components';
-import { INotificacionNotice } from '@/types';
-import { useNoticias, useThemeColor } from '@/hooks';
 import { COLORS } from '~/constants';
-import Spinner from '@/components/ui/Spinner';
+import { useNoticias, useThemeColor } from '@/hooks';
+import { Button, IconLabel, Spinner } from '@/components';
+import { INotificacionNotice } from '@/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Texto } from '@/ui';
 
 export const NoticeDetail = () => {
     const params = useLocalSearchParams<any>()

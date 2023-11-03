@@ -1,7 +1,7 @@
 import { BackHandler, View } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import WebView from "react-native-webview";
-import Spinner from "@/components/ui/Spinner";
+import Spinner from "@/components/Spinner";
 
 const Updsnet = () => {
   const webViewRef = useRef<WebView>(null);

@@ -1,7 +1,6 @@
 import { View, ActivityIndicator, ActivityIndicatorProps } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { COLORS } from '../../../constants/Colors';
-import { Texto } from './Texto';
+import { COLORS } from '~/constants/Colors';
+import { Texto } from '../ui/Texto';
 import { useThemeColor } from '@/hooks';
 
 interface Props extends ActivityIndicatorProps {

@@ -1,8 +1,7 @@
 import { View, Text, BackHandler, useColorScheme, Dimensions, useWindowDimensions } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { WebView, WebViewNavigation } from "react-native-webview";
-import Spinner from "@/components/ui/Spinner";
-import { Texto } from "../../../components";
+import Spinner from "@/components/Spinner";
 import { Redirect, useLocalSearchParams } from "expo-router";
 import CONSTANTS from 'expo-constants';
 
@@ -17,61 +16,50 @@ const EvaluacionDocente = () => {
     if (!params.id) return <Redirect href={"/"} />
     const { id } = params
 
+
     const handleBackButtonPress = () => {
-        if (webViewRef.current) {
-            webViewRef.current.goBack();
-            return true; // Indica que el evento ha sido manejado
+        try {
+            webViewRef.current?.goBack()
+            console.log('xd');
+            return true
+        } catch (err) {
+            console.log("[handleBackButtonPress] Error : ", err)
+            return false
         }
-        return false; // Permite el comportamiento predeterminado de retroceso de la aplicación
-    };
-
-    React.useEffect(() => {
-        const backHandler = BackHandler.addEventListener(
-            "hardwareBackPress",
-            handleBackButtonPress
-        );
+    }
 
 
-        return () => backHandler.remove();
+    useEffect(() => {
+        BackHandler.addEventListener("hardwareBackPress", handleBackButtonPress)
+        return () => {
+            BackHandler.removeEventListener("hardwareBackPress", handleBackButtonPress)
+        };
     }, []);
 
     const INJECTED_JAVASCRIPT = `
-    var meta = document.createElement('meta');
-    meta.name = 'viewport';
-    meta.content = 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0';
-    document.getElementsByTagName('head')[0].appendChild(meta);
-    
     document.querySelector('[data-elementor-type="header"]').remove()
     document.querySelector('[data-elementor-type="footer"]').remove()
    const secciones =  document.querySelectorAll('[data-elementor-type="single"] > section')
 
-   secciones[3].scrollIntoView({
+   /* secciones[5].scrollIntoView({
     block: 'start' // Puedes ajustar esto según tu preferencia (start, center, end, nearest)
-  });
+  }); */
 
 
   setTimeout(() => {
-    secciones[2].style.display = 'none'
-   /*  secciones[0].style.visibility = 'hidden'
-  secciones[1].style.visibility = 'hidden'
-  secciones[2].style.visibility = 'hidden'
-  secciones[4].style.visibility = 'hidden'
-  secciones[11].style.visibility = 'hidden'  */
 
-  const xd = document.querySelectorAll('.fa-user-graduate')
+    secciones[0].remove()
+  secciones[1].remove()
+  secciones[2].remove()
+  secciones[3].remove()
+  secciones[4].remove()
+  secciones[11].remove()  
+
+   const xd = document.querySelectorAll('.fa-user-graduate')
 xd[0].parentElement.parentElement.parentElement.parentElement.remove()
- xd[1].parentElement.parentElement.parentElement.parentElement.remove()
+ xd[1].parentElement.parentElement.parentElement.parentElement.remove() 
 
-  }, 2000);
-
-
-
-
-
-
-  // const xd = document.querySelectorAll('.fa-user-graduate')
-  // xd[0].parentElement.parentElement.parentElement.parentElement.remove()
-  // xd[1].parentElement.parentElement.parentElement.parentElement.remove()
+  }, 1000);
 
     `
 
@@ -92,24 +80,12 @@ xd[0].parentElement.parentElement.parentElement.parentElement.remove()
                         injectedJavaScript={INJECTED_JAVASCRIPT}
                         source={{ uri: `https://www.upds.edu.bo/carrera/${id}` }}
                         onMessage={() => { }}
+                        onNavigationStateChange={(x) => {
+                            console.log(x);
+                        }}
                     />
                 </View>
             </View>
-            {/*  <WebView
-                ref={webViewRef}
-                onLoad={(x) => {
-                    setIsLoading(false)
-                }}
-                sharedCookiesEnabled
-                injectedJavaScript={INJECTED_JAVASCRIPT}
-                source={{ uri: `https://www.upds.edu.bo/carrera/${id}` }}
-                javaScriptEnabled
-                onMessage={() => { }}
-            />
-
-            {isLoading && <View style={{ position: "absolute", top: "50%", left: "50%" }}>
-                <Spinner classNameContainer="" />
-            </View>} */}
         </>
     );
 };

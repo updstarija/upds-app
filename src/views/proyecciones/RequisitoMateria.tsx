@@ -5,7 +5,7 @@ import { AntDesign } from '@expo/vector-icons'
 import { ScrollView } from 'react-native-gesture-handler'
 import { MateriaProyeccion, MateriaRequisito } from '@/types'
 import { useCarreraContext, useMateriaRequisito, useThemeColor } from '@/hooks'
-import Spinner from '@/components/ui/Spinner'
+import Spinner from '@/components/Spinner'
 
 interface Props {
     materia: MateriaProyeccion

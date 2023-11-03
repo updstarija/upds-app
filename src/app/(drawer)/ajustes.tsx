@@ -1,24 +1,25 @@
-import { View, Text, Button, Pressable, TouchableOpacity, Platform } from 'react-native'
+import { View, TouchableOpacity, Platform } from 'react-native'
 import React from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { Link, router } from 'expo-router'
-import { Texto } from '../../components'
+import { Link } from 'expo-router'
 import { FontAwesome, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 import { FlashList } from '@shopify/flash-list'
 import { Menu, menuAjustes } from '@/data'
 import { useAuthContext, useThemeColor } from '@/hooks'
+import { Texto } from '@/ui'
 
 
 const Ajustes = () => {
     return (
-        <View className='bg-white dark:bg-primario-dark flex-1'>
-            <FlashList
-                contentContainerStyle={{ padding: 10 }}
-                data={menuAjustes}
-                estimatedItemSize={20}
-                ItemSeparatorComponent={() => <View className='mb-2' />}
-                renderItem={({ item }) => <EnlaceMenu {...item} />}
-            />
+        <View className='bg-white dark:bg-primario-dark flex-1 '>
+            <View className='flex-1 max-w-2xl mx-auto w-full'>
+                <FlashList
+                    contentContainerStyle={{ padding: 10 }}
+                    data={menuAjustes}
+                    estimatedItemSize={20}
+                    ItemSeparatorComponent={() => <View className='mb-2' />}
+                    renderItem={({ item }) => <EnlaceMenu {...item} />}
+                />
+            </View>
 
             {/* 
             <Button title='BORRAR LOCALSTORAGE ' onPress={async () => {

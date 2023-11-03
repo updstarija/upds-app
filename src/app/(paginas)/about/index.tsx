@@ -1,9 +1,8 @@
 import { View, useWindowDimensions, Linking } from 'react-native'
 import React from 'react'
-import { nativeApplicationVersion, nativeBuildVersion, } from 'expo-application'
-import { Texto } from '../../../components'
-import RenderHTML from 'react-native-render-html'
+import { nativeApplicationVersion } from 'expo-application'
 import { ScrollView } from 'react-native-gesture-handler'
+import { Texto } from '@/ui'
 
 
 const About = () => {
@@ -43,9 +42,9 @@ const About = () => {
                     Upds Tarija es una aplicación oficial de la Universidad Privada Domingo Savio. Esta aplicación está diseñada para simplificar la vida académica de los estudiantes, permitiendo programar materias, recibir notificaciones importantes, acceder a la boleta de proyección y consultar el registro histórico académico.
                 </Texto>
 
-                <Texto className="dark:text-white text-xl mt-4 mb-2" weight='Bold'>Equipo de Desarrollo</Texto>
+                <Texto className="dark:text-white text-xl mt-8 mb-2" weight='Bold'>Equipo de Desarrollo</Texto>
                 <Texto className="dark:text-white text-sm">
-                    El equipo de desarrollo está compuesto por miembros del Área de Sistemas de la UPDS.
+                    El equipo de desarrollo está compuesto por miembros del Departamento de Sistemas de la UPDS.
                 </Texto>
 
 
@@ -57,6 +56,7 @@ const About = () => {
                     <Texto className="dark:text-white text-lg" weight='Bold'>
                         Dante Emanuel Arias Tarifa
                     </Texto>
+                    <Texto className="dark:text-white text-blue-500" onPress={() => Linking.openURL('mailto:danteariastarifa@gmail.com')}>danteariastarifa@gmail.com</Texto>
                     <Texto className="dark:text-white text-sm">
                         Auxiliar de Sistemas
                     </Texto>
@@ -70,19 +70,9 @@ const About = () => {
                 <View className='flex-row justify-evenly'>
                     <View className='flex items-center p-2'>
                         <Texto className="dark:text-white text-lg" weight='Bold'>
-                            Isaac Aguilera
+                            Departamento de Sistemas
                         </Texto>
-                        <Texto className="dark:text-white text-sm">
-                            Jefe de Sistemas
-                        </Texto>
-                    </View>
-                    <View className='flex items-center p-2'>
-                        <Texto className="dark:text-white text-lg" weight='Bold'>
-                            Gonzalo Tarifa
-                        </Texto>
-                        <Texto className="dark:text-white text-sm">
-                            Jefe de Sistemas
-                        </Texto>
+
                     </View>
                 </View>
 
@@ -94,14 +84,11 @@ const About = () => {
                     <Texto className="dark:text-white text-lg" weight='Bold'>
                         Charles Darwin
                     </Texto>
-                    <Texto className="dark:text-white text-sm">
-                        Estudiante
-                    </Texto>
                 </View>
 
 
                 <Texto className="dark:text-white text-sm mt-8">
-                    Para asistencia técnica o preguntas relacionadas con la aplicación, no dudes en contactar al Área de Sistemas de la Universidad Privada Domingo Savio.
+                    Para asistencia técnica o preguntas relacionadas con la aplicación, no dudes en contactar al Departamento de Sistemas de la Universidad Privada Domingo Savio.
                 </Texto>
                 <Texto className="dark:text-white text-sm mt-2">
                     Correo Electrónico: <Texto className="dark:text-white text-blue-500" onPress={() => Linking.openURL('mailto:apps.upds@gmail.com')}>apps.upds@gmail.com</Texto>

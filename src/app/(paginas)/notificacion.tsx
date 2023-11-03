@@ -1,258 +1,148 @@
-import { View, TouchableOpacity } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { getNotificaciones } from '@/services'
-import { BottomSheet, Button, Spinner, Texto } from '../../components'
-import { INotificacion } from '@/types'
-import { FlashList } from '@shopify/flash-list'
-import { useRouter } from 'expo-router'
-import { Feather, FontAwesome5 } from '@expo/vector-icons'
-import { useThemeColor } from '@/hooks'
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import { formatFecha } from '@/helpers'
-import { ScrollView } from 'react-native-gesture-handler'
-
-const Notificacion
-  = () => {
-    const [isLoading, setIsLoading] = useState(true)
-    const [limit, setLimit] = useState(0)
-    const isDarkMode = useThemeColor() === "dark"
-    const router = useRouter()
-
-    const [notificaciones, setNotificaciones] = useState<INotificacion[]>([])
-
-
-    const deleteNotificacion = async (id: string) => {
-      const dataStorage = await AsyncStorage.getItem('notificaciones-eliminadas')
-
-      let notificacionesStorage: string[] = []
-
-      if (dataStorage) {
-        notificacionesStorage = JSON.parse(dataStorage)
-      }
-
-      notificacionesStorage.push(id)
-
-      await AsyncStorage.setItem('notificaciones-eliminadas', JSON.stringify(notificacionesStorage))
-
-
-      const newNotis = notificaciones.filter((noti) => noti.id !== id)
-      setNotificaciones(newNotis)
-    }
-
-    const navigation = async (item: INotificacion) => {
-      await marcarComoLeido(item.id)
-
-      if (item.to) {
-        const data = item.to.split("|")
-        router.push({
-          pathname: `/(home)/comunicados/[id]`, params: {
-            id: data[1]
-          }
-        })
-      }
-    }
-
-    const marcarComoLeido = async (id: string) => {
-      const dataStorage = await AsyncStorage.getItem('notificaciones-leidas')
-
-      let notificacionesStorage: string[] = []
-
-      if (dataStorage) {
-        notificacionesStorage = JSON.parse(dataStorage)
-      }
-
-      if (notificacionesStorage.includes(id)) return;
-
-      notificacionesStorage.push(id)
-
-      await AsyncStorage.setItem('notificaciones-leidas', JSON.stringify(notificacionesStorage))
-
-
-      const newNotis = notificaciones.filter((noti) => {
-        if (noti.id == id) {
-          noti.type = "read"
-
-          return noti;
-        }
-
-        return noti
-      })
-      setNotificaciones(newNotis)
-    }
-
-    const marcarComoNoLeido = async (id: string) => {
-      const dataStorage = await AsyncStorage.getItem('notificaciones-leidas')
-
-      let notificacionesStorage: string[] = []
-
-      if (dataStorage) {
-        notificacionesStorage = JSON.parse(dataStorage)
-      }
-
-      if (!notificacionesStorage.includes(id)) return;
-
-      const newIds = notificacionesStorage.filter(x => x !== id)
-
-      await AsyncStorage.setItem('notificaciones-leidas', JSON.stringify(newIds))
-
-      const newNotis = notificaciones.filter((noti) => {
-        if (noti.id == id) {
-          noti.type = ""
-
-          return noti;
-        }
-
-        return noti
-      })
-      setNotificaciones(newNotis)
-
-
-    }
-
-    const NotificacionItem = (item: INotificacion) => {
-
-
-
-      return (
-        <TouchableOpacity onPress={() => navigation(item)} className='px-2 py-1 ' style={{ backgroundColor: item.type == "read" ? isDarkMode ? "#0a1f4a" : "#FFF" : isDarkMode ? "" : "rgba(34,59,130 / .2)" }}>
-
-          <View className='flex-row justify-between items-center '>
-            <View className='flex-1 mr-4'>
-              <Texto className='text-black dark:text-white text-lg' weight='Bold'>{item.titulo}</Texto>
-              <Texto numberOfLines={2} className='text-black dark:text-white my-1' weight='Light'>{item.mensaje}</Texto>
-              <Texto className='text-gray-400 text-xs' weight='Bold'>hace {formatFecha(item.fecha + "")}</Texto>
-            </View>
-
-            <BottomSheet content={<FontAwesome5 name='ellipsis-h' color={isDarkMode ? "#FFF" : "#000"} size={20} />} snapPointsProp={["40%"]}>
-              <ScrollView className='p-2'>
-                <View className=''>
-                  <Texto className='text-center text-xl dark:text-white' weight='Bold'>{item.titulo}</Texto>
-                  <Texto className='text-center dark:text-white' numberOfLines={10}>{item.mensaje}</Texto>
-                </View>
-
-                <View className='mt-3'>
-                  <Button onPress={() => deleteNotificacion(item.id)} classNameBtn='bg-primario p-4 rounded-xl flex-row justify-between items-center'>
-
-                    <Texto className='text-white '>Eliminar Notificacion</Texto>
-                    <Feather name='delete' color={"#fff"} size={20} />
-
-                  </Button>
-
-
-                  <Button onPress={() => item.type == "read" ? marcarComoNoLeido(item.id) : marcarComoLeido(item.id)} classNameBtn='bg-primario p-4 rounded-xl flex-row justify-between items-center mt-1'>
-
-                    <Texto className='text-white'>{item.type == "read" ? "Marcar como no leido" : "Marcar como leido"}</Texto>
-                    <Feather name={item.type == "read" ? "eye-off" : "eye"} color={"#fff"} size={20} />
-
-                  </Button>
-                </View>
-              </ScrollView>
-            </BottomSheet>
-          </View>
-
-        </TouchableOpacity>
-      )
-    }
-
-
-    const getData = async () => {
-
-      const data = await getNotificaciones(limit + 10)
-      setLimit(limit + 10)
-
-
-      // setNotificaciones(data)
-
-      let storageEliminados = await AsyncStorage.getItem("notificaciones-eliminadas")
-
-      let idsEliminados: string[] = []
-      if (storageEliminados) {
-        idsEliminados = JSON.parse(storageEliminados) as string[]
-      }
-
-      let storageLeidos = await AsyncStorage.getItem("notificaciones-leidas")
-
-
-      let idsLeidos: string[] = []
-      if (storageLeidos) {
-        idsLeidos = JSON.parse(storageLeidos) as string[]
-      }
-
-      const newData = data.map((not) => {
-        return {
-          ...not,
-          type: idsEliminados.includes(not.id) ? "delete" : idsLeidos.includes(not.id) ? "read" : ""
-        }
-      })
-
-      const newDataWithoutDeletes = newData.filter((x) => x.type !== "delete")
-
-      //@ts-ignore
-      setNotificaciones(newDataWithoutDeletes)
-      setIsLoading(false)
-    }
-
-
-    useEffect(() => {
-      /*
-       (
-         async () => {
-           setIsLoading(true)
-           const data = await getNotificaciones()
-           // setNotificaciones(data)
- 
-           let storageEliminados = await AsyncStorage.getItem("notificaciones-eliminadas")
- 
-           let idsEliminados: string[] = []
-           if (storageEliminados) {
-             idsEliminados = JSON.parse(storageEliminados) as string[]
-           }
- 
-           let storageLeidos = await AsyncStorage.getItem("notificaciones-leidas")
- 
- 
-           let idsLeidos: string[] = []
-           if (storageLeidos) {
-             idsLeidos = JSON.parse(storageLeidos) as string[]
-           }
- 
-           const newData = data.map((not) => {
-             return {
-               ...not,
-               type: idsEliminados.includes(not.id) ? "delete" : idsLeidos.includes(not.id) ? "read" : ""
-             }
-           })
- 
-           const newDataWithoutDeletes = newData.filter((x) => x.type !== "delete")
- 
-           //@ts-ignore
-           setNotificaciones(newDataWithoutDeletes)
-           setIsLoading(false)
-         }
-       )()
-      */
-      getData()
-    }, [])
-
-
-
-    return (
-      <View className='bg-white dark:bg-primario-dark flex-1'>
-        {isLoading
-          ? <Spinner />
-          : <FlashList
-            renderItem={({ item }) => <NotificacionItem {...item} />}
-            estimatedItemSize={100}
-            data={notificaciones}
-            onEndReached={getData}
-            onEndReachedThreshold={0.5}
-            ItemSeparatorComponent={() => (<View className='border-[0.4px] border-secondary-dark' />)}
-          />}
-
-      </View>
-    )
+import { View, TouchableOpacity, RefreshControl } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { useRouter } from "expo-router";
+import { Feather, FontAwesome5 } from "@expo/vector-icons";
+import clsx from 'clsx'
+import { useNotification, useThemeColor } from "@/hooks";
+import { Button, Spinner } from "@/components";
+import { CustomBottomSheetModal, Texto } from "@/ui";
+import { formatFecha } from "@/helpers";
+import { INotificacion } from "@/types";
+import { useState } from "react";
+
+const Notificacion = () => {
+  const router = useRouter();
+  const isDark = useThemeColor() === "dark";
+
+  const { data, isLoading, getNotifications, marcarComoLeido, marcarComoNoLeido, deleteNotificacion } = useNotification()
+  const [refreshing, setRefreshing] = useState(false)
+
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+    setRefreshing(false)
   }
 
+  const navigation = async (item: INotificacion) => {
+    await marcarComoLeido(item.id);
 
+    if (item.to) {
+      const data = item.to.split("|");
+      router.push({
+        pathname: `/(home)/comunicados/[id]`,
+        params: {
+          id: data[1],
+        },
+      });
+    }
+  };
 
-export default Notificacion
+  const NotificacionItem = (item: INotificacion) => {
+    return (
+      <View
+        className={
+          clsx(['px-2 py-1',
+            {
+              'bg-white dark:bg-[#0a1f4a]': item.type == "read",
+              'bg-[#c4cee1] dark:bg-transparent': item.type != "read"
+            }])
+        }
+      >
+        <View className="flex-row justify-between items-center ">
+          <TouchableOpacity
+            onPress={() => navigation(item)}
+            className="flex-1 mr-4">
+            <Texto
+              className="text-black dark:text-white text-lg"
+              weight="Bold"
+              numberOfLines={1}
+            >
+              {item.titulo}
+            </Texto>
+            <Texto
+              numberOfLines={2}
+              className="text-black dark:text-white my-1"
+            >
+              {item.mensaje}
+            </Texto>
+            <Texto className="text-gray-400 text-xs" weight="Bold">
+              hace {formatFecha(item.fecha + "")}
+            </Texto>
+          </TouchableOpacity>
+
+          <CustomBottomSheetModal
+            content={
+              <View className="p-2  items-center justify-center">
+                <FontAwesome5
+                  name="ellipsis-h"
+                  color={isDark ? "#FFF" : "#000"}
+                  size={20}
+                />
+              </View>
+            }
+          >
+            <View className="mb-3">
+              <Texto
+                className="text-center text-xl dark:text-white mb-2"
+                weight="Bold"
+              >
+                {item.titulo}
+              </Texto>
+
+              <Texto className=" dark:text-white" numberOfLines={10}>
+                {item.mensaje}
+              </Texto>
+            </View>
+
+            <View className="">
+              <Button
+                onPress={() => deleteNotificacion(item.id)}
+                classNameBtn="bg-primario p-4 rounded-xl flex-row justify-between items-center"
+              >
+                <Texto className="text-white ">Eliminar Notificacion</Texto>
+                <Feather name="delete" color={"#fff"} size={20} />
+              </Button>
+
+              <Button
+                onPress={() =>
+                  item.type == "read"
+                    ? marcarComoNoLeido(item.id)
+                    : marcarComoLeido(item.id)
+                }
+                classNameBtn="bg-primario p-4 rounded-xl flex-row justify-between items-center mt-1"
+              >
+                <Texto className="text-white">
+                  {item.type == "read"
+                    ? "Marcar como no leido"
+                    : "Marcar como leido"}
+                </Texto>
+                <Feather
+                  name={item.type == "read" ? "eye-off" : "eye"}
+                  color={"#fff"}
+                  size={20}
+                />
+              </Button>
+            </View>
+          </CustomBottomSheetModal>
+        </View>
+      </View>
+    );
+  };
+
+  return (
+    <View className="bg-white dark:bg-primario-dark flex-1">
+      <FlashList
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+        data={data}
+        renderItem={({ item }) => <NotificacionItem {...item} />}
+        estimatedItemSize={100}
+        onEndReachedThreshold={0.1}
+        onEndReached={getNotifications}
+        ListFooterComponent={isLoading ? <Spinner showText text="Cargando notificaciones" classNameContainer="p-4 items-center" size={25} /> : <View />}
+        ItemSeparatorComponent={() => (<View className='border-[0.5px] border-secondary-dark' />)}
+      />
+    </View>
+  );
+};
+
+export default Notificacion;
