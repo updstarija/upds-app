@@ -2,8 +2,6 @@ export * from './Button';
 export { default as Card } from './Card';
 export * from './CardCircle';
 export * from './CardNavigation';
-export * from './CarouselCard';
-export * from './CarouselItem';
 export { default as Counter } from './Counter';
 export { default as CustomDrawer } from './CustomDrawer';
 export * from './Etiqueta';

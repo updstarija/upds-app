@@ -1,4 +1,3 @@
-import { VideoThumbnailsResult } from "expo-video-thumbnails";
 
 export interface IResponseInstagram {
     data: IInstragramPost[];
@@ -8,11 +7,12 @@ export interface IResponseInstagram {
 export interface IInstragramPost {
     caption: string;
     id: string;
-    media_type: "CAROUSEL_ALBUM" | "IMAGE" | "VIDEO";
-    media_url: string;
+    like_count: number;
+    media_url?: string;
     permalink: string;
-    timestamp: string;
-    miniatura?: VideoThumbnailsResult
+    thumbnail_url?: string;
+    media_product_type: "FEED" | "REELS";
+    media_type: "CAROUSEL_ALBUM" | "IMAGE" | "VIDEO";
 }
 
 
@@ -25,3 +25,5 @@ export interface Cursors {
     after: string;
     before: string;
 }
+
+

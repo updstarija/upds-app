@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from "react";
 import {
     View,
     FlatList,
-    Platform,
     Alert,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
@@ -41,6 +40,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { verTutorial } from "@/helpers";
 import { SelectCarrera } from "@/views/SelectCarrera";
 import { Texto } from "@/ui";
+import { BackHandler } from "react-native";
 
 interface Props {
     tutorialEnCurso: boolean;
@@ -62,7 +62,7 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
         modulos: false,
     });
 
-    const { canStart, start, tourKey } = useTourGuideController("t-boleta");
+    const { canStart, start, tourKey, getCurrentStep } = useTourGuideController("t-boleta");
 
     const {
         carrerasQuery: carreras,
@@ -105,6 +105,8 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
         }
     }, [empezarTutorial.carreras]);
 
+
+
     useEffect(() => {
         (async () => {
             if (!Object.values(empezarTutorial).includes(false)) {
@@ -126,6 +128,10 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
     const scrollToTop = () => {
         flatListRef?.current?.scrollToOffset({ animated: true, offset: 0 });
     };
+
+    useEffect(() => {
+        if (empezarTutorial && getCurrentStep() === undefined) setTutorialEnCurso(false)
+    }, [getCurrentStep()])
 
     const renderModulos = () => {
         if (modulosQuery.isLoading) return <Texto>CARGANDO MODULOS..</Texto>;
@@ -501,6 +507,15 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
 //-145
 function App() {
     const [tutorialEnCurso, setTutorialEnCurso] = useState(false);
+
+    useEffect(() => {
+        const backHandler = BackHandler.addEventListener(
+            "hardwareBackPress",
+            () => tutorialEnCurso
+        );
+
+        return () => backHandler.remove();
+    }, [tutorialEnCurso]);
 
     return (
         <Boleta

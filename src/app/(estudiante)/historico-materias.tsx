@@ -1,8 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
-import { View, Text, Platform } from "react-native";
+import { View, Text, BackHandler } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import {
-  TooltipProps,
   TourGuideZone,
   useTourGuideController,
 } from "rn-tourguide";
@@ -18,6 +17,7 @@ const HistoricoMaterias = () => {
   const { valueCarrera } = useCarreraContext();
 
   const [blockScroll, setBlockScroll] = useState(true);
+  const [tutorialEnCurso, setTutorialEnCurso] = useState(true)
 
   const { registroHistoricoQuery: data } = useRegistroHistorico({
     carrera: valueCarrera || -1,
@@ -30,6 +30,7 @@ const HistoricoMaterias = () => {
     (async () => {
       if (!data.isLoading && !data.isError) {
         if (canStart && (await verTutorial("t-historico-materias"))) {
+
           start();
           //setTutorialEnCurso(true)
 
@@ -39,10 +40,32 @@ const HistoricoMaterias = () => {
         } else {
           //setTutorialEnCurso(false)
           setBlockScroll(false);
+          setTutorialEnCurso(false);
+
         }
       }
     })();
   }, [canStart, data.isLoading, data.isError]); // 👈 don't miss it!
+
+
+  useEffect(() => {
+    if (tutorialEnCurso && getCurrentStep() === undefined) setTutorialEnCurso(false)
+    else setTutorialEnCurso(true)
+  }, [getCurrentStep()])
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => tutorialEnCurso
+    );
+
+    return () => backHandler.remove();
+  }, [tutorialEnCurso]);
+
+
+  /* useEffect(() => {
+    if (empezarTutorial && getCurrentStep() === undefined) setTutorialEnCurso(false)
+}, [getCurrentStep()]) */
 
   const newRegistroHistorico = useMemo(() => {
     if (data.isLoading || data.isError) return [];
@@ -76,7 +99,7 @@ const HistoricoMaterias = () => {
       <FlashList
         showsVerticalScrollIndicator={false}
         stickyHeaderIndices={stickyHeaderIndices}
-        scrollEnabled={!blockScroll}
+        scrollEnabled={!tutorialEnCurso}
         data={newRegistroHistorico}
         estimatedItemSize={50}
         ItemSeparatorComponent={() => (
@@ -135,51 +158,21 @@ const HistoricoMaterias = () => {
       />
     </View>
   );
+
+
 };
+
+
 
 //-145
-const App = () => {
-  const isIos = Platform.OS === "ios";
+function App() {
   const [tutorialEnCurso, setTutorialEnCurso] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
-
-  const onSkipOrFinishTutorial = async (x: TooltipProps) => {
-    //@ts-ignore
-    x?.handleStop();
-    setTutorialEnCurso(false);
-    await AsyncStorage.setItem("t-historico-materias", "true");
-  };
 
   return (
-    <>
-      {/* <TourGuideProvider {...{ borderRadius: 16 }} backdropColor="#000000b3" verticalOffset={isIos ? -50 - CONSTANS.statusBarHeight + 6 : -105} preventOutsideInteraction tooltipComponent={(x) => (
-        <View className="bg-primario dark:bg-secondary-dark p-2 rounded-xl w-72">
-          <Texto className="text-white mb-4 text-center mt-2"> {x.currentStep.text}</Texto>
+    <HistoricoMaterias
 
-          <View className="flex-row gap-4 justify-evenly">
-            {!x.isLastStep && <TouchableOpacity onPress={() => onSkipOrFinishTutorial(x)}>
-              <Texto className="text-white">Saltar</Texto>
-            </TouchableOpacity>}
-
-            {!x.isFirstStep && <TouchableOpacity onPress={x.handlePrev}>
-              <Texto className="text-white">Anterior</Texto>
-            </TouchableOpacity>}
-
-            {!x.isLastStep ? <TouchableOpacity onPress={x.handleNext}>
-              <Texto className="text-white">Siguiente</Texto>
-            </TouchableOpacity>
-              :
-              <TouchableOpacity onPress={() => onSkipOrFinishTutorial(x)}>
-                <Texto className="text-white">Terminar</Texto>
-              </TouchableOpacity>}
-          </View>
-
-        </View>)}>
-      </TourGuideProvider> */}
-
-      <HistoricoMaterias />
-    </>
+    />
   );
-};
+}
 
 export default App;

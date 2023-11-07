@@ -1,16 +1,10 @@
-import React from "react";
-import { Linking, Platform, View, Image, Pressable } from "react-native";
+import { Linking, Platform, View, Pressable } from "react-native";
 import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { Texto } from "../ui";
-import { COLORS } from "~/constants";
 import { Link } from "expo-router";
+import { COLORS } from "~/constants";
 import { useAuthContext, useThemeColor } from "@/hooks";
+import { Texto } from "../ui";
 import { Menu } from "@/data";
-import { M } from "ts-toolbelt";
-
-
-
-
 
 export const CardNavigation: React.FC<Menu> = ({
   icon,

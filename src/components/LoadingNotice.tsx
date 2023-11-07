@@ -1,5 +1,4 @@
 import { View, ActivityIndicator } from 'react-native';
-import { Texto } from '../ui';
 
 export const LoadingNotice = () => {
   return (

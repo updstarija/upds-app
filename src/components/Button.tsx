@@ -25,7 +25,7 @@ export const Button: React.FC<Props> = ({
         {children}
       </Texto> */}
       {disabled && showLoader ?
-        <ActivityIndicator color={"red"} size={20} /> : <>{children}</>}
+        <ActivityIndicator color={"#fff"} size={20} /> : <>{children}</>}
     </TouchableOpacity>
   );
 };

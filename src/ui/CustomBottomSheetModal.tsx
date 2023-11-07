@@ -15,13 +15,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
     BottomSheetBackdrop,
     BottomSheetModal,
-    BottomSheetModalProvider,
     BottomSheetScrollView,
-    BottomSheetTextInput,
-    BottomSheetView,
     TouchableOpacity,
 } from "@gorhom/bottom-sheet";
-import Texto from "./Texto";
 import { useThemeColor } from "@/hooks";
 import { View } from "react-native-animatable";
 
@@ -36,7 +32,7 @@ const CustomBottomSheetModal: React.FC<PropsWithChildren<Props>> = ({
     content,
     children,
     onPressButton,
-    snapPointsProp,
+    snapPointsProp = [],
     touchableProps,
 }) => {
     const isDark = useThemeColor() === "dark"
@@ -48,7 +44,10 @@ const CustomBottomSheetModal: React.FC<PropsWithChildren<Props>> = ({
     const { top } = useSafeAreaInsets();
 
     const handleOpenModal = useCallback(() => {
-        if (onPressButton) onPressButton()
+        if (onPressButton) {
+            console.log(onPressButton)
+            onPressButton()
+        }
         bottomSheetModalRef.current?.present();
     }, []);
 

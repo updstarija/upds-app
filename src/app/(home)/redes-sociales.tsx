@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Share from "react-native-share";
@@ -8,57 +7,24 @@ import { openURL } from "expo-linking";
 import { Image } from "expo-image";
 import { COLORS } from "~/constants";
 import { useRedesSociales, useThemeColor } from "@/hooks";
-import {
-  IResponseFacebook,
-  IResponseInstagram,
-  IResponseYoutbe,
-} from "@/types";
 import { Spinner } from "@/components";
 import { LayoutScreen } from "@/layout/LayoutScreen";
 import { Texto } from "@/ui";
 
 const RedesSociales = () => {
-  const instagramApi = useRedesSociales<IResponseInstagram>(
-    {} as IResponseInstagram
-  );
-  const facebookApi = useRedesSociales<IResponseFacebook>(
-    {} as IResponseFacebook
-  );
-  const youtubeApi = useRedesSociales<IResponseYoutbe>({} as IResponseYoutbe);
-
-  useEffect(() => {
-    instagramApi.getInstagramPosts();
-  }, []);
-  useEffect(() => {
-    facebookApi.getFacebookPosts();
-  }, []);
-  useEffect(() => {
-    youtubeApi.getVideosYoutTube();
-  }, []);
-
-  const [videoPlayer, setVideoPlayer] = useState(false);
+  const { youtubeQuery, facebookQuery, instagramQuery } = useRedesSociales()
 
   const renderYt = () => {
-    if (youtubeApi.isLoading) return <Spinner style={{ height: 200 }} />;
+    if (youtubeQuery.isLoading) return <Spinner style={{ height: 200 }} />;
 
-    if (youtubeApi.isError)
+    if (youtubeQuery.isError)
       return (
-        <>
-          <View style={styles.emptyContainer}>
-            <Image
-              source={require("~/assets/images/pages/erroryoutube.png")}
-              style={styles.emptyImage}
-            />
-            <Texto className="text-black dark:text-white mt-4" weight="Bold">
-              No hay videos disponibles.
-            </Texto>
-          </View>
-        </>
+        <ErrorCard />
       );
 
     return (
       <FlashList
-        data={[...youtubeApi.data.items, "VER MAS"]}
+        data={[...youtubeQuery.data.items, "VER MAS"]}
         keyExtractor={(item) =>
           typeof item === "string" ? item : item.id.videoId
         }
@@ -90,26 +56,16 @@ const RedesSociales = () => {
   };
 
   const renderFacebook = () => {
-    if (facebookApi.isLoading) return <Spinner style={{ height: 200 }} />;
+    if (facebookQuery.isLoading) return <Spinner style={{ height: 200 }} />;
 
-    if (facebookApi.isError || !facebookApi.data?.data)
+    if (facebookQuery.isError || !facebookQuery.data?.data.length)
       return (
-        <>
-          <View style={styles.emptyContainer}>
-            <Image
-              source={require("~/assets/images/pages/erroryoutube.png")}
-              style={styles.emptyImage}
-            />
-            <Texto className="text-black dark:text-white mt-4" weight="Bold">
-              No hay videos disponibles.
-            </Texto>
-          </View>
-        </>
+        <ErrorCard />
       );
 
     return (
       <FlashList
-        data={[...facebookApi.data.data, "VER MAS"]}
+        data={[...facebookQuery.data.data, "VER MAS"]}
         keyExtractor={(item) => (typeof item === "string" ? item : item.id)}
         estimatedItemSize={250}
         contentContainerStyle={{ padding: 10 }}
@@ -136,26 +92,16 @@ const RedesSociales = () => {
   };
 
   const renderInstagram = () => {
-    if (instagramApi.isLoading) return <Spinner style={{ height: 200 }} />;
+    if (instagramQuery.isLoading) return <Spinner style={{ height: 200 }} />;
 
-    if (instagramApi.isError || instagramApi.data.data.length == 0)
+    if (instagramQuery.isError || !instagramQuery.data?.data.length)
       return (
-        <>
-          <View style={styles.emptyContainer}>
-            <Image
-              source={require("~/assets/images/pages/erroryoutube.png")}
-              style={styles.emptyImage}
-            />
-            <Texto className="text-black dark:text-white mt-4" weight="Bold">
-              No hay videos disponibles.
-            </Texto>
-          </View>
-        </>
+        <ErrorCard />
       );
 
     return (
       <FlashList
-        data={[...instagramApi.data.data, "VER MAS"]}
+        data={[...instagramQuery.data.data, "VER MAS"]}
         estimatedItemSize={250}
         keyExtractor={(item) => (typeof item === "string" ? item : item.id)}
         contentContainerStyle={{ padding: 10 }}
@@ -163,6 +109,7 @@ const RedesSociales = () => {
         showsHorizontalScrollIndicator={false}
         ItemSeparatorComponent={() => <View className="mr-2" />}
         renderItem={({ item, index }) => {
+
           return (
             <>
               {typeof item === "string" ? (
@@ -170,9 +117,9 @@ const RedesSociales = () => {
               ) : (
                 <CardSocial
                   description={item.caption || ""}
-                  showImageReplace={item.media_type === "VIDEO"}
+                  showImageReplace={item.media_type === "VIDEO" && !item.thumbnail_url}
                   url={item.permalink}
-                  image={item.media_url}
+                  image={item.media_product_type == "FEED" ? item.media_url + "" : item.thumbnail_url + ""}
                 />
               )}
             </>
@@ -353,6 +300,20 @@ const VerMasCard: React.FC<{ url: string }> = ({ url }) => {
     </TouchableOpacity>
   );
 };
+
+const ErrorCard = () => {
+  return (
+    <View style={styles.emptyContainer}>
+      <Image
+        source={require("~/assets/images/pages/erroryoutube.png")}
+        style={styles.emptyImage}
+      />
+      <Texto className="text-black dark:text-white mt-4" weight="Bold">
+        Ups. Algo salio mal
+      </Texto>
+    </View>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {

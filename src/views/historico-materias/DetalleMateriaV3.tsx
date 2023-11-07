@@ -1,7 +1,7 @@
 import { useState, useMemo, useCallback, useRef, memo, useEffect } from 'react';
 import { View, Dimensions } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
-import { IRegistroHistorico, Turno } from '@/types';
+import { IRegistroHistorico, } from '@/types';
 import { useDetalleGrupoMateria, useThemeColor } from '@/hooks';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { etiquetas } from '@/data';

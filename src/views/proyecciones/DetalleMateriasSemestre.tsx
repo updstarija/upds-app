@@ -1,23 +1,22 @@
 import { useState } from "react";
-import { ActivityIndicator, View, Alert, FlatList, TouchableOpacity, Touchable, Pressable } from "react-native";
+import { ActivityIndicator, View, Alert, FlatList, TouchableOpacity } from "react-native";
 import Icon from "@expo/vector-icons/FontAwesome";
 import {
   useBoleta,
   useCarreraContext,
   useMateriasProyeccion,
   useThemeColor,
-} from "../../hooks";
-import { BottomSheet, Button, Spinner, Texto } from "../../components";
-import { ISemestre, MateriaProyeccion } from "../../types";
+} from "@/hooks";
 import {
-  AddActions,
-  DeleteActions,
-  InfoActions,
+  Button, Spinner, AddActions,
   Swiper,
-} from "../../components/Swiper";
+} from "@/components";
+import { ISemestre, MateriaProyeccion } from "@/types";
 import { FontAwesome } from "@expo/vector-icons";
 import { RequisitoMateria } from "./RequisitoMateria";
 import { etiquetas } from "@/data";
+import { CustomBottomSheetModal, Texto } from "@/ui";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
@@ -60,15 +59,6 @@ const DetalleMateriasSemestre: React.FC<Props> = ({
     if (response) {
       scrollToTop();
     }
-    /* if (!trabajoAcademico?.id) {
-        response = await trabajosAcademicosCreateMutation.mutateAsync(data);
-    } else {
-        response = await trabajosAcademicosUpdateMutation.mutateAsync(data)
-    } */
-
-    /*  if (response) {
-        toggleModal()
-    } */
   };
 
   const getDetalle = () => {
@@ -89,7 +79,6 @@ const DetalleMateriasSemestre: React.FC<Props> = ({
       setLimit(limit + 5);
       setIsLoadingLimit(false);
     };
-
 
 
     return (
@@ -176,25 +165,42 @@ const Row = ({
   item: MateriaProyeccion;
   enabled: boolean;
 }) => {
-  const isDarkMode = useThemeColor() === "dark"
   const isElectiva = item.materia.startsWith("Electiva - ")
-  const isValidMateria = item.estado.id == 0 || item.estado.id == 1 || item.estado.id == 2 || isElectiva
-  const isAprobadaoEnCurso = item.estado.id == 0 || item.estado.id == 1
+  const isPendiente = item.estado.id == 0
+  const isAprobado = item.estado.id == 1
   const isReprobado = item.estado.id == 2
+  const isValidMateria = isPendiente || isAprobado || isReprobado || isElectiva
 
-  const messageElectiva = () => {
-    Alert.alert("Informacion", "Has seleccionado una materia electiva.\n\nLas materias electivas son opciones adicionales que puedes tomar para personalizar tu experiencia educativa y ampliar tus conocimientos en áreas específicas de interés.\n\nAprovecha esta oportunidad para explorar y sumergirte en nuevos temas que complementen tu formación principal.\n\nRecuerda que las materias electivas son una excelente manera de enriquecer tu aprendizaje y expandir tus horizontes académicos. \n\n¡No dudes en elegir aquellas que más te apasionen y te motiven!")
+  const noMostrarMas = async () => {
+    await AsyncStorage.setItem(`mostrar-detalle-materia-seleccionada-${item.estado.id}`, 'false')
   }
 
+  const message = async () => {
+    const mostrar = await AsyncStorage.getItem(`mostrar-detalle-materia-seleccionada-${item.estado.id}`)
+    if (mostrar == 'false') {
+      return;
+    }
 
-  const messageDeshabilitada = () => {
-    Alert.alert("Informacion", "Esta materia ya ha sido aprobada o esta en curso y, por lo tanto, no es elegible para su selección nuevamente.\n\nSi necesitas asesoramiento en cuanto a tus elecciones académicas o deseas explorar otras opciones, no dudes en ponerte en contacto con nuestro equipo educativo.\n\n¡Sigue adelante y continúa con tu excelente desempeño académico!")
+    let mensaje = "";
+    if (isPendiente) {
+      mensaje = "Has seleccionado una materia que esta pendiente.\n\nLa materia seleccionada esta pendiente, Por lo tanto, no es posible agregarla a la boleta de proyeccion."
+    }
+    else if (isAprobado) {
+      mensaje = "Has seleccionado una materia que esta aprobada.\n\nEsta materia ya ha sido aprobada. Por lo tanto, no es elegible para su selección nuevamente.\n\n¡Sigue adelante y continúa con tu excelente desempeño académico!."
+    }
+    else if (isElectiva) {
+      mensaje = "Has seleccionado una materia electiva.\n\nLas materias electivas son opciones adicionales que puedes tomar para personalizar tu experiencia educativa y ampliar tus conocimientos en áreas específicas de interés.\n\nAprovecha esta oportunidad para explorar y sumergirte en nuevos temas que complementen tu formación principal.\n\nRecuerda que las materias electivas son una excelente manera de enriquecer tu aprendizaje y expandir tus horizontes académicos. \n\n¡No dudes en elegir aquellas que más te apasionen y te motiven!"
+    } else {
+      return;
+    }
+
+    Alert.alert("Informacion",
+      mensaje
+      ,
+      [{ text: 'Ok' }, { text: "No volver a mostrar este mensaje", onPress: noMostrarMas }],
+      { cancelable: true }
+    )
   }
-
-  const message = () => {
-    Alert.alert("HOLA")
-  }
-
 
   const Content = () => (
     <View>
@@ -229,9 +235,9 @@ const Row = ({
 
   return (
 
-    <BottomSheet content={<Content />} touchableProps={{ activeOpacity: 0.8 }} snapPointsProp={["40%"]}>
+    <CustomBottomSheetModal content={<Content />} touchableProps={{ activeOpacity: 0.8 }} onPressButton={() => message()}>
       <RequisitoMateria materia={item} />
-    </BottomSheet>
+    </CustomBottomSheetModal>
 
   );
 }

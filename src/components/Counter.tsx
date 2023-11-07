@@ -1,6 +1,5 @@
-import { View, Text } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated'
+import { useEffect, useState } from 'react'
+import { View } from 'react-native'
 import { Texto } from '../ui'
 
 interface Props {

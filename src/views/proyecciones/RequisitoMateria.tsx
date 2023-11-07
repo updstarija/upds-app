@@ -1,11 +1,11 @@
-import { View, Alert, TouchableOpacity } from 'react-native'
 import { useState } from 'react'
-import { Texto } from '../../components'
-import { AntDesign } from '@expo/vector-icons'
+import { View, Alert, TouchableOpacity } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import { MateriaProyeccion, MateriaRequisito } from '@/types'
+import { AntDesign } from '@expo/vector-icons'
 import { useCarreraContext, useMateriaRequisito, useThemeColor } from '@/hooks'
-import Spinner from '@/components/Spinner'
+import { Spinner } from '@/components'
+import { MateriaProyeccion, MateriaRequisito } from '@/types'
+import { Texto } from '@/ui'
 
 interface Props {
     materia: MateriaProyeccion
@@ -30,6 +30,7 @@ export const RequisitoMateria: React.FC<Props> = ({ materia }) => {
         carrera: valueCarrera || -1,
         materia: materiasHistory[selectedMateria],
     })
+
 
 
     const addNewMateriaHistory = (materia: MateriaRequisito) => {

@@ -3,8 +3,9 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useBoleta } from "@/hooks";
-import { Card, DeleteActions, Swiper, Texto } from "../../components";
+import { Card, DeleteActions, Swiper } from "@/components";
 import { useEffect } from "react";
+import { Texto } from "@/ui";
 
 interface Props {
   carrera: number;

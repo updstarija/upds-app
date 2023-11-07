@@ -1,22 +1,19 @@
-import { useState, useMemo, useCallback, useRef, memo, useEffect } from 'react';
+import { useState, useMemo, useRef, memo } from 'react';
 import { View, Dimensions } from 'react-native';
 import { BarChart, LineChart, PieChart } from 'react-native-gifted-charts';
-import { IRegistroHistorico, Turno } from '@/types';
+import { IRegistroHistorico } from '@/types';
 import { useDetalleGrupoMateria, useThemeColor } from '@/hooks';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { etiquetas } from '@/data';
 import { FontAwesome, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Swipeable } from 'react-native-gesture-handler';
-import Animated from 'react-native-reanimated';
 import { router } from 'expo-router';
 import { formatFechaDMY } from '@/helpers';
 import { differenceInMonths } from 'date-fns';
-import { Button, Etiqueta, Spinner } from '../../components';
+import { Etiqueta, Spinner } from '../../components';
 import { RequisitoMateria } from '../proyecciones';
-import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import { BottomSheet, CustomBottomSheetModal, Texto } from '@/ui';
+import { CustomBottomSheetModal, Texto } from '@/ui';
+import { useTourGuideController } from 'rn-tourguide'
 
-const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
 
 interface Props {
   materia: IRegistroHistorico;
@@ -27,12 +24,9 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan, view }) 
   const isDarkMode = useThemeColor() === 'dark';
   const width = Dimensions.get("window").width
 
-  const [visibleModal, setVisibleModal] = useState(false);
-  const snapPoints = useMemo(() => {
-    if (plan.estado.id == 0) return ["40%"]
+  const xd = useTourGuideController("t-historico-materias")
 
-    return ['35%', '60%', '90%']
-  }, []);
+  const [visibleModal, setVisibleModal] = useState(false);
 
   const [selectedDistribution, setSelectedDistribution] = useState<any>(null);
 
@@ -63,12 +57,6 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan, view }) 
         <Texto className='text-white text-center' weight="Bold">{val}</Texto>
       </View>
     );
-  };
-
-  const getNota = () => {
-    const result = plan.nota;
-    if (result) return true;
-    return false;
   };
 
   const notaPromedioData = [
@@ -546,15 +534,6 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan, view }) 
     )
   }
 
-  /* useEffect(() => {
-
-    swipeRef.current?.openRight()
-  }, [swipeRef]) */
-
-
-
-
-
   return (
     <View className='bg-white dark:bg-secondary-dark'>
       {/*  <Swipeable
@@ -651,7 +630,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan, view }) 
             {renderContentSheetModal()}
           </CustomBottomSheetModal>
           :
-          <BottomSheet content={<>
+          <CustomBottomSheetModal content={<>
             <View style={{ position: "relative", overflow: "hidden" }}>
               <View
                 className={`px-3 py-4 flex-row justify-between items-center bg-white dark:bg-secondary-dark
@@ -672,7 +651,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan, view }) 
                 <FontAwesome name={etiquetas[plan.estado.id].icon} color={"#FFF"} />
               </View>
             </>}
-          </>} touchableProps={{ activeOpacity: 0.8 }} snapPointsProp={["40%"]}>
+          </>} touchableProps={{ activeOpacity: 0.8 }}>
             <RequisitoMateria
               //@ts-ignore
               materia={{
@@ -685,7 +664,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(({ materia: plan, view }) 
                 semestre: "4",
 
               }} />
-          </BottomSheet>
+          </CustomBottomSheetModal>
       }
 
       {/*  <BottomSheet content={<>

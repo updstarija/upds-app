@@ -1,7 +1,7 @@
 import { View, ActivityIndicator, ActivityIndicatorProps } from 'react-native'
 import { COLORS } from '~/constants/Colors';
-import { Texto } from '../ui/Texto';
 import { useThemeColor } from '@/hooks';
+import { Texto } from '@/ui/Texto';
 
 interface Props extends ActivityIndicatorProps {
     classNameContainer?: string

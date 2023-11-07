@@ -1,7 +1,7 @@
-import { useThemeColor } from "@/hooks"
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons"
 import { TouchableOpacity, TouchableOpacityProps } from "react-native"
-import Texto from "../ui/Texto"
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons"
+import { useThemeColor } from "@/hooks"
+import { Texto } from "@/ui"
 
 interface Props extends TouchableOpacityProps {
     icon: string,

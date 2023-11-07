@@ -17,6 +17,8 @@ import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 import { toastConfig } from "@/config";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { Texto } from "@/ui";
+import { AntDesign } from "@expo/vector-icons";
+
 
 
 const queryClient = new QueryClient();
@@ -77,17 +79,17 @@ function RootLayoutNav() {
   }
 
   const tooltipComponentTour = (tooltipProps: TourProps) => {
-    const { isLastStep, isFirstStep, handleNext, handlePrev, handleStop, currentStep: { text } } = tooltipProps
+    const { isLastStep, isFirstStep, handleNext, handlePrev, handleStop, currentStep } = tooltipProps
 
     return (
       <View className="bg-primario dark:bg-secondary-dark p-2 rounded-xl w-72">
         <View className="p-2">
-          {typeof text == "string"
+          {typeof currentStep?.text == "string"
             ?
-            <Texto className="text-white mb-4 text-center mt-2">{tooltipProps.currentStep.text}</Texto>
+            <Texto className="text-white mb-2 text-center mt-2">{tooltipProps.currentStep.text}</Texto>
             :
             <>
-              {text}
+              {currentStep?.text}
             </>
           }
         </View>
@@ -98,15 +100,15 @@ function RootLayoutNav() {
             <Texto className="text-white">Saltar</Texto>
           </TouchableOpacity>} */}
 
-          {!isFirstStep && <TouchableOpacity onPress={tooltipProps.handlePrev} className="p-2">
+          {!isFirstStep && <TouchableOpacity onPress={tooltipProps.handlePrev} className="p-4">
             <Texto className="text-white">Anterior</Texto>
           </TouchableOpacity>}
 
-          {!isLastStep ? <TouchableOpacity onPress={tooltipProps.handleNext} className="p-2">
+          {!isLastStep ? <TouchableOpacity onPress={tooltipProps.handleNext} className="p-4">
             <Texto className="text-white">Siguiente</Texto>
           </TouchableOpacity>
             :
-            <TouchableOpacity onPress={() => onSkipOrFinishTutorial(tooltipProps)} className="p-2">
+            <TouchableOpacity onPress={() => onSkipOrFinishTutorial(tooltipProps)} className="p-4">
               <Texto className="text-white">Terminar</Texto>
             </TouchableOpacity>}
         </View>
@@ -116,20 +118,23 @@ function RootLayoutNav() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <BottomSheetModalProvider>
-        <ThemeProvider>
-          <AuthProvider>
-            <CarreraProvider>
-              <AutocompleteDropdownContextProvider>
-                <TourGuideProvider
-                  {...{ borderRadius: 16 }}
-                  backdropColor="#000000b3"
-                  //backdropColor="rgba(0,0,0,0.4)"
-                  preventOutsideInteraction
-                  verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
-                  tooltipComponent={(props: TooltipProps) => tooltipComponentTour(props as TourProps)}
-                >
+    <TourGuideProvider
+      preventOutsideInteraction
+      borderRadius={16}
+      // {...{ borderRadius: 16 }}
+      backdropColor="#000000b3"
+      //backdropColor="rgba(0,0,0,0.4)"
+
+      verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
+      tooltipComponent={(props) => tooltipComponentTour(props as TourProps)}
+    >
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <CarreraProvider>
+            <BottomSheetModalProvider>
+              <ThemeProvider>
+                <AutocompleteDropdownContextProvider>
+
 
                   <Stack>
                     <Stack.Screen
@@ -341,13 +346,13 @@ function RootLayoutNav() {
                       options={configStack("Biblioteca")}
                     />
                   </Stack>
-                </TourGuideProvider>
-              </AutocompleteDropdownContextProvider>
-            </CarreraProvider>
-          </AuthProvider>
-          <Toast config={toastConfig} />
-        </ThemeProvider>
-      </BottomSheetModalProvider>
-    </QueryClientProvider>
+                </AutocompleteDropdownContextProvider>
+                <Toast config={toastConfig} />
+              </ThemeProvider>
+            </BottomSheetModalProvider>
+          </CarreraProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </TourGuideProvider>
   );
 }

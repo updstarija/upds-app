@@ -1,9 +1,9 @@
-import { Text, View, Image, Dimensions } from "react-native";
-import { IconLabel } from "./IconLabel";
-import { INotificacionNotice } from "@/types/typeNotice";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect, useState } from "react";
+import { Text, View, Image } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from "@expo/vector-icons";
+import { IconLabel } from "./IconLabel";
+import { INotificacionNotice } from "@/types";
 
 export const NoticeCard = (noticia: INotificacionNotice) => {
   const { titulo, texto, like, fecha, imagen, id, categoria } = noticia;

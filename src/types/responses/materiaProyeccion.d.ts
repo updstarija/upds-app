@@ -10,7 +10,7 @@ export interface MateriaProyeccion {
     materiaAdmId: number,
     modulo: string;
     semestre: string;
-    turno: Turno;
+    turno: "Mañana" | "Medio Día" | "Noche" | "Tarde";
     estado: {
         id: number;
         nombre: string;
@@ -18,9 +18,3 @@ export interface MateriaProyeccion {
 }
 
 
-export enum Turno {
-    Mañana = "Mañana",
-    MedioDía = "Medio Día",
-    Noche = "Noche",
-    Tarde = "Tarde",
-}

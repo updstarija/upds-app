@@ -5,8 +5,10 @@ import { CustomDrawer } from '@/components';
 import { COLORS } from '~/constants';
 import { FontAwesome, Ionicons } from '@expo/vector-icons';
 import { configStack } from '@/helpers';
+import { useThemeColor } from '@/hooks';
 
 const LayoutDrawer = () => {
+  const isDark = useThemeColor() === "dark"
   return (
     <Drawer screenOptions={{
       swipeEnabled: false,
@@ -47,7 +49,19 @@ const LayoutDrawer = () => {
         name="ajustes"
         //@ts-ignore
         options={{
-          ...configStack("Ajustes"),
+          title: "Ajustes",
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: isDark
+              ? COLORS.dark.secondary
+              : COLORS.light.background,
+
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+            textTransform: "uppercase",
+          },
+
           drawerIcon: ({ color }) => (
             <Ionicons name='settings-outline' size={20} color={color} />
           )
@@ -60,7 +74,7 @@ const LayoutDrawer = () => {
         options={{
           ...configStack("Testing"),
           drawerItemStyle: {
-            //    display: "none"
+            display: "none"
           },
           drawerIcon: ({ color }) => (
             <Ionicons name='shield' size={20} color={color} />

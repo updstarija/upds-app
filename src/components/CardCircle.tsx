@@ -1,7 +1,6 @@
 import { StyleSheet, View } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Texto } from "../ui";
-import { COLORS } from "~/constants";
 import { useThemeColor } from "@/hooks";
 
 interface Props {

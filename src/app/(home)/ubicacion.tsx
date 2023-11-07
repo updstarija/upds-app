@@ -1,8 +1,10 @@
 import { View, Image, ScrollView, Pressable } from 'react-native'
-import WebView from 'react-native-webview'
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import { useThemeColor } from '@/hooks'
 import { openBrowserAsync } from 'expo-web-browser'
 import { Texto } from '@/ui'
+import MapUpds from '@/views/MapUpds'
+import WebView from 'react-native-webview'
 
 const Ubicacion = () => {
     const isDark = useThemeColor() === "dark"
@@ -26,6 +28,9 @@ const Ubicacion = () => {
                 </View>
 
                 <Texto className='text-center p-4 text-2xl dark:text-white' weight='Bold'>NUESTRA UBICACION</Texto>
+                {/*   <MapView provider={PROVIDER_GOOGLE}
+                    style={{ width: "100%", height: 500 }} /> */}
+                {/* <MapUpds /> */}
                 <View className='h-96' renderToHardwareTextureAndroid>
                     <WebView
                         containerStyle={{ height: 1000 }}

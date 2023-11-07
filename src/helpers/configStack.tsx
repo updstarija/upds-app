@@ -1,5 +1,7 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { COLORS } from "../../constants";
+import { AntDesign } from "@expo/vector-icons";
+import { router } from "expo-router";
 
 export const configStack = (title: string) => {
   const isDarkMode = useThemeColor() === "dark";
@@ -18,5 +20,8 @@ export const configStack = (title: string) => {
     headerTitleStyle: {
       textTransform: "uppercase",
     },
+    headerLeft: () => {
+      return <AntDesign name="left" onPress={() => router.back()} size={25} color={"#FFF"} style={{ marginRight: 10 }} />
+    }
   };
 };

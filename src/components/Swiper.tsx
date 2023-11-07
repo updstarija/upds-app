@@ -1,10 +1,8 @@
 import { useRef } from 'react';
 import { Animated, I18nManager, StyleSheet } from 'react-native';
-
 import { RectButton, Swipeable } from 'react-native-gesture-handler';
-
 import Icon from '@expo/vector-icons/MaterialIcons';
-import { Texto } from '../ui/Texto';
+import { Texto } from '@/ui';
 
 interface Props {
   children: JSX.Element | JSX.Element[];

@@ -1,7 +1,7 @@
 import { View, Text, Alert, FlatList } from 'react-native'
 import { useMemo, useState } from 'react'
 import { AutocompleteDropdown, TAutocompleteDropdownItem } from 'react-native-autocomplete-dropdown'
-import { AddActions, BottomSheet, DeleteActions, Swiper, Texto } from '../../components'
+import { AddActions, DeleteActions, Swiper } from '@/components'
 import { useBoleta, useCarreraContext, useMateriasProyeccion, useSearchMateria, useThemeColor } from '@/hooks'
 import { COLORS } from '~/constants'
 import { FlashList } from '@shopify/flash-list'
@@ -12,6 +12,7 @@ import { MateriaProyeccion } from '@/types'
 import { etiquetas } from '@/data'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Spinner from '@/components/Spinner'
+import { CustomBottomSheetModal, Texto } from '@/ui'
 
 type IconProp = keyof typeof FontAwesome.glyphMap;
 
@@ -56,19 +57,18 @@ export const Busqueda: React.FC<Props> = ({ scrollToTop }) => {
 
     const renderMaterias = () => {
         if (!selectedItem) return <></>
-        if (materiasProyeccionQuery.isLoading) return <View className="p-4 items-center  bg-secondary-dark">
-            <Spinner classNameContainer='' color={"#FFF"} />
-        </View>
+        if (materiasProyeccionQuery.isLoading) return <Spinner className='h-28' />
         if (materiasProyeccionQuery.isError) return <Texto>HUBO UN ERROR</Texto>
 
         const isPendienteOCurso = (id: number) => id == 0 || id == 1
 
         if (materiasProyeccionQuery.data.data.length === 0)
             return (
-                <View className="p-4 items-center  bg-secondary-dark">
-                    <Texto className="text-white text-center">NO HAY MATERIAS OFERTADAS</Texto>
+                <View className="p-4 items-center bg-white dark:bg-secondary-dark  border-[.5px] border-t-0">
+                    <Texto className="dark:text-white text-center">NO HAY MATERIAS OFERTADAS</Texto>
                 </View>
             );
+
         return <View >
             <ScrollView style={{ maxHeight: 400 }} nestedScrollEnabled>
                 {materiasProyeccionQuery.data.data.map(mat => (
@@ -147,7 +147,6 @@ const Row = ({
     }
 
     const message = async () => {
-
         const mostrar = await AsyncStorage.getItem(`mostrar-detalle-materia-seleccionada-${item.estado.id}`)
         if (mostrar == 'false') {
             return;
@@ -162,6 +161,8 @@ const Row = ({
         }
         else if (isElectiva) {
             mensaje = "Has seleccionado una materia electiva.\n\nLas materias electivas son opciones adicionales que puedes tomar para personalizar tu experiencia educativa y ampliar tus conocimientos en áreas específicas de interés.\n\nAprovecha esta oportunidad para explorar y sumergirte en nuevos temas que complementen tu formación principal.\n\nRecuerda que las materias electivas son una excelente manera de enriquecer tu aprendizaje y expandir tus horizontes académicos. \n\n¡No dudes en elegir aquellas que más te apasionen y te motiven!"
+        } else {
+            return;
         }
 
         Alert.alert("Informacion",
@@ -218,8 +219,11 @@ const Row = ({
     )
 
     return (
-        <BottomSheet content={<Content />} touchableProps={{ activeOpacity: 0.8 }} snapPointsProp={["40%"]} onClickFun={isAprobado || isElectiva || isPendiente ? message : null}>
+        <CustomBottomSheetModal content={<Content />} touchableProps={{ activeOpacity: 0.8 }}
+            onPressButton={() => message()}
+        //  onClickFun={isAprobado || isElectiva || isPendiente ? message : null}
+        >
             <RequisitoMateria materia={item} />
-        </BottomSheet>
+        </CustomBottomSheetModal>
     );
 }

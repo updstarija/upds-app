@@ -1,5 +1,5 @@
+import { useState } from "react";
 import { Text, View } from "react-native";
-import React, { useState } from "react";
 import {
     DrawerContentScrollView,
     DrawerItemList,
@@ -12,11 +12,10 @@ import {
     Ionicons,
     MaterialCommunityIcons,
 } from "@expo/vector-icons";
-
-import { ThemeConfig } from "@/views";
-import { useAuthContext, useThemeColor } from "@/hooks";
 import { router } from "expo-router";
-import { Texto } from "../ui";
+import { useAuthContext, useThemeColor } from "@/hooks";
+import { ThemeConfig } from "@/views";
+import { Texto } from "@/ui";
 import { menuFacultades } from "@/data";
 
 const CustomDrawer = (props: DrawerContentComponentProps) => {

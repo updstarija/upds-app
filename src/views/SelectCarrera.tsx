@@ -1,5 +1,4 @@
-import { View, Text } from 'react-native'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import DropDownPicker from 'react-native-dropdown-picker';
 import { useCarreraContext, useCarreras, useThemeColor } from '@/hooks';
 import { FontAwesome } from '@expo/vector-icons';

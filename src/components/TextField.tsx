@@ -1,6 +1,6 @@
 import { View, TextInput, TextInputProps, Text } from 'react-native';
 import { Controller, Control, RegisterOptions } from 'react-hook-form';
-import { Texto } from '../ui';
+import { Texto } from '@/ui';
 
 interface Props extends TextInputProps {
   control: Control<any>;

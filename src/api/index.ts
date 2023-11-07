@@ -9,3 +9,4 @@ export * from './planEstudio';
 export * from './semestres';
 export * from './registroHistorico';
 export * from './estadisticas';
+export * from './redes-sociales';
