@@ -43,8 +43,11 @@ const CarouselPriorityNotices = () => {
             </View>
 
             <View>
-                <View className=''>
+                <View className='w-full items-center justify-center'>
                     <Carousel
+                        style={{
+                            width
+                        }}
                         mode="parallax"
                         loop
                         autoPlay

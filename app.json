@@ -3,7 +3,7 @@
     "name": "UPDS Tarija",
     "slug": "upds-tarija",
     "version": "1.0.11",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/images/app/icon.png",
     "scheme": "updstarija",
     "userInterfaceStyle": "automatic",

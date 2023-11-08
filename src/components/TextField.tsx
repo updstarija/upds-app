@@ -18,7 +18,7 @@ export const TextField: React.FC<Props> = ({
 }) => {
   return (
     <View className="mb-3">
-      <Texto className="mb-1 ml-4 text-black dark:text-white">{label}</Texto>
+      <Texto className="mb-1 ml-4 text-black dark:text-white lg:text-xl">{label}</Texto>
       <Controller
         control={control}
         rules={rules}

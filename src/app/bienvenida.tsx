@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { Image, TouchableOpacity, View, FlatList, Dimensions, ScrollView } from 'react-native'
+import { Image, TouchableOpacity, View, FlatList, Dimensions, ScrollView, useWindowDimensions } from 'react-native'
 import { Text } from 'react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
@@ -34,7 +34,7 @@ const sliders = [
 
 const BienvenidaScreen = () => {
   const navigation = useNavigation();
-  const { width, height } = Dimensions.get("window")
+  const { width, height } = useWindowDimensions()
 
   const [sliderActual, setCurrentSlideIndex] = useState(0);
   const isDarkMode = useThemeColor() === "dark"
@@ -101,7 +101,7 @@ const BienvenidaScreen = () => {
                 activeOpacity={0.8}
                 className='flex-1 h-[50] items-center justify-center rounded border border-white  dark:border-[#0D1F46]'
                 onPress={saltarSlider}>
-                <Text className='font-bold text-white'>
+                <Text className='font-bold text-white lg:text-lg'>
                   SALTAR
                 </Text>
               </TouchableOpacity>
@@ -111,7 +111,7 @@ const BienvenidaScreen = () => {
                 activeOpacity={0.8}
                 onPress={IrSiguienteSlide}
                 className='flex-1 h-[50] items-center justify-center bg-white dark:bg-[#0D1F46]  rounded'>
-                <Text className='font-bold text-[#223B82] dark:text-white '>
+                <Text className='font-bold text-[#223B82] dark:text-white  lg:text-lg'>
                   SIGUIENTE
                 </Text>
               </TouchableOpacity>
@@ -168,17 +168,17 @@ const Slide: React.FC<Props> = ({ title, image, text }) => {
       {title && (
         <View>
           <Text
-            className="text-white font-bold text-xl text-center uppercase">
+            className="text-white font-bold text-xl lg:text-3xl text-center uppercase">
             Bienvenido a la app de la
           </Text>
-          <Text className=' text-white font-bold text-3xl text-center uppercase'>¡UPDS Sede Tarija!</Text>
+          <Text className=' text-white font-bold text-3xl lg:text-6xl text-center uppercase'>¡UPDS Sede Tarija!</Text>
         </View>
       )}
 
       <View className="flex-column items-center mt-10">
         <Image source={image}
-          style={{ height: 300, resizeMode: "contain" }} />
-        <Text className='text-lg text-white dark:text-white text-center'>{text}</Text>
+          style={{ height: width > 500 ? 600 : 300, resizeMode: "contain" }} />
+        <Text className='text-lg lg:text-2xl text-white dark:text-white text-center'>{text}</Text>
       </View>
     </View>
   )
