@@ -1,71 +1,69 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { View, Text, BackHandler } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import {
   TourGuideZone,
   useTourGuideController,
 } from "rn-tourguide";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Skeleton } from "moti/skeleton";
 import { useCarreraContext, useRegistroHistorico } from "@/hooks";
 import { verTutorial } from "@/helpers";
-import { DetalleMateriaV2 } from "@/views/historico-materias";
-import { Spinner } from "@/components";
+import { MateriaHistoricoItem } from "@/views";
 import { Texto } from "@/ui";
 import { IRegistroHistorico } from "@/types";
 
-const HistoricoMaterias = () => {
-  const { valueCarrera } = useCarreraContext();
+const tutorialHistoricoSteps = {
+  1: "Presiona en el registro para obtener mas informacion acerca de la materia",
+  2: "Desliza para obtener acceso a mas funciones"
+}
 
-  const [blockScroll, setBlockScroll] = useState(true);
+const HistoricoMaterias = () => {
+  const listref = useRef<FlashList<IRegistroHistorico> | null>(null);
   const [tutorialEnCurso, setTutorialEnCurso] = useState(true)
+
+  const { valueCarrera } = useCarreraContext();
 
   const { registroHistoricoQuery: data } = useRegistroHistorico({
     carrera: valueCarrera || -1,
   });
 
-  const { canStart, start, getCurrentStep, tourKey } =
+  const { canStart, start, tourKey, eventEmitter, stop } =
     useTourGuideController("t-historico-materias");
+
+  const handleBackButtonPress = () => {
+    if (tutorialEnCurso) stop()
+    return !tutorialEnCurso
+  };
 
   useEffect(() => {
     (async () => {
       if (!data.isLoading && !data.isError) {
-        if (canStart && (await verTutorial("t-historico-materias"))) {
+        const activarTutorial = await verTutorial(tourKey)
 
+        if (!activarTutorial) {
+          setTutorialEnCurso(false)
+          return;
+        }
+        console.log({
+          canStart,
+          activarTutorial
+        });
+        if (canStart && activarTutorial) {
+          console.log(55);
           start();
-          //setTutorialEnCurso(true)
-
-          setTimeout(() => {
-            setBlockScroll(false);
-          }, 1000);
-        } else {
-          //setTutorialEnCurso(false)
-          setBlockScroll(false);
-          setTutorialEnCurso(false);
-
         }
       }
     })();
-  }, [canStart, data.isLoading, data.isError]); // 👈 don't miss it!
+  }, [canStart, data.isLoading, data.isError]);
 
 
-  useEffect(() => {
-    if (tutorialEnCurso && getCurrentStep() === undefined) setTutorialEnCurso(false)
-    else setTutorialEnCurso(true)
-  }, [getCurrentStep()])
+  const handleOnStart = () => {
+    setTutorialEnCurso(true)
+    listref.current?.scrollToOffset({ animated: true, offset: 0 })
+  }
 
-  useEffect(() => {
-    const backHandler = BackHandler.addEventListener(
-      "hardwareBackPress",
-      () => tutorialEnCurso
-    );
+  const handleOnStop = () => setTutorialEnCurso(false)
 
-    return () => backHandler.remove();
-  }, [tutorialEnCurso]);
-
-
-  /* useEffect(() => {
-    if (empezarTutorial && getCurrentStep() === undefined) setTutorialEnCurso(false)
-}, [getCurrentStep()]) */
 
   const newRegistroHistorico = useMemo(() => {
     if (data.isLoading || data.isError) return [];
@@ -81,8 +79,6 @@ const HistoricoMaterias = () => {
     return newData;
   }, [data?.data?.data]);
 
-  if (data.isLoading) return <Spinner />;
-  if (data.isError) return <Text className="text-white">HUBO UN ERROR..</Text>;
 
   const stickyHeaderIndices = newRegistroHistorico
     .map((item, index) => {
@@ -94,13 +90,36 @@ const HistoricoMaterias = () => {
     })
     .filter((item) => item !== null) as number[];
 
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackButtonPress
+    );
+
+    return () => backHandler.remove();
+  }, [tutorialEnCurso]);
+
+  useEffect(() => {
+    eventEmitter?.on('start', handleOnStart)
+    eventEmitter?.on('stop', handleOnStop)
+
+    return () => {
+      eventEmitter?.off('start', handleOnStart)
+      eventEmitter?.off('stop', handleOnStop)
+    }
+  }, [])
+
+
+  if (data.isError) return <Text className="text-white">HUBO UN ERROR..</Text>;
+
+
   return (
     <View className="flex-1 bg-white dark:bg-primario-dark">
       <FlashList
-        showsVerticalScrollIndicator={false}
-        stickyHeaderIndices={stickyHeaderIndices}
+        ref={listref}
+        stickyHeaderIndices={!data.isLoading ? stickyHeaderIndices : undefined}
         scrollEnabled={!tutorialEnCurso}
-        data={newRegistroHistorico}
+        data={!data.isLoading ? newRegistroHistorico : [... new Array(20).fill(0)]}
         estimatedItemSize={50}
         ItemSeparatorComponent={() => (
           <View className="border-[.5px] border-primario" />
@@ -111,48 +130,54 @@ const HistoricoMaterias = () => {
         renderItem={({ item, index }) => {
           if (typeof item === "string") {
             return (
-              <View className="bg-white dark:bg-secondary-dark p-5 shadow">
-                <Texto className="text-black dark:text-white text-center">
-                  {item}
-                </Texto>
-              </View>
+              <>
+                <View className="bg-white dark:bg-secondary-dark p-5 shadow">
+                  <Texto className="text-black dark:text-white text-center">
+                    {item}
+                  </Texto>
+                </View>
+              </>
+            );
+
+          } else if (typeof item === "number") {
+            return (
+              <>
+
+                <View className="h-12 bg-white dark:bg-secondary-dark justify-center p-4">
+                  <View className="w-10" />
+                  <Skeleton colorMode={'light'} width={200 + (Math.round(Math.random() * 100))} height={15} />
+                </View>
+
+              </>
             );
           } else {
-            if (index == 1 || index == 2) {
-              let text = "";
-              if (index == 1) {
-                text =
-                  "Presiona en el registro para obtener mas informacion acerca de la materia";
-              } else if (index == 2) {
-                text = "Desliza para obtener acceso a mas funciones";
-              }
+            if (index == 1) {
               return (
                 <>
                   <TourGuideZone
-
                     tourKey={tourKey}
                     style={{ zIndex: 2 }}
                     zone={index}
-                    /*   text={<View className="">
-                        <Image
-                          source={require(`~/assets/tutoriales/historico-materias-detalle.gif`)}
-                          className="w-full h-full"
-  
-                          contentFit="contain"
-                        />
-  
-                        <Texto>{text}</Texto>
-  
-                      </View>} */
-                    text={text}
+                    text={tutorialHistoricoSteps[1]}
                     borderRadius={10}
                   >
-                    <DetalleMateriaV2 materia={item} view="detalle-materia" />
+                    <TourGuideZone
+                      tourKey={tourKey}
+                      style={{ zIndex: 2 }}
+                      zone={index + 1}
+                      text={tutorialHistoricoSteps[2]}
+                      borderRadius={10}
+                    >
+
+                      <MateriaHistoricoItem materia={item} withTutorial />
+                    </TourGuideZone>
+
                   </TourGuideZone>
+
                 </>
               );
             }
-            return <DetalleMateriaV2 materia={item} view="detalle-materia" />;
+            return <MateriaHistoricoItem materia={item} />
           }
         }}
       />

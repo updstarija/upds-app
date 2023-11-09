@@ -74,7 +74,7 @@ const LayoutDrawer = () => {
         options={{
           ...configStack("Testing"),
           drawerItemStyle: {
-            display: "none"
+            // display: "none"
           },
           drawerIcon: ({ color }) => (
             <Ionicons name='shield' size={20} color={color} />

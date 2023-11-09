@@ -14,3 +14,7 @@ export { default as Spinner } from './Spinner';
 export * from './Swiper';
 export { default as TextField } from './TextField';
 export * from './VideoPlayer';
+
+//
+export { default as SwiperV2 } from './SwiperV2';
+export { default as MateriaState } from './MateriaState';
