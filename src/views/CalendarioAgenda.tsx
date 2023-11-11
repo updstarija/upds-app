@@ -8,7 +8,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS } from '~/constants';
 import { useCalendario, useThemeColor } from '@/hooks';
 import { Button, Option } from '@/components';
-import { Modal, Texto } from '@/ui';
+import { CustomModal, Modal, Texto } from '@/ui';
 
 const dayNames = ['Dom.', 'Lun.', 'Mar.', 'Mie.', 'Jue.', 'Vie.', 'Sab.']
 
@@ -142,7 +142,7 @@ const CalendarioAgenda = () => {
 
     return (
         <>
-            <Modal isVisible={modalFiltro} >
+            <CustomModal isVisible={modalFiltro} >
                 <View>
                     <View>
                         <Option active={filtro == 1} onPress={() => onChangeFiltro(1)} icon='calendar' text='PRESENCIAL' justifyBetween />
@@ -159,7 +159,7 @@ const CalendarioAgenda = () => {
                         <View />
                     </View>
                 </View>
-            </Modal>
+            </CustomModal>
 
             <Agenda
                 ListEmptyComponent={() => <Texto>GOLA</Texto>}

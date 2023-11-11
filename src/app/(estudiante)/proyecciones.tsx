@@ -10,10 +10,11 @@ import {
   useThemeColor,
 } from "@/hooks";
 import { DetalleBoleta, DetalleMateriasSemestre } from "@/views/proyecciones";
-import { Texto, Button } from "@/components";
+import { Button } from "@/components";
 import Modal from "react-native-modal";
 import Icon from "@expo/vector-icons/FontAwesome";
 import { COLORS } from "~/constants";
+import { CustomModal, Texto } from "@/ui";
 
 const ProjectionsScreen = () => {
   const isDarkMode = useThemeColor() === "dark";
@@ -251,7 +252,7 @@ const ProtectedScreen = () => {
 
       <ProjectionsScreen />
 
-      <Modal isVisible={visibleModal} deviceHeight={height + 50}>
+      <CustomModal isVisible={visibleModal} >
         <View className="rounded-lg bg-white p-4 dark:bg-primario-dark">
           <Texto weight="Bold" className="mb-3 text-center text-xl text-black">
             DETALLES PARA CREACION DE BOLETA
@@ -280,7 +281,7 @@ const ProtectedScreen = () => {
             </Button>
           </View>
         </View>
-      </Modal>
+      </CustomModal>
 
       <View className="absolute bottom-0 right-0">
         {/* <FloatingButton onNew={onNewBoleta} onPrint={() => { }} /> */}

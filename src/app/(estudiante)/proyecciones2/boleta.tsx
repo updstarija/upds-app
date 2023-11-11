@@ -36,10 +36,9 @@ import {
     useTourGuideController,
 } from "rn-tourguide";
 import Spinner from "@/components/Spinner";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { verTutorial } from "@/helpers";
 import { SelectCarrera } from "@/views/SelectCarrera";
-import { Texto } from "@/ui";
+import { CustomModal, Texto } from "@/ui";
 import { BackHandler } from "react-native";
 
 interface Props {
@@ -464,7 +463,7 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
             </View> */}
             </View>
 
-            <Modal isVisible={modalBoleta}>
+            <CustomModal isVisible={modalBoleta}>
                 <View className="bg-white dark:bg-secondary-dark p-4 rounded-2xl">
                     <Texto
                         className="text-lg text-center text-black dark:text-white"
@@ -499,7 +498,7 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
                         </Button>
                     </View>
                 </View>
-            </Modal>
+            </CustomModal>
         </>
     );
 };

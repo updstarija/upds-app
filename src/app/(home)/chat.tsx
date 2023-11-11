@@ -16,7 +16,7 @@ import { router } from "expo-router";
 import { COLORS } from "~/constants";
 import { useAuthContext, useChat, useThemeColor } from "@/hooks";
 import { Button, Spinner, TextField } from "@/components";
-import { Texto } from "@/ui";
+import { CustomModal, Texto } from "@/ui";
 
 const ChatScreen = () => {
   {
@@ -190,7 +190,7 @@ const ChatScreen = () => {
           />
         }
 
-        <Modal isVisible={visibleModal}>
+        <CustomModal isVisible={visibleModal}>
           <View className="bg-white dark:bg-secondary-dark p-4 rounded-lg">
             <Texto className="text-2xl dark:text-white text-center mt-3 mb-4" weight="Bold">Datos Personales</Texto>
             <TextField
@@ -224,7 +224,7 @@ const ChatScreen = () => {
               </Button>
             </View>
           </View>
-        </Modal>
+        </CustomModal>
       </View>
     );
   }
