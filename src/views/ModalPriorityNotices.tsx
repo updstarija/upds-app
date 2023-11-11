@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Pressable, View, useWindowDimensions } from 'react-native';
-import { Image } from 'expo-image';
-
 import Carousel from 'react-native-reanimated-carousel';
-import { useNoticias } from '@/hooks';
-import { AntDesign } from '@expo/vector-icons';
 import PaginationDot from 'react-native-animated-pagination-dot'
-import { COLORS } from '~/constants';
+import { Image } from 'expo-image';
 import { Link } from 'expo-router';
+import { AntDesign } from '@expo/vector-icons';
+import { useNoticias } from '@/hooks';
 import { CustomModal, Texto } from '@/ui';
+import { COLORS } from '~/constants';
+
 
 const ModalPriorityNotices = () => {
     const [isVisible, setIsVisible] = useState(true)
@@ -27,7 +27,6 @@ const ModalPriorityNotices = () => {
             <CustomModal isVisible={isVisible}>
                 <View
                     className="max-w-lg mx-auto w-full"
-                //className='bg-primario dark:bg-secondary-dark rounded-xl'
                 >
                     <View className=''>
                         <Carousel
@@ -55,7 +54,7 @@ const ModalPriorityNotices = () => {
                             autoPlay
                             data={data}
                             autoPlayInterval={data.length == 1 ? 999999 : 3000}
-                            scrollAnimationDuration={2000}
+                            scrollAnimationDuration={1500}
                             onSnapToItem={(index) => setActiveIndex(index)}
                             renderItem={({ index, item }) => (
                                 <Link href={`/comunicados/${item.id}`} asChild>

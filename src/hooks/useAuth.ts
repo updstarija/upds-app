@@ -66,7 +66,7 @@ export const useAuth = () => {
                     console.log('--------------------------------------------------------')
                     console.log('SE COMPLETO EL FETCH')
                     console.log('--------------------------------------------------------')
-                })
+                }).catch((x) => console.log("ERROR FETCH TEST"))
 
             const { data } = await updsApi<IResponseLogin>("/auth/perfil")
 

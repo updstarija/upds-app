@@ -1,7 +1,7 @@
 import { useState, useReducer } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
-import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { isMateriaInRangeMonths } from "@/helpers/isMateriaInRangeMonths";
 import { MateriaState, SwiperV2 } from "@/components";
 import { CustomBottomSheetModal, Texto } from "@/ui";
@@ -14,10 +14,13 @@ import { Image } from "expo-image";
 
 interface Props {
     materia: IRegistroHistorico;
-    withTutorial?: boolean;
+    tutorial?: {
+        inCourse: boolean;
+        step: number
+    },
 }
 
-const MateriaHistoricoItem: React.FC<Props> = ({ materia, withTutorial = false }) => {
+const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
     const [enabled, setEnabled] = useState(false);
     const [dark, toggle] = useReducer((s) => !s, true);
 
@@ -66,6 +69,62 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, withTutorial = false }
             </>
         );
     };
+    console.log({
+        step
+    }, 2);
+    const Tutorial = () => {
+
+        if (!tutorial || !tutorial.inCourse) return null
+
+
+
+        if (tutorial.step == 1) return <Animatable.View
+            useNativeDriver
+            animation="pulse"
+            iterationCount={"infinite"}
+            direction="alternate"
+            style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
+            <Image
+                style={{
+                    width: 30,
+                    height: 30
+                }}
+                contentFit="contain"
+                source={require("~/assets/images/icons/hand.png")}
+            />
+        </Animatable.View>
+
+        if (tutorial.step == 2) return <Animatable.View
+            useNativeDriver
+            animation="slideOutLeft"
+            iterationCount={"infinite"}
+            direction="alternate"
+            duration={2500}
+            style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+
+                alignItems: "flex-end",
+
+            }}
+        >
+            <MaterialCommunityIcons
+                name="gesture-swipe-horizontal"
+                size={40}
+
+            />
+        </Animatable.View>
+    }
 
     const content = (
         <SwiperV2
@@ -78,52 +137,8 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, withTutorial = false }
                     nombre={materia.nombre}
                     nota={materia.nota}
                 />
-                {withTutorial && <Animatable.View
-                    useNativeDriver
-                    animation="pulse"
-                    iterationCount={"infinite"}
-                    direction="alternate"
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        right: 0,
-                        bottom: 0,
-                        left: 0,
-                        alignItems: "center",
-                        justifyContent: "center",
-                    }}
-                >
-                    <Image
-                        style={{
-                            width: 30,
-                            height: 30
-                        }}
-                        contentFit="contain"
-                        source={require("~/assets/images/icons/hand.png")}
-                    />
-                </Animatable.View>}
 
-                {/*     {withTutorial && <Animatable.View
-                    useNativeDriver
-                    animation="slideOutLeft"
-                    iterationCount={"infinite"}
-                    direction="alternate"
-                    duration={2500}
-                    style={{
-                        position: "absolute",
-                        top: 0,
-                        right: 0,
-
-                        alignItems: "flex-end",
-
-                    }}
-                >
-                    <MaterialCommunityIcons
-                        name="gesture-swipe-horizontal"
-                        size={40}
-
-                    />
-                </Animatable.View>} */}
+                <Tutorial />
             </View>
         </SwiperV2>
     );
