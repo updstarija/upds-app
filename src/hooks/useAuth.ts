@@ -58,6 +58,16 @@ export const useAuth = () => {
     const refreshLogin = async () => {
         setIsLoading(true)
         try {
+
+            const dataTest = fetch("https://tarija.upds.edu.bo/ApiProyecciones/api/auth/perfil", {
+                method: "GET"
+            }).then((x) => x.json())
+                .then(x => {
+                    console.log('--------------------------------------------------------')
+                    console.log('SE COMPLETO EL FETCH')
+                    console.log('--------------------------------------------------------')
+                })
+
             const { data } = await updsApi<IResponseLogin>("/auth/perfil")
 
             await AsyncStorage.setItem('usuario', JSON.stringify(data.data));
