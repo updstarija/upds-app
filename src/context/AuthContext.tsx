@@ -91,7 +91,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   const logout = async () => {
     await AsyncStorage.removeItem("usuario");
     AsyncStorage.removeItem("usuario").then((x) => {
-      console.log("DELETE INFP USER ", x)
+      //console.log("DELETE INFP USER ", x)
     })
 
     const queryClient = useQueryClient()

@@ -29,7 +29,7 @@ export const getChatMessages = async (chatId: string) => {
 
 export const sendMessage = async (chatId: string, mensaje: string, uname: string) => {
   try {
-    console.log(chatId, "SEND MESSAGE")
+    // console.log(chatId, "SEND MESSAGE")
     const device = await firebase.messaging().getToken();
 
     const newMessage: Message = {

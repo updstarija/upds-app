@@ -136,11 +136,11 @@ const ChatScreen = () => {
     }, [chatId])
 
     /* useEffect(() => {
-      console.log(chatId, "USE EFET")
+      //console.log(chatId, "USE EFET")
       if (chatId && chatId.length > 0) {
         if (status === "autenticado") {
           setChatId(userAuth.usuario.documentoIdentidad)
-          console.log(chatId)
+          //console.log(chatId)
         } else {
           setVisibleModal(true)
         }

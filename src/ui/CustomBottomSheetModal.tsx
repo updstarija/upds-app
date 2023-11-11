@@ -45,7 +45,7 @@ const CustomBottomSheetModal: React.FC<PropsWithChildren<Props>> = ({
 
     const handleOpenModal = useCallback(() => {
         if (onPressButton) {
-            console.log(onPressButton)
+            //(onPressButton)
             onPressButton()
         }
         bottomSheetModalRef.current?.present();

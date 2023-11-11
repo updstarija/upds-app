@@ -49,7 +49,7 @@ const Biblioteca = () => {
         const dataElibro = await fetch("https://auth.elibro.net/auth/sso/", requestOptions)
         const responseELibro = await dataElibro.json()
         setUrlELibro(responseELibro.url)
-        console.log(responseELibro.url)
+        //console.log(responseELibro.url)
         setIsLoadingSession(false)
     }
 

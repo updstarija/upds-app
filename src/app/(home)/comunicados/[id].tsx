@@ -55,12 +55,11 @@ export const NoticeDetail = () => {
             })
             .then(async () => {
                 await AsyncStorage.setItem(`liked_noticia_${id}`, (!liked).toString());
-                console.log(likes)
+                //console.log(likes)
                 setLikes(likes + increment);
-                console.log('increnmet')
             })
             .catch(error => {
-                console.log('Error al incrementar like:', error);
+                // console.log('Error al incrementar like:', error);
             });
     };
 
@@ -167,7 +166,7 @@ Mas Informacion: ${noticia.url}
 
             await Share.open(shareOptions);
         } catch (error) {
-            console.log('Error al compartir la imagen:', error);
+            //console.log('Error al compartir la imagen:', error);
         }
     }
 

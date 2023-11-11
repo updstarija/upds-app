@@ -26,10 +26,7 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorialEnCurso, setEmpezarTu
 
   useEffect(() => {
     if (!boletaQuery.isLoading && !boletaQuery.isError) {
-      console.log('boleta go')
       setEmpezarTutorial((prev) => ({ ...prev, boleta: true }))
-      console.log('boleta true')
-
     }
   }, [boletaQuery.isLoading, boletaQuery.isError, boletaQuery.isFetching])
 

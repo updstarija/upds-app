@@ -44,12 +44,7 @@ const HistoricoMaterias = () => {
           setTutorialEnCurso(false)
           return;
         }
-        console.log({
-          canStart,
-          activarTutorial
-        });
         if (canStart && activarTutorial) {
-          console.log(55);
           start();
         }
       }

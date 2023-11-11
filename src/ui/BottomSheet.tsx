@@ -25,7 +25,7 @@ export const BottomSheet: React.FC<Props> = memo(({ content, children, snapPoint
         bottomSheetModalRef.current?.present();
 
         if (onClickFun) {
-            console.log('EXECUTE')
+            //console.log('EXECUTE')
             onClickFun()
         }
     }, []);

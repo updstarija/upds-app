@@ -17,7 +17,6 @@ export const useAuth = () => {
                 method: "POST"
             }).then((x) => x.json())
                 .then(x => {
-                    console.log((x));
                     console.log('--------------------------------------------------------')
                     console.log('SE COMPLETO EL FETCH')
                     console.log('--------------------------------------------------------')
@@ -26,8 +25,6 @@ export const useAuth = () => {
         } catch {
             console.error('HUBO UN ERROR')
         }
-
-        console.log("XD")
 
         try {
             const { data } = await updsApi.post<IResponseLogin>("/auth/login", dataUser)

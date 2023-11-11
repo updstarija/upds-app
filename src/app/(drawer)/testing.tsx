@@ -599,7 +599,7 @@ const Busqueda = () => {
         bottomSheetModalRef.current?.present();
     }, []);
     const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
+        //console.log('handleSheetChanges', index);
     }, []);
 
     const renderBackdrop = useCallback(
@@ -691,8 +691,8 @@ const Busqueda = () => {
                 enableDynamicSizing
                 enablePanDownToClose
                 backdropComponent={renderBackdrop}
-                onDismiss={() => console.log('dismiss')}
-                onChange={() => console.log('change')}
+                //onDismiss={() => console.log('dismiss')}
+                //onChange={() => console.log('change')}
 
                 topInset={top}
                 keyboardBehavior={Platform.OS === 'android' ? 'extend' : 'interactive'}

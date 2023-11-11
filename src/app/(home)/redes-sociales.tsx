@@ -226,7 +226,7 @@ ${url}
 
       await Share.open(shareOptions);
     } catch (error) {
-      console.log("Error al compartir la imagen:", error);
+      //console.log("Error al compartir la imagen:", error);
     }
   };
 

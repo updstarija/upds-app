@@ -19,32 +19,6 @@ import { useAuth, useAuthContext } from '@/hooks';
 
 
 const Index = () => {
-  const registerForPushNotification = async () => {
-
-    let token;
-
-    if (Platform.OS === "android") {
-      await Notifications.setNotificationChannelAsync('default', {
-        name: "default",
-        importance: Notifications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: "#FF23F7C"
-      })
-    }
-
-    const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
-    if (existingStatus !== 'granted') {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
-    }
-    token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
-  }
   const { logout, login } = useAuthContext()
 
   const isIos = Platform.OS == "ios"
@@ -134,7 +108,7 @@ const Index = () => {
       } else {
         await requestPermissionsAndroid()
         await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).then((x) => {
-          console.log("PERMISOS NOTIFICAION ANDROID: ", x)
+          console.log("PERMISOS NOTIFICATION ANDROID: ", x)
         })
       }
 
@@ -145,12 +119,10 @@ const Index = () => {
       }
 
       if (!isIos) {
-        console.log("OBTENIENDO TOKEN!!!!")
-
 
         try {
           const token = await messaging().getToken();
-          console.log(token)
+          console.log(`TOKEN NOTIFICATIONS ${token}`)
         } catch {
           console.log("FALLO AL OBTENER EL TOKEN")
           // Alert.alert("FALLO AL OBTENER EL TOKEN")
@@ -162,7 +134,7 @@ const Index = () => {
       messaging()
         .subscribeToTopic('upds')
         .then((x) => {
-          console.log(x)
+          console.log("SUSCRIBE TO UPDS TOPIC NOTIFICATIONS")
           //Alert.alert("SUSCRITO")
         })
         .catch((e) => {
@@ -208,10 +180,10 @@ const Index = () => {
       },
     );
 
-    messaging().getInitialNotification()
-      .then(msg => {
-        console.log(msg, "GET INITIAL NOTIFICATION")
-      })
+    /*     messaging().getInitialNotification()
+          .then(msg => {
+            //console.log(msg, "GET INITIAL NOTIFICATION")
+          }) */
   }, []);
 
   if (isLoading) return null

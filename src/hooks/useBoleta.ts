@@ -21,7 +21,6 @@ export const useBoleta = ({ carrera }: Params) => {
                 text1: "Bien",
                 text2: "Se ha eliminado la materia con exito"
             })
-            console.log('eliminada on exitp')
             client.invalidateQueries(['boleta-proyecciones'])
         },
         onError: (error: any) => {

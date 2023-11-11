@@ -33,7 +33,7 @@ export const CarreraProvider: React.FC<Props> = ({ children }) => {
 
   const { carrerasQuery } = useCarreras(status === 'autenticado');
 
-  console.log(valueCarrera)
+  //console.log(valueCarrera)
 
   useEffect(() => {
     if (carrerasQuery.data && !valueCarrera) {

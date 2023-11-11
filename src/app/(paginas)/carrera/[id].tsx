@@ -20,10 +20,8 @@ const EvaluacionDocente = () => {
     const handleBackButtonPress = () => {
         try {
             webViewRef.current?.goBack()
-            console.log('xd');
             return true
         } catch (err) {
-            console.log("[handleBackButtonPress] Error : ", err)
             return false
         }
     }
