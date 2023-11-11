@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Pressable, View, useWindowDimensions } from 'react-native';
-import Modal from 'react-native-modal'
 import { Image } from 'expo-image';
 
 import Carousel from 'react-native-reanimated-carousel';
@@ -9,7 +8,7 @@ import { AntDesign } from '@expo/vector-icons';
 import PaginationDot from 'react-native-animated-pagination-dot'
 import { COLORS } from '~/constants';
 import { Link } from 'expo-router';
-import { Texto } from '@/ui';
+import { CustomModal, Texto } from '@/ui';
 
 const ModalPriorityNotices = () => {
     const [isVisible, setIsVisible] = useState(true)
@@ -25,7 +24,7 @@ const ModalPriorityNotices = () => {
 
     return (
         <>
-            <Modal isVisible={isVisible}>
+            <CustomModal isVisible={isVisible}>
                 <View
                     className="max-w-lg mx-auto w-full"
                 //className='bg-primario dark:bg-secondary-dark rounded-xl'
@@ -96,7 +95,7 @@ const ModalPriorityNotices = () => {
                     </View>
                 </View>
 
-            </Modal>
+            </CustomModal>
         </>
     )
 }
