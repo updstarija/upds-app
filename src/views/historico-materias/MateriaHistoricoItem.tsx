@@ -1,16 +1,18 @@
-import { useState, useReducer } from "react";
+import { useState, useReducer, useEffect, useRef, memo } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { isMateriaInRangeMonths } from "@/helpers/isMateriaInRangeMonths";
 import { MateriaState, SwiperV2 } from "@/components";
-import { CustomBottomSheetModal, Texto } from "@/ui";
+import { CustomBottomSheetModal, CustomSkeleton, Texto } from "@/ui";
 import { IRegistroHistorico } from "@/types";
 import { useDetalleGrupoMateria, useThemeColor } from "@/hooks";
-import { Skeleton } from "moti/skeleton";
 import MateriaChartsDetail from "./MateriaChartsDetail";
 import * as Animatable from "react-native-animatable";
 import { Image } from "expo-image";
+import { SwiperV2Ref } from "@/components/SwiperV2";
+import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
+
 
 interface Props {
     materia: IRegistroHistorico;
@@ -20,11 +22,29 @@ interface Props {
     },
 }
 
-const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
-    const [enabled, setEnabled] = useState(false);
-    const [dark, toggle] = useReducer((s) => !s, true);
+const animationPulse = {
+    from: {
+        transform: [{
+            scale: 1
+        }]
+    },
+    to: {
+        transform: [{
+            scale: 1.3
+        }]
+    }
+}
 
-    const colorMode = useThemeColor();
+const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
+    const [enabled, setEnabled] = useState(false);
+    const swiperRef = useRef<SwiperV2Ref>(null);
+    const bottomSheetRef = useRef<CustomBottomSheetRef>(null);
+    const isDark = useThemeColor() === "dark";
+
+    const handleClose = () => {
+        swiperRef.current?.close();
+    };
+
     const { detalleGrupoMateriaQuery: data } = useDetalleGrupoMateria({
         grupo: materia.grupoMaestro || materia.grupo,
         enabled,
@@ -65,22 +85,19 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
                     size={30}
                     color="#fff"
                     style={{ paddingRight: 0 }}
+                    onPress={() => handleClose()}
                 />
             </>
         );
     };
-    console.log({
-        step
-    }, 2);
+
     const Tutorial = () => {
-
         if (!tutorial || !tutorial.inCourse) return null
-
-
+        const handImages = [require("~/assets/images/icons/hand-light.png"), require("~/assets/images/icons/hand-dark.png")]
 
         if (tutorial.step == 1) return <Animatable.View
             useNativeDriver
-            animation="pulse"
+            animation={animationPulse}
             iterationCount={"infinite"}
             direction="alternate"
             style={{
@@ -99,7 +116,7 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
                     height: 30
                 }}
                 contentFit="contain"
-                source={require("~/assets/images/icons/hand.png")}
+                source={isDark ? handImages[1] : handImages[0]}
             />
         </Animatable.View>
 
@@ -113,21 +130,49 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
                 position: "absolute",
                 top: 0,
                 right: 0,
-
                 alignItems: "flex-end",
-
+                userSelect: "none"
             }}
         >
             <MaterialCommunityIcons
                 name="gesture-swipe-horizontal"
                 size={40}
+                color={isDark ? "#FFF" : "#000"}
 
             />
         </Animatable.View>
     }
 
+    useEffect(() => {
+        if (!tutorial?.inCourse) return
+
+        if (tutorial.step == 2) {
+            setTimeout(() => {
+                swiperRef.current?.openRight();
+            }, 1000);
+
+            setTimeout(() => {
+                swiperRef.current?.openLeft();
+            }, 3000);
+
+            setTimeout(() => {
+                swiperRef.current?.close();
+            }, 5000);
+        } else if (tutorial.step == 1) {
+            setTimeout(() => {
+                bottomSheetRef.current?.open()
+            }, 2000);
+
+            setTimeout(() => {
+                bottomSheetRef.current?.close()
+            }, 8500);
+        }
+    }, [tutorial])
+
     const content = (
         <SwiperV2
+            ref={swiperRef}
+            friction={3}
             renderLeftActions={renderLeftActions}
             renderRightActions={renderRightActions}
         >
@@ -152,7 +197,7 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
                             Materia:
                         </Texto>
                         {data.isLoading ? (
-                            <Skeleton colorMode={colorMode} width={160} height={15} />
+                            <CustomSkeleton width={160} height={15} />
                         ) : (
                             <Texto className="text-black dark:text-white">
                                 {data.data?.data.informacion.materia}
@@ -165,7 +210,7 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
                             Grupo:
                         </Texto>
                         {data.isLoading ? (
-                            <Skeleton colorMode={colorMode} width={50} height={15} />
+                            <CustomSkeleton width={50} height={15} />
                         ) : (
                             <Texto className="text-black dark:text-white">
                                 {data.data?.data.informacion.grupo}
@@ -179,7 +224,7 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
                         </Texto>
 
                         {data.isLoading ? (
-                            <Skeleton colorMode={colorMode} width={200} height={15} />
+                            <CustomSkeleton width={200} height={15} />
                         ) : (
                             <Texto className="text-black dark:text-white">
                                 {data.data?.data.informacion.horario}
@@ -193,7 +238,7 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
                         </Texto>
 
                         {data.isLoading ? (
-                            <Skeleton colorMode={colorMode} width={100} height={15} />
+                            <CustomSkeleton width={100} height={15} />
                         ) : (
                             <Texto className="text-black dark:text-white">
                                 {data.data?.data.informacion.modulo}
@@ -207,7 +252,7 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
                         </Texto>
 
                         {data.isLoading ? (
-                            <Skeleton colorMode={colorMode} width={140} height={15} />
+                            <CustomSkeleton width={140} height={15} />
                         ) : (
                             <Texto className="text-black dark:text-white">
                                 {data.data?.data.informacion.docente}
@@ -221,7 +266,7 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
                         </Texto>
 
                         {data.isLoading ? (
-                            <Skeleton colorMode={colorMode} width={50} height={15} />
+                            <CustomSkeleton width={50} height={15} />
                         ) : (
                             <Texto className="text-black dark:text-white">
                                 {data.data?.data.informacion.nota}
@@ -235,35 +280,38 @@ const MateriaHistoricoItem: React.FC<Props> = ({ materia, tutorial }) => {
 
     return (
         <CustomBottomSheetModal
+            ref={bottomSheetRef}
             content={content}
             snapPointsProp={materia.estado.id == 0 ? [] : ["35%", "60%", "90%"]}
             onPressButton={() => setEnabled(true)}
         >
-            <Texto
-                className="text-center text-xl text-black dark:text-white mb-4"
-                weight="Bold"
-            >
-                DETALLE DE LA MATERIA
-            </Texto>
+            {enabled && <>
+                <Texto
+                    className="text-center text-xl text-black dark:text-white mb-4"
+                    weight="Bold"
+                >
+                    DETALLE DE LA MATERIA
+                </Texto>
 
-            {!data.isError ? (
-                <>
-                    <Information />
+                {!data.isError ? (
+                    <>
+                        <Information />
 
-                    <MateriaChartsDetail materia={materia} detalleGrupo={data} />
-                </>
-            ) : (
-                <>
-                    <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl">
-                        <Texto className="text-white text-center">
-                            {
-                                "Hubo un error al cargar el detalle :(.\nSi el problema persiste por favor reportalo con soporte"
-                            }
-                        </Texto>
-                    </View>
-                </>
-            )}
+                        <MateriaChartsDetail materia={materia} detalleGrupo={data} />
+                    </>
+                ) : (
+                    <>
+                        <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl">
+                            <Texto className="text-white text-center">
+                                {
+                                    "Hubo un error al cargar el detalle :(.\nSi el problema persiste por favor reportalo con soporte"
+                                }
+                            </Texto>
+                        </View>
+                    </>
+                )}
+            </>}
         </CustomBottomSheetModal>
     );
-};
+});
 export default MateriaHistoricoItem;

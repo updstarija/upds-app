@@ -1,34 +1,36 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { View, Text, BackHandler } from "react-native";
-import { FlashList, ListRenderItem } from "@shopify/flash-list";
+import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
 import {
   TourGuideZone,
   useTourGuideController,
 } from "rn-tourguide";
-import { Skeleton } from "moti/skeleton";
 import { useCarreraContext, useRegistroHistorico } from "@/hooks";
 import { verTutorial } from "@/helpers";
 import { MateriaHistoricoItem } from "@/views";
-import { Texto } from "@/ui";
+import { CustomSkeleton, Texto } from "@/ui";
 import { IRegistroHistorico } from "@/types";
+import { RefreshControl } from "react-native-gesture-handler";
 
 const tutorialHistoricoSteps = {
   1: "Presiona en el registro para obtener mas informacion acerca de la materia",
-  2: "Desliza para obtener acceso a mas funciones"
+  2: "Desliza para obtener acceso a mas funcionalidades"
 }
 
 const HistoricoMaterias = () => {
   const listref = useRef<FlashList<IRegistroHistorico> | null>(null);
 
+  const [refreshing, setRefreshing] = useState(false)
+
   const [tutorialEnCurso, setTutorialEnCurso] = useState({
-    inCourse: true,
+    inCourse: false,
     step: 1
   })
 
 
   const { valueCarrera } = useCarreraContext();
 
-  const { registroHistoricoQuery: data } = useRegistroHistorico({
+  const { registroHistoricoQuery: data, handleRefresh } = useRegistroHistorico({
     carrera: valueCarrera || -1,
   });
 
@@ -36,8 +38,8 @@ const HistoricoMaterias = () => {
     useTourGuideController("t-historico-materias");
 
   const handleBackButtonPress = () => {
-    if (tutorialEnCurso) stop()
-    return !tutorialEnCurso
+    if (tutorialEnCurso.inCourse) stop()
+    return !tutorialEnCurso.inCourse
   };
 
   useEffect(() => {
@@ -50,23 +52,24 @@ const HistoricoMaterias = () => {
           return;
         }
         if (canStart && activarTutorial) {
-          start();
+          setTutorialEnCurso({ ...tutorialEnCurso, inCourse: true })
+          listref.current?.scrollToOffset({ animated: true, offset: 0 })
+
+          setTimeout(() => {
+            start();
+          }, 1000);
         }
       }
     })();
   }, [canStart, data.isLoading, data.isError]);
 
 
-  const handleOnStart = () => {
-    setTutorialEnCurso({ ...tutorialEnCurso, inCourse: true })
-    listref.current?.scrollToOffset({ animated: true, offset: 0 })
-  }
+  const handleOnStop = () => setTutorialEnCurso({ ...tutorialEnCurso, inCourse: false })
 
-  const handleOnStop = () => setTutorialEnCurso({ ...tutorialEnCurso, step: tutorialEnCurso.step + 1 })
-
-  const handleOnStepChange = () => {
-    setTutorialEnCurso({ ...tutorialEnCurso, step: tutorialEnCurso.step + 1 })
-    //    console.log(getCurrentStep()?.order);
+  const handleOnStepChange = (step: any) => {
+    console.log(step?.order);
+    setTutorialEnCurso({ ...tutorialEnCurso, step: step?.order || -1 })
+    // console.log(getCurrentStep()?.order, "ORDER");
   }
   //console.log(getCurrentStep());
   const newRegistroHistorico = useMemo(() => {
@@ -94,6 +97,56 @@ const HistoricoMaterias = () => {
     })
     .filter((item) => item !== null) as number[];
 
+
+  const renderListItem = useCallback(({ item, index }: ListRenderItemInfo<any>) => {
+    if (typeof item === "string") {
+      return (
+        <>
+          <View className="bg-white dark:bg-secondary-dark p-5 shadow">
+            <Texto className="text-black dark:text-white text-center">
+              {item}
+            </Texto>
+          </View>
+        </>
+      );
+
+    } else if (typeof item === "number") {
+      return (
+        <>
+          <View className="h-12 bg-white dark:bg-secondary-dark justify-center p-4">
+            <View className="w-10" />
+            <CustomSkeleton width={200 + (Math.round(Math.random() * 100))} height={15} />
+          </View>
+
+        </>
+      );
+    } else {
+      if (index == 1) {
+        return (
+          <>
+            <TourGuideZone
+              tourKey={tourKey}
+              style={{ zIndex: 2 }}
+              zone={index}
+              text={tutorialHistoricoSteps[1]}
+            >
+              <TourGuideZone
+                tourKey={tourKey}
+                style={{ zIndex: 2 }}
+                zone={index + 1}
+                keepTooltipPosition
+                text={tutorialHistoricoSteps[2]}
+              >
+                <MateriaHistoricoItem materia={item} tutorial={tutorialEnCurso} />
+              </TourGuideZone>
+            </TourGuideZone>
+          </>
+        );
+      }
+      return <MateriaHistoricoItem materia={item} />
+    }
+  }, [tutorialEnCurso]);
+
   useEffect(() => {
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -104,32 +157,36 @@ const HistoricoMaterias = () => {
   }, [tutorialEnCurso]);
 
   useEffect(() => {
-    eventEmitter?.on('start', handleOnStart)
     eventEmitter?.on('stop', handleOnStop)
     eventEmitter?.on('stepChange', handleOnStepChange)
 
     return () => {
-      eventEmitter?.off('start', handleOnStart)
       eventEmitter?.off('stop', handleOnStop)
       eventEmitter?.off('stepChange', handleOnStepChange)
     }
-  }, [canStart, tutorialEnCurso])
+  }, [tutorialEnCurso.inCourse])
+
+
+  useEffect(() => {
+    return () => {
+      stop()
+    }
+  }, [])
 
 
   if (data.isError) return <Text className="text-white">HUBO UN ERROR..</Text>;
 
-  const renderListItem = useCallback((list: ListRenderItem<any>) => {
-    return <></>
-  }, []);
+
   return (
     <View className="flex-1 bg-white dark:bg-primario-dark">
       <FlashList
         ref={listref}
         stickyHeaderIndices={!data.isLoading ? stickyHeaderIndices : undefined}
-        scrollEnabled={!tutorialEnCurso}
-        data={!data.isLoading ? newRegistroHistorico : [... new Array(20).fill(0)]}
+        scrollEnabled={!tutorialEnCurso.inCourse}
+        data={!data.isLoading ? tutorialEnCurso.inCourse ? newRegistroHistorico.slice(0, 5) : newRegistroHistorico : [... new Array(15).fill(0)]}
         estimatedItemSize={50}
         extraData={tutorialEnCurso}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ItemSeparatorComponent={() => (
           <View className="border-[.5px] border-primario" />
         )}
@@ -141,17 +198,4 @@ const HistoricoMaterias = () => {
 
 };
 
-
-
-//-145
-function App() {
-  const [tutorialEnCurso, setTutorialEnCurso] = useState(false);
-
-  return (
-    <HistoricoMaterias
-
-    />
-  );
-}
-
-export default App;
+export default HistoricoMaterias;

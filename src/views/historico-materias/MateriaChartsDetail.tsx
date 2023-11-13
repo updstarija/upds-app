@@ -2,10 +2,9 @@ import { useState, useMemo, memo } from "react";
 import { View, useWindowDimensions } from "react-native";
 import { BarChart, LineChart, PieChart } from "react-native-gifted-charts";
 import { UseQueryResult } from "@tanstack/react-query";
-import { Skeleton } from "moti/skeleton";
 import { useThemeColor } from "@/hooks";
-import { Etiqueta } from "@/components";
-import { Texto } from "@/ui";
+import { Etiqueta, Spinner } from "@/components";
+import { CustomSkeleton, Texto } from "@/ui";
 import { IRegistroHistorico, IResponseDetalleGrupo } from "@/types";
 
 interface Props {
@@ -137,13 +136,15 @@ export const MateriaChartsDetail: React.FC<Props> = memo(
         // const isAprobado = materia.estado.id == 1;
         // const isReprobado = materia.estado.id == 2;
 
-
         return (
-            <View className="bg-white dark:bg-secondary-dark mt-6">
-                {isPendiente ?
-                    <View className='items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl'>
-                        <Texto className='text-white'>La materia esta en curso. Vuelva Pronto :)</Texto>
-                    </View> :
+            <View className="bg-white dark:bg-primario-dark mt-6">
+                {isPendiente ? (
+                    <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl">
+                        <Texto className="text-white">
+                            La materia esta en curso. Vuelva Pronto :)
+                        </Texto>
+                    </View>
+                ) : (
                     <View className="flex-col gap-5">
                         <View className="rounded-2xl bg-[#223B82] p-5 dark:bg-[#0D1F46] ">
                             <Texto
@@ -154,11 +155,10 @@ export const MateriaChartsDetail: React.FC<Props> = memo(
                             </Texto>
                             <View className="mx-auto">
                                 {detalleGrupo.isLoading ? (
-                                    <Skeleton
-                                        colorMode={"light"}
+                                    <CustomSkeleton
                                         width={220}
                                         height={240}
-                                        colors={['#243E89', '#2F489C', '#3752AD']}
+                                        colors={["#243E89", "#2F489C", "#3752AD"]}
                                     />
                                 ) : (
                                     <BarChart
@@ -208,10 +208,14 @@ export const MateriaChartsDetail: React.FC<Props> = memo(
                             </Texto>
 
                             <View className="mx-auto my-5">
-                                {detalleGrupo.isLoading
-                                    ?
-                                    <Skeleton colorMode={'light'} width={195} height={195} colors={['#243E89', '#2F489C', '#3752AD']} radius={"round"} />
-                                    :
+                                {detalleGrupo.isLoading ? (
+                                    <CustomSkeleton
+                                        width={195}
+                                        height={195}
+                                        colors={["#243E89", "#2F489C", "#3752AD"]}
+                                        radius={"round"}
+                                    />
+                                ) : (
                                     <PieChart
                                         data={qualificationDistribution}
                                         donut
@@ -249,8 +253,7 @@ export const MateriaChartsDetail: React.FC<Props> = memo(
                                             );
                                         }}
                                     />
-                                }
-
+                                )}
                             </View>
 
                             <View className="flex gap-y-2">
@@ -314,14 +317,12 @@ export const MateriaChartsDetail: React.FC<Props> = memo(
 
                             <View className="mx-auto mt-5 p-3">
                                 {detalleGrupo.isLoading ? (
-                                    <Skeleton
-                                        colorMode={"light"}
+                                    <CustomSkeleton
                                         width={250}
                                         height={240}
-                                        colors={['#243E89', '#2F489C', '#3752AD']}
+                                        colors={["#243E89", "#2F489C", "#3752AD"]}
                                     />
-                                ) :
-
+                                ) : (
                                     <LineChart
                                         thickness={3}
                                         color={isDark ? "#fff" : "#091f4e"}
@@ -360,12 +361,11 @@ export const MateriaChartsDetail: React.FC<Props> = memo(
                                             },
                                         }}
                                     />
-                                }
-
+                                )}
                             </View>
                         </View>
                     </View>
-                }
+                )}
             </View>
         );
     }
