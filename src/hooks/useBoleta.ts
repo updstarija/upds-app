@@ -43,6 +43,7 @@ export const useBoleta = ({ carrera }: Params) => {
         }
     })
 
+
     return {
         boletaQuery,
         materiaProyeccionDeleteMutation,

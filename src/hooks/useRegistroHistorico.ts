@@ -1,12 +1,14 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { getPlanEstudio, getRegistroHistorico } from "@/api";
-import { useAuthContext } from "./useAuthContext";
+import { getRegistroHistorico } from "@/api";
 
 interface Params {
     carrera: number
 }
 
 export const useRegistroHistorico = ({ carrera }: Params) => {
+    const client = useQueryClient();
+
+
     const registroHistoricoQuery = useQuery(
         ['registro-historico', carrera],
         () => getRegistroHistorico(carrera),
@@ -15,7 +17,13 @@ export const useRegistroHistorico = ({ carrera }: Params) => {
         }
     )
 
+    const handleRefresh = () => {
+        client.invalidateQueries(['registro-historico'])
+        client.invalidateQueries(['detalle-materia'])
+    }
+
     return {
-        registroHistoricoQuery
+        registroHistoricoQuery,
+        handleRefresh
     }
 }
