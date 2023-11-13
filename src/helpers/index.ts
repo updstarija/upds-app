@@ -7,3 +7,4 @@ export * from './yaPasoLaBienvenida';
 export * from './formatFecha';
 export * from './nombreCompleto';
 export * from './verTutorial';
+export * from './invalidateQuery';
