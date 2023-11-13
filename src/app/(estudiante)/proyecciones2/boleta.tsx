@@ -18,9 +18,9 @@ import {
     Busqueda,
     DetalleBoleta,
     DetalleMateriasSemestre,
+    SemestreProyeccionItem,
 } from "@/views/proyecciones";
 import { Button } from "../../../components";
-import Modal from "react-native-modal";
 import Icon from "@expo/vector-icons/FontAwesome";
 import { COLORS } from "~/constants";
 import { FloatingAction } from "react-native-floating-action";
@@ -30,7 +30,6 @@ import { shareAsync } from "expo-sharing";
 import { templateBoletaV3 } from "@/data/";
 
 import {
-    TooltipProps,
     TourGuideZone,
     TourGuideZoneByPosition,
     useTourGuideController,
@@ -40,6 +39,8 @@ import { verTutorial } from "@/helpers";
 import { SelectCarrera } from "@/views/SelectCarrera";
 import { CustomModal, Texto } from "@/ui";
 import { BackHandler } from "react-native";
+import { FlashList } from "@shopify/flash-list";
+import { ScrollView } from "react-native-gesture-handler";
 
 interface Props {
     tutorialEnCurso: boolean;
@@ -61,29 +62,19 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
         modulos: false,
     });
 
-    const { canStart, start, tourKey, getCurrentStep } = useTourGuideController("t-boleta");
+    const { tourKey } = useTourGuideController("t-boleta");
 
     const {
         carrerasQuery: carreras,
         valueCarrera,
-        setValueCarrera,
     } = useCarreraContext();
 
     const [semestreOpen, setSemestreOpen] = useState(-1);
 
-    const onChangeSemestre = (val: number) => {
-        if (val === semestreOpen) {
-            setSemestreOpen(-1);
-            return;
-        }
-        setSemestreOpen(val);
-    };
 
-    const [openCarrera, setOpenCarrera] = useState(false);
     const [openModulo, setOpenModulo] = useState(false);
-    const [valueModulo, setvalueModulo] = useState<number | null>(null);
+    const [valueModulo, setvalueModulo] = useState<number>(0);
 
-    const [blockScroll, setBlockScroll] = useState(true);
 
     const { carrerasQuery } = useCarreras();
     const { semestresQuery } = useSemestres({
@@ -106,31 +97,24 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
 
 
 
-    useEffect(() => {
-        (async () => {
-            if (!Object.values(empezarTutorial).includes(false)) {
-                if (canStart && (await verTutorial("t-boleta"))) {
-                    start();
-                    setTutorialEnCurso(true);
+    /*   useEffect(() => {
+          (async () => {
+              if (!Object.values(empezarTutorial).includes(false)) {
+                  if (canStart && (await verTutorial("t-boleta"))) {
+                      start();
+                      setTutorialEnCurso(true);
+  
+                      setTimeout(() => {
+                          setBlockScroll(false);
+                      }, 1000);
+                  } else {
+                      setTutorialEnCurso(false);
+                      setBlockScroll(false);
+                  }
+              }
+          })();
+      }, [canStart, empezarTutorial]); */
 
-                    setTimeout(() => {
-                        setBlockScroll(false);
-                    }, 1000);
-                } else {
-                    setTutorialEnCurso(false);
-                    setBlockScroll(false);
-                }
-            }
-        })();
-    }, [canStart, empezarTutorial]);
-
-    const scrollToTop = () => {
-        flatListRef?.current?.scrollToOffset({ animated: true, offset: 0 });
-    };
-
-    useEffect(() => {
-        if (empezarTutorial && getCurrentStep() === undefined) setTutorialEnCurso(false)
-    }, [getCurrentStep()])
 
     const renderModulos = () => {
         if (modulosQuery.isLoading) return <Texto>CARGANDO MODULOS..</Texto>;
@@ -247,7 +231,7 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
                 <View style={{ zIndex: -1 }}>{renderBoleta()}</View>
             </TourGuideZone>
 
-            <TourGuideZone
+            {/*   <TourGuideZone
                 tourKey={tourKey}
                 zone={3}
                 text="Buscador de materias para proyectar"
@@ -256,7 +240,7 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
                 <View style={{ zIndex: 1, paddingVertical: 20 }}>
                     <Busqueda scrollToTop={scrollToTop} />
                 </View>
-            </TourGuideZone>
+            </TourGuideZone> */}
 
             <TourGuideZone
                 tourKey={tourKey}
@@ -266,7 +250,6 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
                 borderRadius={10}
             >
                 <View style={{ zIndex: 9999 }} className="pb-4">
-                    {/* <View style={{zIndex: 1, position: 'absolute'}}>{renderModulos()}</View> */}
                     {renderModulos()}
                 </View>
             </TourGuideZone>
@@ -277,36 +260,26 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
         if (semestresQuery.isLoading) return <Spinner />;
         if (semestresQuery.isError) return <Texto>HUBO UN ERROR..</Texto>;
 
-        if (!empezarTutorial.semestres) {
-            setEmpezarTutorial({ ...empezarTutorial, semestres: true });
-        }
+        /*         if (!empezarTutorial.semestres) {
+                    setEmpezarTutorial({ ...empezarTutorial, semestres: true });
+                } */
         return (
             <>
-                <FlatList
-                    data={null}
-                    ref={flatListRef}
+                <View style={{ zIndex: 1 }}>{renderHeaderBody()}</View>
+                {/*   <FlatList
+                    data={semestresQuery.data}
+                    keyExtractor={(item) => item.id.toString()}
                     showsVerticalScrollIndicator={false}
-                    scrollEnabled={!blockScroll}
-                    ListHeaderComponent={
-                        <>
-                            <View style={{ zIndex: 1 }}>{renderHeaderBody()}</View>
-                            <FlatList
-                                data={semestresQuery.data}
-                                showsVerticalScrollIndicator={false}
-                                renderItem={(item) => (
-                                    <DetalleMateriasSemestre
-                                        semestre={item.item}
-                                        modulo={valueModulo || 0}
-                                        active={item.item.id === semestreOpen}
-                                        onChangeSemestre={onChangeSemestre}
-                                        scrollToTop={scrollToTop}
-                                    />
-                                )}
-                            />
-                        </>
-                    }
-                    renderItem={null}
-                />
+                    extraData={valueModulo}
+                    renderItem={({ item }) => (
+                        <SemestreProyeccionItem semestre={item} modulo={valueModulo} />
+                    )}
+                /> */}
+
+                {semestresQuery.data.map(item => (
+                    <SemestreProyeccionItem semestre={item} modulo={valueModulo} key={item.id} />
+
+                ))}
             </>
         );
     };
@@ -420,10 +393,20 @@ const Boleta: React.FC<Props> = ({ tutorialEnCurso, setTutorialEnCurso }) => {
 
     return (
         <>
-            <View className="flex-1 bg-red-400">
-                <View className="bg-white dark:bg-primario-dark flex-1">
+            <View className="flex-1 dark:bg-primario-dark">
+                {/*   <FlatList
+                    data={null}
+                    ListHeaderComponent={
+                        <View className="bg-white dark:bg-primario-dark flex-1">
+                            {renderPlan()}
+                        </View>
+                    }
+                    renderItem={null}
+                /> */}
+
+                <ScrollView className="bg-white dark:bg-primario-dark flex-1">
                     {renderPlan()}
-                </View>
+                </ScrollView>
 
                 {/*    <View style={{ zIndex: 2, marginTop: -100 }} >
                 <TourGuideZone zone={4} text="Aqui puedes seleccionar los distintos modulos de las materias ofertadas" borderRadius={10} shape='circle' >

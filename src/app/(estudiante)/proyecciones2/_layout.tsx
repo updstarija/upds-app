@@ -2,7 +2,7 @@ import { MaterialTopTabs } from '@/navigator/top-tabs';
 import { COLORS } from '~/constants';
 import { Animated } from 'react-native';
 import { useThemeColor } from '@/hooks';
-
+import { ProyeccionesProvider } from '@/context/ProyeccionesContext';
 
 const av = new Animated.Value(0);
 av.addListener(() => {
@@ -15,6 +15,7 @@ export default function Layout() {
 
 
     return (
+
         <MaterialTopTabs
             screenListeners={{
                 focus: () => {
@@ -59,5 +60,8 @@ export default function Layout() {
 
             />
         </MaterialTopTabs>
+
+
+
     );
 }

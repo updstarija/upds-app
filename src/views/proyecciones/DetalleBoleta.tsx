@@ -46,7 +46,7 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorialEnCurso, setEmpezarTu
       </Texto>
     );
 
-  console.log(tutorialEnCurso)
+
 
   if (tutorialEnCurso) return (<Card classNameCard="my-4 flex">
     <Texto className="mt-2 text-center text-white">BOLETA DE PROYECCION</Texto>
