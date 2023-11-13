@@ -18,3 +18,4 @@ export * from './VideoPlayer';
 //
 export { default as SwiperV2 } from './SwiperV2';
 export { default as MateriaState } from './MateriaState';
+export { default as MateriaStateProyecciones } from './MateriaStateProyecciones';
