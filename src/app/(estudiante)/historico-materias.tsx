@@ -71,7 +71,7 @@ const HistoricoMaterias = () => {
     setTutorialEnCurso({ ...tutorialEnCurso, step: step?.order || -1 })
     // console.log(getCurrentStep()?.order, "ORDER");
   }
-  //console.log(getCurrentStep());
+
   const newRegistroHistorico = useMemo(() => {
     if (data.isLoading || data.isError) return [];
 

@@ -74,9 +74,9 @@ function RootLayoutNav() {
 
   const onSkipOrFinishTutorial = async (tooltipProps: TourProps) => {
     if (!tooltipProps.handleStop) return
-    tooltipProps.handleStop()
 
-    await AsyncStorage.setItem(tooltipProps.currentStep.tourKey, "true");
+    tooltipProps.handleStop()
+    AsyncStorage.setItem(tooltipProps.currentStep.tourKey, "true");
   }
 
   const tooltipComponentTour = (tooltipProps: TourProps) => {
@@ -101,11 +101,11 @@ function RootLayoutNav() {
             <Texto className="text-white">Saltar</Texto>
           </TouchableOpacity>} */}
 
-          {!isFirstStep && <TouchableOpacity onPress={tooltipProps.handlePrev} className="p-4">
+          {!isFirstStep && <TouchableOpacity onPress={handlePrev} className="p-4">
             <Texto className="text-white">Anterior</Texto>
           </TouchableOpacity>}
 
-          {!isLastStep ? <TouchableOpacity onPress={tooltipProps.handleNext} className="p-4">
+          {!isLastStep ? <TouchableOpacity onPress={handleNext} className="p-4">
             <Texto className="text-white">Siguiente</Texto>
           </TouchableOpacity>
             :
@@ -131,7 +131,6 @@ function RootLayoutNav() {
                 // {...{ borderRadius: 16 }}
                 backdropColor="#000000b3"
                 //backdropColor="rgba(0,0,0,0.4)"
-
                 verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
                 tooltipComponent={(props) => tooltipComponentTour(props as TourProps)}
               >
@@ -290,12 +289,12 @@ function RootLayoutNav() {
                         options={configStack("Proyecciones")}
                       />
 
-                      <Stack.Screen
-                        name="(estudiante)/proyecciones2"
+                      {/*              <Stack.Screen
+                        name="(estudiante)/proyecciones"
                         //@ts-ignore
                         options={configStack("Proyecciones")}
                       />
-
+ */}
                       <Stack.Screen
                         name="(estudiante)/historico-materias"
                         //@ts-ignore

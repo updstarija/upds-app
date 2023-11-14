@@ -3,15 +3,31 @@ import {
   useState,
 } from 'react';
 
+type TutorialProyeccionesReady = {
+  carreras: false,
+  boleta: false,
+  modulos: false,
+  semestres: false
+}
+
+
+type TutorialInfo = {
+  inCourse: boolean,
+  step: number
+}
 interface ProyeccionesContext {
   carrera: number,
   modulo: number,
   semestre: number,
   boleta: number,
+  tutorialBoletaReady: TutorialProyeccionesReady,
+  tutorialEnCurso: TutorialInfo,
   handleCarrera: Function
   handleModulo: Function
   handleSemestre: Function
   handleBoleta: Function
+  setTutorialBoletaReady: Function
+  setTutorialEnCurso: Function
 }
 export const ProyeccionesContext = createContext<ProyeccionesContext>(
   {} as ProyeccionesContext,
@@ -27,6 +43,18 @@ export const ProyeccionesProvider: React.FC<Props> = ({ children }) => {
   const [semestre, setSemestre] = useState(-1)
   const [boleta, setBoleta] = useState(-1)
 
+  const [tutorialBoletaReady, setTutorialBoletaReady] = useState<TutorialProyeccionesReady>({
+    carreras: false,
+    boleta: false,
+    modulos: false,
+    semestres: false
+  })
+
+  const [tutorialEnCurso, setTutorialEnCurso] = useState<TutorialInfo>({
+    inCourse: false,
+    step: 1
+  })
+
   const handleCarrera = (id: number) => {
     setCarrera(id)
   }
@@ -40,6 +68,7 @@ export const ProyeccionesProvider: React.FC<Props> = ({ children }) => {
     setBoleta(id)
   }
 
+
   return (
     <ProyeccionesContext.Provider
       value={{
@@ -47,10 +76,14 @@ export const ProyeccionesProvider: React.FC<Props> = ({ children }) => {
         modulo,
         semestre,
         boleta,
+        tutorialBoletaReady,
+        tutorialEnCurso,
         handleCarrera,
         handleModulo,
         handleSemestre,
         handleBoleta,
+        setTutorialBoletaReady,
+        setTutorialEnCurso,
       }}>
       {children}
     </ProyeccionesContext.Provider>
