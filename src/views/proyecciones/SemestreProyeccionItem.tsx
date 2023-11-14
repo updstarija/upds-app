@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
 import { View } from "react-native";
 import { router } from "expo-router";
 import { FontAwesome } from "@expo/vector-icons";
-import { CustomBottomSheetModal, Texto } from "@/ui";
+import { CustomBottomSheetModal, CustomSkeleton, Texto } from "@/ui";
 import { ISemestre } from "@/types";
 import { useBoleta, useCarreraContext, useMateriasProyeccion, useProyeccionesContext, useThemeColor } from "@/hooks";
 import { SwiperV2Ref } from "@/components/SwiperV2";
@@ -13,6 +13,7 @@ import { FlatList, ScrollView } from "react-native-gesture-handler";
 import clsx from "clsx";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { COLORS } from "~/constants";
+import { Spacer } from "@/components";
 
 
 
@@ -100,18 +101,6 @@ const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo }) => {
         });
     }, [filterText, selectedTurns, data.data])
 
-    /* useEffect(() => {
-        if (selectedTurns.length) {
-            setItem(JSON.stringify(selectedTurns))
-        }
-    }, [selectedTurns])
-
-    useEffect(() => {
-        (async () => {
-            setSelectedTurns(JSON.parse(await getItem() || '[]'))
-        })()
-    }, []) */
-
     useEffect(() => {
         if (boletaQuery.data && boletaQuery.data.info.boleta) {
             handleBoleta(boletaQuery.data.info.boleta)
@@ -128,73 +117,92 @@ const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo }) => {
                 handleSemestre(semestre.id)
             }}
             withoutScrollView
-            snapPointsProp={["50%", "90%"]}
+            snapPointsProp={!data.isLoading && !data.isError && data.data.data.length > 5 ? ["50%", "90%"] : []}
         >
-            <BottomSheetTextInput
-                value={filterText}
-                onChangeText={e => setFilterText(e)}
-                style={{
-                    margin: 15,
-                    borderRadius: 10,
-                    backgroundColor: isDark ? COLORS.dark.secondary : "rgb(243 244 246)",
-                    padding: 10,
-                    color: isDark ? "#FFF" : "#000",
-                }}
-                placeholder="Buscar materia...."
-                placeholderTextColor={"#ccc"}
-                className={`rounded-2xl border bg-gray-100 p-4 text-gray-700 dark:bg-primario-dark dark:text-white`} />
-
-            <Texto className="px-4 pb-2">Turno:</Texto>
-
-            <View className=' items-center justify-center mb-5'>
-                <FlatList
-                    data={["Mañana", "Medio Día", "Tarde", "Noche"]}
-                    horizontal
-                    showsHorizontalScrollIndicator={false}
-                    contentContainerStyle={{ paddingHorizontal: 10 }}
-                    ItemSeparatorComponent={() => (
-                        <View className="w-2" />
-                    )}
-                    extraData={selectedTurns}
-                    renderItem={({ item }) => (
-                        <TouchableOpacity onPress={() => handleFilterTurn(item)}>
-                            <View className={
-                                clsx([
-                                    "rounded-full py-2 px-4 border-[.5px] border-primario",
-                                    {
-                                        "bg-primario dark:bg-secondary-dark text-white": selectedTurns.includes(item)
-                                    }
-                                ])
-                            }>
-                                <Texto className={
-                                    clsx([
-                                        "'text-black dark:text-white'",
-                                        {
-                                            "text-white": selectedTurns.includes(item)
-                                        }
-                                    ])
-                                }>{item}</Texto>
-                            </View>
-                        </TouchableOpacity>
-                    )}
-                />
-            </View>
 
 
-            {!data.isLoading && !data.isError ?
+            {!data.isError ?
                 <View className="flex-1 ">
-                    {!!!filterData.length && <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl m-4">
-                        <Texto className="text-white">
-                            No hay datos que mostrar :(
-                        </Texto>
-                    </View>}
 
                     <BottomSheetFlatList
-                        data={filterData}
-                        keyExtractor={(i) => i.id.toString()}
-                        renderItem={({ item }) => (
-                            <MateriaProyeccionesItem materia={item} semestre={semestre} />
-                        )}
+                        //data={filterData}
+                        ListHeaderComponent={<>
+                            <BottomSheetTextInput
+                                value={filterText}
+                                onChangeText={e => setFilterText(e)}
+                                style={{
+                                    margin: 15,
+                                    borderRadius: 10,
+                                    backgroundColor: isDark ? COLORS.dark.secondary : "rgb(243 244 246)",
+                                    padding: 10,
+                                    color: isDark ? "#FFF" : "#000",
+                                }}
+                                placeholder="Buscar materia...."
+                                placeholderTextColor={"#ccc"}
+                                className={`rounded-2xl border bg-gray-100 p-4 text-gray-700 dark:bg-primario-dark dark:text-white`} />
+
+                            <Texto className="px-4 pb-2">Turno:</Texto>
+
+                            <View className=' items-center justify-center mb-5'>
+                                <FlatList
+                                    data={["Mañana", "Medio Día", "Tarde", "Noche"]}
+                                    horizontal
+                                    showsHorizontalScrollIndicator={false}
+                                    contentContainerStyle={{ paddingHorizontal: 10 }}
+                                    ItemSeparatorComponent={() => (
+                                        <View className="w-2" />
+                                    )}
+                                    extraData={selectedTurns}
+                                    renderItem={({ item }) => (
+                                        <TouchableOpacity onPress={() => handleFilterTurn(item)}>
+                                            <View className={
+                                                clsx([
+                                                    "rounded-full py-2 px-4 border-[.5px] border-primario",
+                                                    {
+                                                        "bg-primario dark:bg-secondary-dark text-white": selectedTurns.includes(item)
+                                                    }
+                                                ])
+                                            }>
+                                                <Texto className={
+                                                    clsx([
+                                                        "'text-black dark:text-white'",
+                                                        {
+                                                            "text-white": selectedTurns.includes(item)
+                                                        }
+                                                    ])
+                                                }>{item}</Texto>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )}
+                                />
+                            </View>
+
+                            {!data.isLoading && !!!filterData.length && <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl m-4">
+                                <Texto className="text-white">
+                                    No hay datos que mostrar :(
+                                </Texto>
+                            </View>}
+                        </>}
+                        data={!data.isLoading ? filterData : [... new Array(5).fill(0)]}
+                        renderItem={({ item }) => {
+                            if (typeof item === "number") {
+                                return (
+                                    <View className="h-16 bg-white dark:bg-secondary-dark justify-center p-4">
+                                        <View className="flex-row justify-between items-center">
+                                            <View>
+                                                <CustomSkeleton width={150 + (Math.round(Math.random() * 100))} height={10} />
+                                                <Spacer height={5} />
+                                                <CustomSkeleton width={100} height={10} />
+                                            </View>
+
+                                            <CustomSkeleton width={50} height={15} />
+                                        </View>
+                                    </View>
+                                );
+                            }
+                            return <MateriaProyeccionesItem materia={item} semestre={semestre} />
+                        }
+                        }
                         ItemSeparatorComponent={() => (
                             <View className="border-[.5px] border-primario" />
                         )}

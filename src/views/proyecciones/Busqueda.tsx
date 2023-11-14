@@ -1,12 +1,11 @@
-import { View, Text, Alert, FlatList } from 'react-native'
+import { View, Alert } from 'react-native'
 import { useMemo, useState } from 'react'
-import { AutocompleteDropdown, TAutocompleteDropdownItem } from 'react-native-autocomplete-dropdown'
-import { AddActions, DeleteActions, Swiper } from '@/components'
+import { AutocompleteDropdown } from 'react-native-autocomplete-dropdown'
+import { AddActions, Swiper } from '@/components'
 import { useBoleta, useCarreraContext, useMateriasProyeccion, useSearchMateria, useThemeColor } from '@/hooks'
 import { COLORS } from '~/constants'
-import { FlashList } from '@shopify/flash-list'
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
-import { AntDesign, FontAwesome } from '@expo/vector-icons'
+import { ScrollView } from 'react-native-gesture-handler'
+import { FontAwesome } from '@expo/vector-icons'
 import { RequisitoMateria } from './RequisitoMateria'
 import { MateriaProyeccion } from '@/types'
 import { etiquetas } from '@/data'
@@ -17,10 +16,10 @@ import { CustomBottomSheetModal, Texto } from '@/ui'
 type IconProp = keyof typeof FontAwesome.glyphMap;
 
 interface Props {
-    scrollToTop: Function
+
 }
 
-export const Busqueda: React.FC<Props> = ({ scrollToTop }) => {
+export const Busqueda: React.FC<Props> = () => {
     const isDarkMode = useThemeColor() === "dark"
 
     const { valueCarrera } = useCarreraContext()
@@ -51,7 +50,7 @@ export const Busqueda: React.FC<Props> = ({ scrollToTop }) => {
     const onAddMateria = async (data: any) => {
         const response = await materiaProyeccionCreateMutation.mutateAsync(data);
 
-        if (response) scrollToTop();
+        //    if (response) scrollToTop();
     };
 
 
@@ -115,7 +114,7 @@ export const Busqueda: React.FC<Props> = ({ scrollToTop }) => {
                 onClear={() => setInputText("")}
                 inputContainerStyle={{ backgroundColor: isDarkMode ? COLORS.dark.secondary : "#FFF", borderColor: "#000", borderWidth: .5 }}
                 debounce={600}
-                EmptyResultComponent={<Texto className='text-black dark:text-white p-3 text-center'>{isLoading ? "Buscando Materia" : inputText.length === 0 ? "Busca una materia para tu proyeccion" : "No se ha encontrado la materia o no esta disponible en tu plan de estudio"}</Texto>}
+                EmptyResultComponent={<Texto className='text-black dark:text-white p-3 text-center'>{isLoading ? "Buscando Materia..." : inputText.length === 0 ? "Busca una materia para tu proyeccion" : "No se ha encontrado la materia o no esta disponible en tu plan de estudio"}</Texto>}
             />
 
 

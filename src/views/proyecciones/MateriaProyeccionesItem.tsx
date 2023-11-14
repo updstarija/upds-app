@@ -193,7 +193,7 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, seme
         <CustomBottomSheetModal
             ref={bottomSheetRef}
             content={content}
-            snapPointsProp={materia.estado.id == 0 ? [] : ["35%", "60%", "90%"]}
+
             onPressButton={() => {
                 setEnabled(true)
                 message()
