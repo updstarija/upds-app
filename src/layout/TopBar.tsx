@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { DrawerToggleButton } from '@react-navigation/drawer';
 import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { Link } from 'expo-router';
@@ -28,9 +28,9 @@ export const TopBar = () => {
           </View>
 
           <View className='flex-row'>
-            <Link className='mr-4' href='/notificacion' >
-              <View className=''>
-                <MaterialIcons name="notifications" color={'#FFF'} size={23} />
+            <Link className='mr-4 ' href='/notificacion' asChild >
+              <Pressable >
+                <MaterialIcons name="notifications" color={'#FFF'} size={23} style={{ margin: 3 }} />
                 <Animatable.View animation={{
                   from: {
                     transform: [
@@ -46,12 +46,14 @@ export const TopBar = () => {
 
                 </Animatable.View>
 
-              </View>
+              </Pressable>
             </Link>
 
 
-            {status === "autenticado" && <Link className='mr-4' href='/perfil'>
-              <FontAwesome name='user-circle-o' size={20} color="#fff" />
+            {status === "autenticado" && <Link className='mr-4' href='/perfil' asChild>
+              <Pressable>
+                <FontAwesome name='user-circle-o' size={20} color="#fff" style={{ margin: 3 }} />
+              </Pressable>
             </Link>}
 
           </View>

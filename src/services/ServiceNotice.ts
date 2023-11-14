@@ -18,11 +18,11 @@ export const getPaginatedNotice = async (len: number, categoria: string = "") =>
 
     if (categoria == "") {
         snapshot = await db.collection('Noticia')
-            .orderBy('prioridad', "desc").orderBy("fecha", "desc").limit(len + 5).get();
+            .orderBy('prioridad', "desc").orderBy("fecha", "desc").limit(len + 2).get();
     } else {
         snapshot = await db.collection('Noticia')
             .where("categoria", "==", categoria)
-            .orderBy('prioridad', "desc").orderBy("fecha", "desc").limit(len + 5).get();
+            .orderBy('prioridad', "desc").orderBy("fecha", "desc").limit(len + 2).get();
     }
 
     const data: INotificacionNotice[] = snapshot.docs.map(doc => ({

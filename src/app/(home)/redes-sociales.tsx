@@ -6,13 +6,16 @@ import { FontAwesome } from "@expo/vector-icons";
 import { openURL } from "expo-linking";
 import { Image } from "expo-image";
 import { COLORS } from "~/constants";
-import { useRedesSociales, useThemeColor } from "@/hooks";
+import { useFaq, useRedesSociales, useThemeColor } from "@/hooks";
 import { Spinner } from "@/components";
 import { LayoutScreen } from "@/layout/LayoutScreen";
 import { Texto } from "@/ui";
 
 const RedesSociales = () => {
   const { youtubeQuery, facebookQuery, instagramQuery } = useRedesSociales()
+  const { detalleGrupoMateriaQuery } = useFaq()
+
+
 
   const renderYt = () => {
     if (youtubeQuery.isLoading) return <Spinner style={{ height: 200 }} />;
@@ -191,6 +194,16 @@ const RedesSociales = () => {
 
             {renderInstagram()}
           </View>
+        </View>
+
+        <View>
+          <Texto>{detalleGrupoMateriaQuery.isLoading ? "ESTA CARGANDO" : "NO ESTA CARGANDO"}</Texto>
+          <Texto>{detalleGrupoMateriaQuery.isFetching ? "ESTA FETCHIN" : "NO ESTA FETCHIN"}</Texto>
+          <Texto>{detalleGrupoMateriaQuery.isError ? "ESTA ERROR" : "NO ESTA ERROR"}</Texto>
+
+          {detalleGrupoMateriaQuery.data?.map((x) => (
+            <Texto key={x.id}>{x.descripcion}</Texto>
+          ))}
         </View>
       </ScrollView>
     </LayoutScreen>

@@ -1,5 +1,28 @@
+import { View, Text } from 'react-native'
+import React from 'react'
+import { useFaq } from '@/hooks'
 
-import { View, Text, ScrollView } from 'react-native';
+const Testing = () => {
+    const { detalleGrupoMateriaQuery } = useFaq()
+
+    console.log(detalleGrupoMateriaQuery.data)
+    return (
+        <View>
+            <Text>{detalleGrupoMateriaQuery.isLoading ? "ESTA CARGANDO" : "NO ESTA CARGANDO"}</Text>
+            <Text>{detalleGrupoMateriaQuery.isFetching ? "ESTA FETCHIN" : "NO ESTA FETCHIN"}</Text>
+            <Text>{detalleGrupoMateriaQuery.isError ? "ESTA ERROR" : "NO ESTA ERROR"}</Text>
+
+            {detalleGrupoMateriaQuery.data?.map((x) => (
+                <Text>{x.descripcion}</Text>
+            ))}
+        </View>
+    )
+}
+
+export default Testing
+
+
+/* import { View, Text, ScrollView } from 'react-native';
 import { DetallePlanSemestre } from '@/views/historico-materias';
 import { useCarreraContext, useSemestres } from '@/hooks';
 import { useState } from 'react';
@@ -65,7 +88,7 @@ const HistoricoMaterias = () => {
     );
 };
 
-export default HistoricoMaterias;
+export default HistoricoMaterias; */
 
 
 /* 

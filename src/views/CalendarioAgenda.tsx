@@ -110,7 +110,6 @@ const CalendarioAgenda = () => {
             <TouchableOpacity
                 className={` p-4 mb-2 ${isFirst ? "mt-5" : ""}`}
                 style={{ backgroundColor: reservation.color }}
-                onPress={() => Alert.alert(reservation.description)}
             >
                 <Texto className='text-white'>{reservation.name}</Texto>
             </TouchableOpacity>
@@ -120,7 +119,7 @@ const CalendarioAgenda = () => {
     const renderEmptyDate = () => {
         return (
             <View>
-                <Texto>This is empty date!</Texto>
+                <Texto>No hay eventos disponibles!</Texto>
             </View>
         );
     };

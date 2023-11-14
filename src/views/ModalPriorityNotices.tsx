@@ -27,7 +27,7 @@ const ModalPriorityNotices = () => {
         <>
             <Modal isVisible={isVisible}>
                 <View
-                    className="max-w-lg mx-auto w-full"
+                    className="max-w-lg lg:max-w-5xl mx-auto w-full"
                 //className='bg-primario dark:bg-secondary-dark rounded-xl'
                 >
                     <View className=''>
@@ -36,7 +36,7 @@ const ModalPriorityNotices = () => {
                                 {
                                     width: "100%",
                                     justifyContent: "center",
-                                    maxWidth: 500,
+                                    maxWidth: width,
                                     alignItems: "center"
                                 }
                             }
@@ -51,7 +51,7 @@ const ModalPriorityNotices = () => {
                                 moveSize: width + 100,
                             }}
                             loop
-                            width={width > 1000 ? 500 : width - 40}
+                            width={width > 1000 ? width : width - 40}
                             height={height - 200}
                             autoPlay
                             data={data}

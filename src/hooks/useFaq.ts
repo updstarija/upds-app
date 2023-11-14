@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import faqService from '@/services/ServiceFaq';
 import { useAuthContext } from './useAuthContext';
 import { IFaq } from '@/types';
+import { useQuery } from '@tanstack/react-query';
 
 
 export const useFaq = () => {
@@ -44,9 +45,42 @@ export const useFaq = () => {
         return responseData
     }
 
+    const getFaqsV3 = async (categoria: string = "") => {
+        console.log("LOADING")
+        await new Promise((resolve) => setTimeout(() => {
+            resolve(true)
+        }, 3000))
+        console.log("FIN LOADING")
+
+        const responseData = await faqService.getFaqsV2({
+            lastDoc: lastDocument,
+            limit: 5,
+            filters: {
+                categoria: {
+                    value: categoria,
+                    matchMode: "=="
+                }
+            }
+        })
+
+        const { data: newData, snapshot } = responseData
+
+
+
+        return newData
+    }
+
     /*  useEffect(() => {
          getFaqs()
      }, []) */
+    const detalleGrupoMateriaQuery = useQuery(
+        ['xd-test'],
+        () => getFaqsV3(),
+        {
+
+        }
+    )
+
 
     return {
         data,
@@ -55,6 +89,7 @@ export const useFaq = () => {
         isLoading,
         getFaqs,
         getFaqsV2,
-        lastDocument
+        lastDocument,
+        detalleGrupoMateriaQuery
     }
 }
