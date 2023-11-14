@@ -173,7 +173,7 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> = forward
 
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-    const snapPoints = useMemo(() => snapPointsProp, []);
+    const snapPoints = useMemo(() => snapPointsProp, [snapPointsProp]);
     const { top } = useSafeAreaInsets();
 
     const handleOpenModal = useCallback(() => {
@@ -242,13 +242,11 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> = forward
                 onDismiss={() => setIsOpen(false)}
                 onChange={handleChange}
                 //         keyboardBehavior={Platform.OS === "android" ? "fillParent" : "interactive"}
+
                 keyboardBlurBehavior="restore"
-                //android_keyboardInputMode="adjustResize"
+                android_keyboardInputMode="adjustResize"
                 handleIndicatorStyle={{ backgroundColor: '#0D1F46' }}
                 backgroundStyle={{ backgroundColor: isDark ? '#040e22' : '#fff' }}>
-
-
-
                 {!withoutScrollView
                     ?
                     <BottomSheetScrollView style={{ padding: 0 }}>
