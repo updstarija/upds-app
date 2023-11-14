@@ -13,6 +13,7 @@ export * from './Option';
 export { default as Spinner } from './Spinner';
 export * from './Swiper';
 export { default as TextField } from './TextField';
+export { default as Spacer } from './Spacer';
 export * from './VideoPlayer';
 
 //
