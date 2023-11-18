@@ -302,7 +302,7 @@ const Stats = () => {
 
                         <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
                             <View className='bg-yellow-200  rounded-xl p-4 border-gray-50  border-[.5px] dark:border-[0px] '>
-                                <Texto className=' dark:text-black text-xs ' weight='Light'>El promedio mostrado es una estimacion o aproximacion. Los calculos finales pueden variar ligeramente debido a actualizaciones que puedadn surgir</Texto>
+                                <Texto className=' dark:text-black text-xs ' weight='Light'>El promedio mostrado es una estimación o aproximación. Los cálculos finales pueden variar ligeramente debido a actualizaciones que puedan surgir.</Texto>
                             </View>
                         </View>
                         <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
@@ -323,11 +323,11 @@ const Stats = () => {
                         </View>
 
 
-                        <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
+                        {/*    <View className='bg-white dark:bg-primario-dark rounded-xl' style={{ elevation: 10 }}>
                             <View className='bg-white dark:bg-secondary-dark  rounded-xl p-6 border-gray-300  border-[.5px] dark:border-[0px] '>
                                 <Texto className='text-black dark:text-white text-center text-xl my-3' weight='Bold'>RENDIMIENTO</Texto>
 
-                                {/* <SelectCarrera /> */}
+                               
 
                                 <View className='items-center justify-center mt-10'>
 
@@ -359,7 +359,7 @@ const Stats = () => {
                                     />
                                 </View>
                             </View>
-                        </View>
+                        </View> */}
                     </>
                 </View>
             </ScrollView>

@@ -39,7 +39,7 @@ const About = () => {
 
                 <Texto className='mb-4 dark:text-white'>{nativeApplicationVersion}</Texto>
                 <Texto className="dark:text-white text-sm">
-                    Upds Tarija es una aplicación oficial de la Universidad Privada Domingo Savio. Esta aplicación está diseñada para simplificar la vida académica de los estudiantes, permitiendo programar materias, recibir notificaciones importantes, acceder a la boleta de proyección y consultar el registro histórico académico.
+                    Upds Tarija es una aplicación oficial de la Universidad Privada Domingo Savio Sede Tarija. Esta aplicación está diseñada para simplificar la vida académica de los estudiantes, permitiendo programar materias, recibir notificaciones importantes, acceder a la boleta de proyección y consultar el registro histórico académico.
                 </Texto>
 
                 <Texto className="dark:text-white text-xl mt-8 mb-2" weight='Bold'>Equipo de Desarrollo</Texto>
@@ -91,10 +91,10 @@ const About = () => {
                     Para asistencia técnica o preguntas relacionadas con la aplicación, no dudes en contactar al Departamento de Sistemas de la Universidad Privada Domingo Savio.
                 </Texto>
                 <Texto className="dark:text-white text-sm mt-2">
-                    Correo Electrónico: <Texto className="dark:text-white text-blue-500" onPress={() => Linking.openURL('mailto:apps.upds@gmail.com')}>apps.upds@gmail.com</Texto>
+                    Correo Electrónico: <Texto className="dark:text-white text-blue-500" onPress={() => Linking.openURL('mailto:soporte.tarija@upds.edu.do')}>soporte.tarija@upds.edu.bo</Texto>
                 </Texto>
                 <Texto className="dark:text-white text-sm mt-2">
-                    Teléfono de Soporte: 12345678
+                    Teléfono: (591)(4) 665-8303 Int.: 131
                 </Texto>
             </View>
         </ScrollView>

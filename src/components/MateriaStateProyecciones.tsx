@@ -6,8 +6,9 @@ import { FontAwesome } from "@expo/vector-icons";
 
 interface Props {
     materia: MateriaProyeccion;
+    withModulo?: boolean
 }
-const MateriaState: React.FC<Props> = ({ materia }) => {
+const MateriaState: React.FC<Props> = ({ materia, withModulo = false }) => {
     const isElectiva = materia.materia.startsWith("Electiva - ")
     const isPendiente = materia.estado.id == 0;
     const isAprobado = materia.estado.id == 1;
@@ -24,6 +25,7 @@ const MateriaState: React.FC<Props> = ({ materia }) => {
                             {materia.materia}
                         </Texto>
                         <Texto className={`text-xs text-gray-400`}>{materia.carrera}</Texto>
+                        {withModulo && <Texto className={`text-xs text-gray-400`}>{materia.modulo}</Texto>}
                     </View>
                     <Texto className={`text-black dark:text-white`}>{materia.turno}</Texto>
                 </View>

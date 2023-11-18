@@ -1,5 +1,5 @@
 import { useState, useReducer, useEffect, useRef, memo } from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { isMateriaInRangeMonths } from "@/helpers/isMateriaInRangeMonths";
@@ -12,28 +12,33 @@ import * as Animatable from "react-native-animatable";
 import { Image } from "expo-image";
 import { SwiperV2Ref } from "@/components/SwiperV2";
 import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
-
+import { sleep } from "@/helpers";
+import { MateriaProyeccionesItem } from "../proyecciones";
 
 interface Props {
     materia: IRegistroHistorico;
     tutorial?: {
         inCourse: boolean;
-        step: number
-    },
+        step: number;
+    };
 }
 
 const animationPulse = {
     from: {
-        transform: [{
-            scale: 1
-        }]
+        transform: [
+            {
+                scale: 1,
+            },
+        ],
     },
     to: {
-        transform: [{
-            scale: 1.3
-        }]
-    }
-}
+        transform: [
+            {
+                scale: 1.3,
+            },
+        ],
+    },
+};
 
 const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
     const [enabled, setEnabled] = useState(false);
@@ -56,7 +61,7 @@ const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
         return (
             <>
                 <MaterialCommunityIcons.Button
-                    onPress={() => router.push(`/evaluacion/${45}`)}
+                    onPress={() => router.push(`/evaluacion/${materia.grupo}`)}
                     name="clipboard-check"
                     size={30}
                     color="#fff"
@@ -65,7 +70,7 @@ const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
                 />
 
                 <MaterialCommunityIcons.Button
-                    onPress={() => router.push(`/moodle/${54}`)}
+                    onPress={() => router.push(`/moodle/${materia.moodle}`)}
                     name="school"
                     size={30}
                     color="#fff"
@@ -80,94 +85,223 @@ const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
     const renderRightActions = () => {
         return (
             <>
-                <MaterialCommunityIcons.Button
-                    name="eye"
-                    size={30}
-                    color="#fff"
-                    style={{ paddingRight: 0 }}
-                    onPress={() => handleClose()}
+                <MateriaProyeccionesItem
+                    showMessage={false}
+                    customContent={
+                        <View className="bg-yellow-500 p-2 rounded">
+                            <MaterialCommunityIcons
+                                name="family-tree"
+                                size={30}
+                                color="#fff"
+                                style={{ padding: 0 }}
+                            //onPress={() => handleClose()}
+                            />
+                        </View>
+                    }
+                    materia={{
+                        ...materia,
+                        carrera: "",
+                        estado: materia.estado,
+                        id: materia.id,
+                        materia: materia.nombre,
+                        materiaAdmId: materia.materiaId,
+                        modulo: "",
+                        semestre: "",
+                        turno: "Mañana",
+                    }}
                 />
             </>
         );
     };
 
     const Tutorial = () => {
-        if (!tutorial || !tutorial.inCourse) return null
-        const handImages = [require("~/assets/images/icons/hand-light.png"), require("~/assets/images/icons/hand-dark.png")]
+        if (!tutorial || !tutorial.inCourse) return null;
+        const handImages = [
+            require("~/assets/images/icons/hand-light.png"),
+            require("~/assets/images/icons/hand-dark.png"),
+        ];
 
-        if (tutorial.step == 1) return <Animatable.View
-            useNativeDriver
-            animation={animationPulse}
-            iterationCount={"infinite"}
-            direction="alternate"
-            style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                bottom: 0,
-                left: 0,
-                alignItems: "center",
-                justifyContent: "center",
-            }}
-        >
-            <Image
-                style={{
-                    width: 30,
-                    height: 30
-                }}
-                contentFit="contain"
-                source={isDark ? handImages[1] : handImages[0]}
-            />
-        </Animatable.View>
+        if (tutorial.step == 1)
+            return (
+                <Animatable.View
+                    useNativeDriver
+                    animation={animationPulse}
+                    iterationCount={"infinite"}
+                    direction="alternate"
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        bottom: 0,
+                        left: 0,
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    <Image
+                        style={{
+                            width: 30,
+                            height: 30,
+                        }}
+                        contentFit="contain"
+                        source={isDark ? handImages[1] : handImages[0]}
+                    />
+                </Animatable.View>
+            );
 
-        if (tutorial.step == 2) return <Animatable.View
-            useNativeDriver
-            animation="slideOutLeft"
-            iterationCount={"infinite"}
-            direction="alternate"
-            duration={2500}
-            style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                alignItems: "flex-end",
-                userSelect: "none"
-            }}
-        >
-            <MaterialCommunityIcons
-                name="gesture-swipe-horizontal"
-                size={40}
-                color={isDark ? "#FFF" : "#000"}
+        if (tutorial.step == 2)
+            return (
+                <Animatable.View
+                    useNativeDriver
+                    animation="slideOutLeft"
+                    iterationCount={"infinite"}
+                    direction="alternate"
+                    duration={2500}
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        alignItems: "flex-end",
+                        userSelect: "none",
+                    }}
+                >
+                    <MaterialCommunityIcons
+                        name="gesture-swipe-horizontal"
+                        size={40}
+                        color={isDark ? "#FFF" : "#000"}
+                    />
+                </Animatable.View>
+            );
+    };
 
-            />
-        </Animatable.View>
-    }
+    let tuto2: any = null;
+    let tuto1: any = null;
+    /*     let tuto2 = null;
+        let tuto3 = null;
+        let tuto4 = null;
+        let tuto5 = null;
+        let tuto6 = null; */
+    /*     const animationTutorial = async () => {
+              if (!tutorial?.inCourse) return
+      
+              while (tutorial.step == 1) {
+                  console.log(tutorial.step)
+                  await sleep(1000)
+                  bottomSheetRef.current?.open()
+                  await sleep(5000)
+                  bottomSheetRef.current?.close()
+                  await sleep(2500)
+              }
+      
+              while (tutorial.step == 2) {
+                  console.log(tutorial.step)
+                  await sleep(1000)
+                  swiperRef.current?.openRight();
+                  await sleep(3000)
+                  swiperRef.current?.openLeft();
+                  await sleep(3000)
+                  swiperRef.current?.close();
+                  await sleep(1000)
+              }
+          } */
 
     useEffect(() => {
-        if (!tutorial?.inCourse) return
-
+        if (!tutorial?.inCourse) return;
         if (tutorial.step == 2) {
-            setTimeout(() => {
+            tuto2 = setTimeout(() => {
                 swiperRef.current?.openRight();
+
+                if (tutorial.step != 2) {
+                    clearTimeout(tuto2)
+                }
             }, 1000);
 
-            setTimeout(() => {
+            tuto2 = setTimeout(() => {
                 swiperRef.current?.openLeft();
+
+                if (tutorial.step != 2) {
+                    clearTimeout(tuto2)
+                }
             }, 3000);
 
-            setTimeout(() => {
+            tuto2 = setTimeout(() => {
                 swiperRef.current?.close();
+
+                if (tutorial.step != 2) {
+                    clearTimeout(tuto2)
+                }
             }, 5000);
+
+            tuto2 = setTimeout(() => {
+                swiperRef.current?.openRight();
+
+                if (tutorial.step != 2) {
+                    clearTimeout(tuto2)
+                }
+            }, 11000);
+
+            tuto2 = setTimeout(() => {
+                swiperRef.current?.openLeft();
+
+                if (tutorial.step != 2) {
+                    clearTimeout(tuto2)
+                }
+            }, 13000);
+
+            tuto2 = setTimeout(() => {
+                swiperRef.current?.close();
+
+                if (tutorial.step != 2) {
+                    clearTimeout(tuto2)
+                }
+            }, 15000);
         } else if (tutorial.step == 1) {
-            setTimeout(() => {
-                bottomSheetRef.current?.open()
+            tuto1 = setTimeout(() => {
+                bottomSheetRef.current?.open();
+
+
+                if (tutorial.step != 1) {
+                    clearTimeout(tuto1)
+                }
             }, 2000);
 
-            setTimeout(() => {
-                bottomSheetRef.current?.close()
+            tuto1 = setTimeout(() => {
+                bottomSheetRef.current?.close();
+
+                if (tutorial.step != 1) {
+                    clearTimeout(tuto1)
+                }
+            }, 6500);
+
+            tuto1 = setTimeout(() => {
+                bottomSheetRef.current?.open();
+
+                if (tutorial.step != 1) {
+                    clearTimeout(tuto1)
+                }
             }, 8500);
+
+            tuto1 = setTimeout(() => {
+                bottomSheetRef.current?.close();
+
+                if (tutorial.step != 1) {
+                    clearTimeout(tuto1)
+                }
+            }, 15000);
         }
-    }, [tutorial])
+    }, [tutorial]);
+
+    useEffect(() => {
+        if (tutorial?.step != 2) {
+            clearTimeout(tuto2)
+            tuto2 = null
+        }
+
+        if (tutorial?.step != 1) {
+            clearTimeout(tuto1)
+            tuto1 = null
+        }
+    }, [tutorial?.step])
 
     const content = (
         <SwiperV2
@@ -175,6 +309,8 @@ const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
             friction={3}
             renderLeftActions={renderLeftActions}
             renderRightActions={renderRightActions}
+
+        //enabled={(tutorial?.inCourse)}
         >
             <View className="relative">
                 <MateriaState
@@ -285,32 +421,30 @@ const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
             snapPointsProp={materia.estado.id == 0 ? [] : ["35%", "60%", "90%"]}
             onPressButton={() => setEnabled(true)}
         >
-            {enabled && <>
-                <Texto
-                    className="text-center text-xl text-black dark:text-white mb-4"
-                    weight="Bold"
-                >
-                    DETALLE DE LA MATERIA
-                </Texto>
+            <Texto
+                className="text-center text-xl text-black dark:text-white mb-4"
+                weight="Bold"
+            >
+                DETALLE DE LA MATERIA
+            </Texto>
 
-                {!data.isError ? (
-                    <>
-                        <Information />
+            {!data.isError ? (
+                <>
+                    <Information />
 
-                        <MateriaChartsDetail materia={materia} detalleGrupo={data} />
-                    </>
-                ) : (
-                    <>
-                        <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl">
-                            <Texto className="text-white text-center">
-                                {
-                                    "Hubo un error al cargar el detalle :(.\nSi el problema persiste por favor reportalo con soporte"
-                                }
-                            </Texto>
-                        </View>
-                    </>
-                )}
-            </>}
+                    <MateriaChartsDetail materia={materia} detalleGrupo={data} />
+                </>
+            ) : (
+                <>
+                    <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl">
+                        <Texto className="text-white text-center">
+                            {
+                                "Hubo un error al cargar el detalle :(.\nSi el problema persiste por favor reportalo con soporte"
+                            }
+                        </Texto>
+                    </View>
+                </>
+            )}
         </CustomBottomSheetModal>
     );
 });

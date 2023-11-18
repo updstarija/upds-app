@@ -13,8 +13,8 @@ import { IRegistroHistorico } from "@/types";
 import { RefreshControl } from "react-native-gesture-handler";
 
 const tutorialHistoricoSteps = {
-  1: "Presiona en el registro para obtener mas informacion acerca de la materia",
-  2: "Desliza para obtener acceso a mas funcionalidades"
+  1: "Presiona en el registro para obtener mas información acerca de la materia",
+  2: "Desliza para obtener acceso a más funcionalidades"
 }
 
 const HistoricoMaterias = () => {
@@ -38,8 +38,7 @@ const HistoricoMaterias = () => {
     useTourGuideController("t-historico-materias");
 
   const handleBackButtonPress = () => {
-    if (tutorialEnCurso.inCourse) stop()
-    return !tutorialEnCurso.inCourse
+    return tutorialEnCurso.inCourse
   };
 
   useEffect(() => {
@@ -67,9 +66,7 @@ const HistoricoMaterias = () => {
   const handleOnStop = () => setTutorialEnCurso({ ...tutorialEnCurso, inCourse: false })
 
   const handleOnStepChange = (step: any) => {
-    console.log(step?.order);
     setTutorialEnCurso({ ...tutorialEnCurso, step: step?.order || -1 })
-    // console.log(getCurrentStep()?.order, "ORDER");
   }
 
   const newRegistroHistorico = useMemo(() => {
@@ -111,11 +108,30 @@ const HistoricoMaterias = () => {
       );
 
     } else if (typeof item === "number") {
+      if (index == 0) {
+        return (
+          <>
+            <View className="p-5 bg-white dark:bg-secondary-dark justify-center p-4">
+
+              <View className="items-center justify-center">
+                <CustomSkeleton width={250} height={15} />
+
+              </View>
+            </View>
+
+          </>)
+      }
       return (
         <>
           <View className="h-12 bg-white dark:bg-secondary-dark justify-center p-4">
-            <View className="w-10" />
-            <CustomSkeleton width={200 + (Math.round(Math.random() * 100))} height={15} />
+
+            <View className="flex-row items-center justify-between">
+              <CustomSkeleton width={200 + (Math.round(Math.random() * 100))} height={15} />
+              <CustomSkeleton width={30} height={15} />
+
+            </View>
+
+
           </View>
 
         </>
@@ -154,7 +170,7 @@ const HistoricoMaterias = () => {
     );
 
     return () => backHandler.remove();
-  }, [tutorialEnCurso]);
+  }, [tutorialEnCurso.inCourse]);
 
   useEffect(() => {
     eventEmitter?.on('stop', handleOnStop)

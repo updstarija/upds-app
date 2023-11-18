@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
-import { View } from "react-native";
+import { KeyboardAvoidingView, View } from "react-native";
 import { router } from "expo-router";
-import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { CustomBottomSheetModal, CustomSkeleton, Texto } from "@/ui";
 import { ISemestre } from "@/types";
-import { useBoleta, useCarreraContext, useMateriasProyeccion, useProyeccionesContext, useThemeColor } from "@/hooks";
+import { useBoleta, useCarreraContext, useMateriasProyeccion, useProyeccionesContext, useSearchMateria, useThemeColor } from "@/hooks";
 import { SwiperV2Ref } from "@/components/SwiperV2";
 import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
 import { BottomSheetFlatList, BottomSheetTextInput, TouchableOpacity } from '@gorhom/bottom-sheet'
@@ -14,32 +14,41 @@ import clsx from "clsx";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { COLORS } from "~/constants";
 import { Spacer } from "@/components";
-
-
-
+import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
+import SelectTurnos from "../SelectTurnos";
 
 interface Props {
     semestre: ISemestre;
     modulo: number;
+    withSearch?: boolean
 }
 
 
-const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo }) => {
+const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo, withSearch }) => {
     const [enabled, setEnabled] = useState(false);
     const swiperRef = useRef<SwiperV2Ref>(null);
     const bottomSheetRef = useRef<CustomBottomSheetRef>(null);
     const isDark = useThemeColor() === "dark";
 
     const [filterText, setFilterText] = useState("")
-    const [selectedTurns, setSelectedTurns] = useState<string[]>([])
 
-    const handleClose = () => {
-        swiperRef.current?.close();
-    };
 
     const { valueCarrera } = useCarreraContext();
-    const { handleSemestre, handleBoleta } = useProyeccionesContext()
+    const { handleSemestre, handleBoleta, selectedTurns } = useProyeccionesContext()
     /*   const { getItem, setItem } = useAsyncStorage('selected-turns'); */
+
+    const { data: dataSearchMateria, getData, isLoading } = useSearchMateria()
+    const [selectedItem, setSelectedItem] = useState<null | { id: string }>(null)
+    const [inputText, setInputText] = useState("")
+
+    const sugerencias = useMemo(() => dataSearchMateria.map((x) => ({ id: x.id + "", title: x.nombre })), [dataSearchMateria])
+
+    const onChangeText = (q: string) => {
+        setInputText(q)
+        if (q != "") {
+            getData(q, valueCarrera || -1)
+        }
+    }
 
     const { materiasProyeccionQuery: data, materiaProyeccionCreateMutation } =
         useMateriasProyeccion({
@@ -47,29 +56,45 @@ const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo }) => {
             enabled,
             modulo: modulo,
             semestre: semestre.id,
+            buscarMateria: Number(selectedItem?.id || 0),
         });
+
     const { boletaQuery } = useBoleta({ carrera: valueCarrera || -1 });
 
     const content = (
-        <View className="flex-row justify-between bg-primario p-3 dark:bg-secondary-dark flex-1 ">
-            <Texto className="text-white font-bold">{semestre.nombre}</Texto>
 
-            <FontAwesome
-                name={enabled ? "chevron-down" : "chevron-right"}
+        <View className={
+            clsx([
+                "flex-row  bg-primario p-3 dark:bg-secondary-dark",
+                {
+                    "justify-between": !withSearch,
+                    "items-center justify-center": withSearch
+                }
+            ]
+            )
+        }>
+
+            {withSearch && <AntDesign
+                name="search1"
+                color={"#FFF"}
+                size={20}
+                style={{ marginRight: 5 }}
+            />
+            }
+            <Texto className="text-white font-bold">{withSearch ? "Buscar Materia" : semestre.nombre}</Texto>
+
+
+            {!withSearch && <FontAwesome
+                name={enabled ? "chevron-down" : "chevron-up"}
                 size={20}
                 color="#fff"
-            />
+            />}
         </View>
+
+
     );
 
-    const handleFilterTurn = async (turn: string) => {
-        if (selectedTurns.includes(turn)) {
-            setSelectedTurns(selectedTurns.filter(item => item != turn))
-            return;
-        }
 
-        setSelectedTurns([...selectedTurns, turn])
-    }
 
     const filterData = useMemo(() => {
         if (data.isLoading || data.isError) return []
@@ -117,65 +142,67 @@ const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo }) => {
                 handleSemestre(semestre.id)
             }}
             withoutScrollView
-            snapPointsProp={!data.isLoading && !data.isError && data.data.data.length > 5 ? ["50%", "90%"] : []}
+            onCloseModal={() => setEnabled(false)}
+            snapPointsProp={(!data.isLoading && !data.isError && data.data.data.length > 5) ? ["50%", "90%"] : []}
         >
 
 
             {!data.isError ?
                 <View className="flex-1 ">
-
                     <BottomSheetFlatList
                         //data={filterData}
                         ListHeaderComponent={<>
-                            <BottomSheetTextInput
-                                value={filterText}
-                                onChangeText={e => setFilterText(e)}
-                                style={{
-                                    margin: 15,
-                                    borderRadius: 10,
-                                    backgroundColor: isDark ? COLORS.dark.secondary : "rgb(243 244 246)",
-                                    padding: 10,
-                                    color: isDark ? "#FFF" : "#000",
-                                }}
-                                placeholder="Buscar materia...."
-                                placeholderTextColor={"#ccc"}
-                                className={`rounded-2xl border bg-gray-100 p-4 text-gray-700 dark:bg-primario-dark dark:text-white`} />
+                            {withSearch
+                                ?
+                                <View>
+                                    <AutocompleteDropdown
+                                        dataSet={sugerencias}
+                                        closeOnBlur={true}
+                                        useFilter={false}
+                                        clearOnFocus={false}
+                                        textInputProps={{
+                                            placeholder: 'Busca una materia....',
+                                            style: { color: isDark ? "#FFF" : "#000" },
+                                            autoFocus: true,
 
-                            <Texto className="px-4 pb-2">Turno:</Texto>
+                                        }}
+                                        onSelectItem={setSelectedItem}
+                                        loading={isLoading}
+                                        onChangeText={onChangeText}
+                                        suggestionsListTextStyle={{
+                                            color: isDark ? '#FFF' : "#000",
 
-                            <View className=' items-center justify-center mb-5'>
-                                <FlatList
-                                    data={["Mañana", "Medio Día", "Tarde", "Noche"]}
-                                    horizontal
-                                    showsHorizontalScrollIndicator={false}
-                                    contentContainerStyle={{ paddingHorizontal: 10 }}
-                                    ItemSeparatorComponent={() => (
-                                        <View className="w-2" />
-                                    )}
-                                    extraData={selectedTurns}
-                                    renderItem={({ item }) => (
-                                        <TouchableOpacity onPress={() => handleFilterTurn(item)}>
-                                            <View className={
-                                                clsx([
-                                                    "rounded-full py-2 px-4 border-[.5px] border-primario",
-                                                    {
-                                                        "bg-primario dark:bg-secondary-dark text-white": selectedTurns.includes(item)
-                                                    }
-                                                ])
-                                            }>
-                                                <Texto className={
-                                                    clsx([
-                                                        "'text-black dark:text-white'",
-                                                        {
-                                                            "text-white": selectedTurns.includes(item)
-                                                        }
-                                                    ])
-                                                }>{item}</Texto>
-                                            </View>
-                                        </TouchableOpacity>
-                                    )}
-                                />
-                            </View>
+                                        }}
+
+                                        containerStyle={{
+                                            zIndex: -1, margin: 10,
+                                            marginBottom: 15,
+                                        }}
+                                        suggestionsListContainerStyle={{ backgroundColor: isDark ? COLORS.dark.secondary : "#FFF" }}
+                                        onClear={() => setInputText("")}
+                                        inputContainerStyle={{ backgroundColor: isDark ? COLORS.dark.secondary : "#FFF", borderColor: "#000", borderWidth: .5 }}
+                                        debounce={600}
+                                        EmptyResultComponent={<Texto className='text-black dark:text-white p-3 text-center'>{isLoading ? "Buscando Materia..." : inputText.length === 0 ? "Busca una materia para tu proyeccion" : "No se ha encontrado la materia o no esta disponible en tu plan de estudio"}</Texto>}
+                                    />
+                                </View>
+                                :
+                                <BottomSheetTextInput
+                                    value={filterText}
+                                    onChangeText={e => setFilterText(e)}
+                                    style={{
+                                        margin: 15,
+                                        borderRadius: 10,
+                                        backgroundColor: isDark ? COLORS.dark.secondary : "rgb(243 244 246)",
+                                        padding: 10,
+                                        color: isDark ? "#FFF" : "#000",
+                                    }}
+                                    placeholder="Buscar materia...."
+                                    placeholderTextColor={"#ccc"}
+                                    className={`rounded-2xl border bg-gray-100 p-4 text-gray-700 dark:bg-primario-dark dark:text-white`} />
+                            }
+
+
+                            <SelectTurnos />
 
                             {!data.isLoading && !!!filterData.length && <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl m-4">
                                 <Texto className="text-white">
@@ -200,7 +227,7 @@ const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo }) => {
                                     </View>
                                 );
                             }
-                            return <MateriaProyeccionesItem materia={item} semestre={semestre} />
+                            return <MateriaProyeccionesItem materia={item} withModulo={withSearch} />
                         }
                         }
                         ItemSeparatorComponent={() => (

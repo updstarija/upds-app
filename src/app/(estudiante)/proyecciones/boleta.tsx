@@ -4,7 +4,6 @@ import {
     FlatList,
     Alert,
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
 import {
     useAuthContext,
     useBoleta,
@@ -21,9 +20,7 @@ import {
     SelectModulos,
     SemestreProyeccionItem,
 } from "@/views/proyecciones";
-import Icon from "@expo/vector-icons/FontAwesome";
-import { COLORS } from "~/constants";
-import { FloatingAction } from "react-native-floating-action";
+import { FloatingAction, IActionProps } from "react-native-floating-action";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { printAsync, printToFileAsync } from "expo-print";
 import { shareAsync } from "expo-sharing";
@@ -36,10 +33,10 @@ import {
 } from "rn-tourguide";
 import Spinner from "@/components/Spinner";
 import { SelectCarrera } from "@/views/SelectCarrera";
-import { Texto } from "@/ui";
+import { CustomModal, Texto } from "@/ui";
 import { BackHandler } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { Spacer } from "@/components";
+import { Button, Spacer } from "@/components";
 import { verTutorial } from "@/helpers";
 
 
@@ -48,14 +45,34 @@ interface Props {
     setTutorialEnCurso: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+const actionsFloatButton: IActionProps[] = [
+    {
+        text: "Enviar como PDF",
+        name: "pdf",
+        icon: <FontAwesome name="file-pdf-o" color="#fff" size={20} />,
+
+    },
+    {
+        text: "Imprimir Boleta",
+        name: "imprimir",
+        icon: <MaterialCommunityIcons name="printer" color="#fff" size={20} />,
+    },
+    {
+        text: "Nueva Boleta",
+        name: "nueva_boleta",
+        icon: <MaterialCommunityIcons name="plus" color="#fff" size={20} />,
+    },
+];
+
+
 const Boleta: React.FC<Props> = () => {
-    const listref = useRef<FlatList | null>(null);
-    const boletaRef = useRef<View | null>(null);
+
+
 
     const isDark = useThemeColor() === "dark";
 
     const { userAuth } = useAuthContext();
-    const { tutorialBoletaReady, setTutorialBoletaReady, tutorialEnCurso, setTutorialEnCurso } = useProyeccionesContext();
+    const { tutorialBoletaReady, setTutorialBoletaReady, tutorialEnCurso, setTutorialEnCurso, listref } = useProyeccionesContext();
     const { canStart, start, tourKey, eventEmitter } = useTourGuideController("t-boleta");
 
     const {
@@ -72,58 +89,12 @@ const Boleta: React.FC<Props> = () => {
         proyeccion: true,
     });
     const { modulosQuery } = useModulos();
-    const { boletaCreateMutation, boletaQuery } = useBoleta({
+    const { onNewBoleta, boletaQuery } = useBoleta({
         carrera: valueCarrera || -1,
     });
 
     if (carrerasQuery.isLoading) return <Spinner />;
     if (carrerasQuery.isError) return <Texto>Hubo un error....</Texto>;
-
-
-    useEffect(() => {
-        if (!tutorialBoletaReady.carreras && carrerasQuery.data) {
-            setTutorialBoletaReady({ ...tutorialBoletaReady, carreras: true });
-        }
-    }, [carrerasQuery]);
-
-    useEffect(() => {
-        if (!tutorialBoletaReady.modulos && modulosQuery.data?.data) {
-            setTutorialBoletaReady({ ...tutorialBoletaReady, modulos: true });
-        }
-    }, [modulosQuery]);
-
-    useEffect(() => {
-        if (!tutorialBoletaReady.semestres && semestresQuery.data) {
-            setTutorialBoletaReady({ ...tutorialBoletaReady, semestres: true });
-        }
-    }, [semestresQuery]);
-    useEffect(() => {
-        if (!tutorialBoletaReady.boleta && boletaQuery.data?.data) {
-            setTutorialBoletaReady({ ...tutorialBoletaReady, boleta: true });
-        }
-    }, [boletaQuery]);
-
-    useEffect(() => {
-        (async () => {
-            if (!Object.values(tutorialBoletaReady).includes(false)) {
-                const activarTutorial = await verTutorial(tourKey)
-
-                if (!activarTutorial) {
-                    setTutorialEnCurso({ ...tutorialEnCurso, inCourse: false })
-                    return;
-                }
-                if (canStart && activarTutorial) {
-                    setTutorialEnCurso({ ...tutorialEnCurso, inCourse: true })
-                    // listref.current?.scrollToOffset({ animated: true, offset: 0 })
-
-                    setTimeout(() => {
-                        start();
-                    }, 1500);
-                }
-            }
-        })();
-    }, [canStart, tutorialBoletaReady]);
-
 
     const handleBackButtonPress = () => {
         return tutorialEnCurso.inCourse
@@ -180,6 +151,9 @@ const Boleta: React.FC<Props> = () => {
                 zone={4}
                 text="Buscador de materias para proyectar"
             >
+                {/* <View className="">
+                    <SemestreProyeccionItem modulo={0} semestre={{ id: 0, nombre: "" }} withSearch />
+                </View> */}
                 <Busqueda />
             </TourGuideZone>
 
@@ -191,7 +165,9 @@ const Boleta: React.FC<Props> = () => {
                 zone={5}
                 text="Listado de los módulos de la oferta semestral"
             >
+
                 <SelectModulos valueModulo={valueModulo} setvalueModulo={setvalueModulo} />
+
             </TourGuideZone>
 
             <Spacer />
@@ -207,6 +183,7 @@ const Boleta: React.FC<Props> = () => {
         return (
             <>
                 <FlashList
+                    ref={listref}
                     estimatedItemSize={100}
                     data={semestresQuery.data}
                     keyExtractor={(item) => item.id.toString()}
@@ -214,40 +191,18 @@ const Boleta: React.FC<Props> = () => {
                     ListHeaderComponent={<View className="z-50">
                         {renderHeaderBody()}
                     </View>}
+                    ItemSeparatorComponent={() => (
+                        <View className="border-[.5px] border-primario-dark " />
+                    )}
                     extraData={valueModulo}
                     renderItem={({ item }) => (
                         <SemestreProyeccionItem semestre={item} modulo={valueModulo} />
                     )}
                 />
-
-
-
             </>
 
         );
     };
-
-
-    const actions = [
-        {
-            text: "Enviar como PDF",
-            name: "pdf",
-            icon: <FontAwesome name="file-pdf-o" color="#fff" size={20} />,
-            position: 2,
-        },
-        {
-            text: "Imprimir Boleta",
-            name: "imprimir",
-            icon: <MaterialCommunityIcons name="printer" color="#fff" size={20} />,
-            position: 3,
-        },
-        {
-            text: "Nueva Boleta",
-            name: "nueva_boleta",
-            icon: <MaterialCommunityIcons name="plus" color="#fff" size={20} />,
-            position: 4,
-        },
-    ];
 
     const boletaValida = () => {
         if (boletaQuery.data && boletaQuery.data.data.length > 0) {
@@ -312,29 +267,26 @@ const Boleta: React.FC<Props> = () => {
         await shareAsync(uri, { UTI: ".pdf", mimeType: "application/pdf" });
     };
 
-    const onNewBoleta = async () => {
-        Alert.alert(
-            "ALERTA",
-            "Estas seguro de generar una nueva boleta de proyeccion?.\nSe eliminara la boleta actual.",
-            [
-                {
-                    text: "No",
-                    style: "destructive",
-                },
-                {
-                    text: "si",
-                    onPress: async () => {
-                        await boletaCreateMutation.mutateAsync(valueCarrera || -1);
-                        setModalBoleta(!modalBoleta);
-                    },
-                },
-            ],
-            { cancelable: false }
-        );
+    const handleNewBoleta = async () => {
+        await onNewBoleta(() => {
+            toggleModalBoleta(false);
+        })
+    }
 
-        //await boletaCreateMutation.mutateAsync(valueCarrera || -1);
-    };
+    const toggleModalBoleta = (open?: boolean) => {
+        if (open === undefined) {
+            setModalBoleta(!modalBoleta)
+            return;
+        }
 
+        setModalBoleta(open)
+    }
+
+    const actionsEvents: { [key: string]: Function } = {
+        "pdf": printToFile,
+        "imprimir": print,
+        "nueva_boleta": toggleModalBoleta
+    }
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener(
@@ -355,7 +307,50 @@ const Boleta: React.FC<Props> = () => {
         }
     }, [tutorialEnCurso.inCourse])
 
+    useEffect(() => {
+        if (!tutorialBoletaReady.carreras && carrerasQuery.data) {
+            setTutorialBoletaReady({ ...tutorialBoletaReady, carreras: true });
+        }
+    }, [carrerasQuery]);
 
+    useEffect(() => {
+        if (!tutorialBoletaReady.modulos && modulosQuery.data?.data) {
+            setTutorialBoletaReady({ ...tutorialBoletaReady, modulos: true });
+        }
+    }, [modulosQuery]);
+
+    useEffect(() => {
+        if (!tutorialBoletaReady.semestres && semestresQuery.data) {
+            setTutorialBoletaReady({ ...tutorialBoletaReady, semestres: true });
+        }
+    }, [semestresQuery]);
+
+    useEffect(() => {
+        if (!tutorialBoletaReady.boleta && boletaQuery.data?.data) {
+            setTutorialBoletaReady({ ...tutorialBoletaReady, boleta: true });
+        }
+    }, [boletaQuery]);
+
+    useEffect(() => {
+        (async () => {
+            if (!Object.values(tutorialBoletaReady).includes(false)) {
+                const activarTutorial = await verTutorial(tourKey)
+
+                if (!activarTutorial) {
+                    setTutorialEnCurso({ ...tutorialEnCurso, inCourse: false })
+                    return;
+                }
+                if (canStart && activarTutorial) {
+                    setTutorialEnCurso({ ...tutorialEnCurso, inCourse: true })
+                    // listref.current?.scrollToOffset({ animated: true, offset: 0 })
+
+                    setTimeout(() => {
+                        start();
+                    }, 1500);
+                }
+            }
+        })();
+    }, [canStart, tutorialBoletaReady]);
 
 
     return (
@@ -365,7 +360,7 @@ const Boleta: React.FC<Props> = () => {
 
                 <TourGuideZoneByPosition
                     tourKey={tourKey}
-                    text="Empieza generando tu boleta aqui si aun no la creaste"
+                    text="Si aún no creaste tu boleta, comienza el proceso aquí"
                     zone={10}
                     shape={"circle"}
                     isTourGuide={tutorialEnCurso.step > 3}
@@ -378,25 +373,20 @@ const Boleta: React.FC<Props> = () => {
 
                 <FloatingAction
                     overlayColor="#0000006a"
-                    actions={actions}
+                    actions={actionsFloatButton}
                     distanceToEdge={{ horizontal: 40, vertical: 40 }}
                     onPressItem={(name) => {
-                        if (name === "pdf") {
-                            printToFile();
-                        } else if (name === "imprimir") {
-                            print();
-                        } else if (name === "nueva_boleta") {
-                            setModalBoleta(!modalBoleta);
+                        if (!name) return;
+
+                        if (Object.keys(actionsEvents).includes(name)) {
+                            actionsEvents[name]()
                         }
+
                     }}
                 />
-
-                {/* <View style={{ position: "absolute", bottom: 40, right: 40 }}>
-                <Texto>H</Texto>
-            </View> */}
             </View>
 
-            {/*    <CustomModal isVisible={modalBoleta}>
+            <CustomModal isVisible={modalBoleta} onBackdropPress={() => toggleModalBoleta(false)}>
                 <View className="bg-white dark:bg-secondary-dark p-4 rounded-2xl">
                     <Texto
                         className="text-lg text-center text-black dark:text-white"
@@ -404,8 +394,8 @@ const Boleta: React.FC<Props> = () => {
                     >
                         NUEVA BOLETA
                     </Texto>
-                    <View className="border border-gray-100 my-2" />
-                    <Texto weight="Bold">Nombres:</Texto>
+                    <View className="border border-gray-100 mt-2 mb-3" />
+                    <Texto weight="Bold" className="mb-1">Nombres:</Texto>
                     <Texto>
                         {userAuth.usuario.nombre} {userAuth.usuario.apellidoPaterno}{" "}
                         {userAuth.usuario.apellidoMaterno}
@@ -414,24 +404,26 @@ const Boleta: React.FC<Props> = () => {
                     <Texto className="mt-2  text-black dark:text-white" weight="Bold">
                         Carrera:{" "}
                     </Texto>
-                    <View className="mt-1 z-10">{renderCarreras()}</View>
+                    <View className="mt-1 z-10">
+                        <SelectCarrera />
+                    </View>
 
                     <View className="flex-row justify-between mt-4">
                         <Button
-                            onPress={() => setModalBoleta(!modalBoleta)}
+                            onPress={toggleModalBoleta}
                             classNameBtn="bg-gray-400 dark:bg-primario-dark p-2 rounded-lg"
                         >
                             <Texto className="text-white">CERRAR</Texto>
                         </Button>
                         <Button
-                            onPress={() => onNewBoleta()}
+                            onPress={handleNewBoleta}
                             classNameBtn="bg-primario p-2 rounded-lg"
                         >
                             <Texto className="text-white">CREAR BOLETA</Texto>
                         </Button>
                     </View>
                 </View>
-            </CustomModal> */}
+            </CustomModal>
         </View>
     );
 };

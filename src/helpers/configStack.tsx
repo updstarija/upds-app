@@ -21,7 +21,7 @@ export const configStack = (title: string) => {
       textTransform: "uppercase",
     },
     headerLeft: () => {
-      return <AntDesign name="left" onPress={() => router.back()} size={25} color={"#FFF"} style={{ marginRight: 10 }} />
+      return <AntDesign name="left" onPress={() => router.back()} size={25} color={"#FFF"} style={{ padding: 10, marginRight: 15 }} />
     }
   };
 };

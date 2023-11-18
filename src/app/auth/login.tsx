@@ -18,7 +18,7 @@ import { IFormLogin } from '@/types';
 import { COLORS } from '~/constants';
 import { Button, TextField } from '@/components';
 import { Texto } from '../../ui';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 const styles = StyleSheet.create({
@@ -255,10 +255,14 @@ const Login = () => {
     setMostrarBtnBackLogin,
   } = useAuthContext();
 
-  const { control, handleSubmit } = useForm<IFormLogin>({ mode: 'onChange' });
+  const { control, handleSubmit, setValue } = useForm<IFormLogin>({ mode: 'onChange' });
   const [recordar, setRecordar] = useState(false)
 
   const onSubmit = async (data: IFormLogin) => {
+    if (recordar) {
+      await AsyncStorage.setItem("email-user", data.usuario)
+    }
+
     const user = await login(data);
     if (user) {
       loginContext(user);
@@ -291,6 +295,19 @@ const Login = () => {
     );
   };
 
+  const forgetPasswordMessage = () => {
+    Alert.alert("Informacion", "Para acceder, utiliza tu correo académico como nombre de usuario y tu documento de identidad como contraseña", [], { cancelable: true })
+  }
+
+  useEffect(() => {
+    (async () => {
+      const email = await AsyncStorage.getItem("email-user")
+      if (email) {
+        setValue("usuario", email)
+        setRecordar(true)
+      }
+    })()
+  }, [])
   return (
     <>
       <StatusBar
@@ -342,14 +359,18 @@ const Login = () => {
 
           <TextField
             control={control}
-            label="Usuario"
+            label="Correo académico"
             name="usuario"
+            placeholder='email@upds.net.bo'
+            placeholderTextColor={"#ccc"}
             rules={{ required: 'El usuario es requerido' }}
           />
           <TextField
             control={control}
-            label="Contraseña"
+            label="Documento de Identidad"
             name="contraseña"
+            placeholder='********'
+            placeholderTextColor={"#ccc"}
             rules={{ required: 'La contraseña es requerida' }}
             secureTextEntry
           />
@@ -367,9 +388,9 @@ const Login = () => {
               <Texto className="text-black dark:text-white">Recordarme</Texto>
             </View>
 
-            <TouchableOpacity>
+            <TouchableOpacity className='p-2' onPress={() => forgetPasswordMessage()}>
               <Texto className="text-black dark:text-white">
-                Olvidaste tu contraseña?
+                Olvidaste tus credenciales?
               </Texto>
             </TouchableOpacity>
           </View>

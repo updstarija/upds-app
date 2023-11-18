@@ -13,21 +13,23 @@ import { RequisitoMateria } from "./RequisitoMateria";
 
 interface Props {
     materia: MateriaProyeccion;
-    semestre: ISemestre;
+    customContent?: JSX.Element | JSX.Element[]
+    showMessage?: boolean;
+    withModulo?: boolean;
     tutorial?: {
         inCourse: boolean;
         step: number
     },
 }
 
-const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, semestre }) => {
+const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, customContent, showMessage = true, withModulo = false }) => {
     const [enabled, setEnabled] = useState(false);
     const swiperRef = useRef<SwiperV2Ref>(null);
     const bottomSheetRef = useRef<CustomBottomSheetRef>(null);
     const isDark = useThemeColor() === "dark";
 
     const { valueCarrera } = useCarreraContext();
-    const { boleta } = useProyeccionesContext()
+    const { boleta, scrollToTop } = useProyeccionesContext()
 
     const handleClose = () => {
         swiperRef.current?.close();
@@ -44,6 +46,8 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, seme
         }
 
         await materiaProyeccionCreateMutation.mutateAsync(data);
+
+        scrollToTop()
     };
 
 
@@ -118,6 +122,8 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, seme
     }
 
     const message = async () => {
+        if (!showMessage) return;
+
         const mostrar = await AsyncStorage.getItem(`mostrar-detalle-materia-seleccionada-${materia.estado.id}`)
         if (mostrar == 'false') {
             return;
@@ -125,7 +131,7 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, seme
 
         let mensaje = "";
         if (isPendiente) {
-            mensaje = "Has seleccionado una materia que esta pendiente.\n\nLa materia seleccionada esta pendiente, Por lo tanto, no es posible agregarla a la boleta de proyeccion."
+            mensaje = "Has seleccionado una materia que esta pendiente.\n\nLa materia seleccionada esta pendiente, Por lo tanto, no es posible agregarla a la boleta de proyección."
         }
         else if (isAprobado) {
             mensaje = "Has seleccionado una materia que esta aprobada.\n\nEsta materia ya ha sido aprobada. Por lo tanto, no es elegible para su selección nuevamente.\n\n¡Sigue adelante y continúa con tu excelente desempeño académico!."
@@ -180,11 +186,12 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, seme
             ref={swiperRef}
             friction={1}
             onRightOpen={handleAddMateria}
-            renderLeftActions={isValid ? renderLeftActions : undefined}
+            // renderLeftActions={isValid ? renderLeftActions : undefined}
             renderRightActions={isValidForBoleta() ? renderRightActions : undefined}
         >
             <MateriaStateProyecciones
                 materia={materia}
+                withModulo={withModulo}
             />
         </SwiperV2>
     );
@@ -192,7 +199,7 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, seme
     return (
         <CustomBottomSheetModal
             ref={bottomSheetRef}
-            content={content}
+            content={customContent ? customContent : content}
 
             onPressButton={() => {
                 setEnabled(true)

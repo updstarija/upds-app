@@ -10,7 +10,7 @@ export interface Menu {
 
 export const menuHomeScreen: Menu[] = [
     {
-        text: 'UPDS',
+        text: 'UPDS Tarija',
         icon: 'institution',
         //  to: 'https://www.360virtualbo.com/tour/educacion/updstarija',
         to: "ubicacion",
@@ -41,7 +41,7 @@ export const menuHomeScreen: Menu[] = [
           link: false
       }, */
     {
-        text: 'Calendario Academico',
+        text: 'Calendario Académico',
         icon: 'calendar',
         to: '/calendario-academico',
         link: false,
@@ -88,7 +88,7 @@ export const menuHomeStudent: Menu[] = [
           link: false
       }, */
     {
-        text: 'Registro Historico',
+        text: 'Registro Histórico',
         icon: 'account-tree',
         to: '/historico-materias',
         link: false,
@@ -113,7 +113,7 @@ export const menuAjustes: Menu[] = [
     },
     {
         icon: "grid-view",
-        text: "Tutoriales, Guias, Avisos, etc.",
+        text: "Tutoriales, Guías, Avisos, etc.",
         to: "tutorialConfig",
         link: false
     },
@@ -132,7 +132,7 @@ export const menuAjustes: Menu[] = [
     {
         //@ts-ignore
         icon: "shield-check",
-        text: "Politica de Privacidad",
+        text: "Política de Privacidad",
         to: "politica",
         link: false
     },

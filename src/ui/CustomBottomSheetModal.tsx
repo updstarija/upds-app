@@ -132,7 +132,8 @@ import {
 import {
     BackHandler,
     TouchableOpacityProps,
-    TouchableOpacity
+    TouchableOpacity,
+    Platform
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -153,6 +154,7 @@ export interface CustomBottomSheetRef {
 interface Props extends BottomSheetModalProps {
     content: JSX.Element | JSX.Element[];
     onPressButton?: Function;
+    onCloseModal?: Function;
     snapPointsProp?: string[];
     touchableProps?: TouchableOpacityProps;
     withoutScrollView?: boolean;
@@ -166,6 +168,7 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> = forward
     onPressButton,
     withoutScrollView = false,
     snapPointsProp = [],
+    onCloseModal,
     ...props
 }, ref) => {
     const isDark = useThemeColor() === "dark"
@@ -206,6 +209,11 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> = forward
     };
 
 
+    const onDismiss = () => {
+        setIsOpen(false)
+        if (onCloseModal) onCloseModal()
+    }
+
     useImperativeHandle(ref, () => ({
         close: () => {
             bottomSheetModalRef.current?.dismiss()
@@ -239,9 +247,9 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> = forward
                 topInset={top}
                 enableDynamicSizing={snapPointsProp?.length == 0}
                 backdropComponent={renderBackdrop}
-                onDismiss={() => setIsOpen(false)}
+                onDismiss={onDismiss}
                 onChange={handleChange}
-                //         keyboardBehavior={Platform.OS === "android" ? "fillParent" : "interactive"}
+                // keyboardBehavior={Platform.OS === "android" ? "fillParent" : "interactive"}
 
                 keyboardBlurBehavior="restore"
                 android_keyboardInputMode="adjustResize"

@@ -124,18 +124,18 @@ function RootLayoutNav() {
       <AuthProvider>
         <CarreraProvider>
           <ProyeccionesProvider>
-            <BottomSheetModalProvider>
-              <TourGuideProvider
-                preventOutsideInteraction
-                borderRadius={16}
-                // {...{ borderRadius: 16 }}
-                backdropColor="#000000b3"
-                //backdropColor="rgba(0,0,0,0.4)"
-                verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
-                tooltipComponent={(props) => tooltipComponentTour(props as TourProps)}
-              >
-                <ThemeProvider>
-                  <AutocompleteDropdownContextProvider>
+            <AutocompleteDropdownContextProvider>
+              <BottomSheetModalProvider>
+                <TourGuideProvider
+                  preventOutsideInteraction
+                  borderRadius={16}
+                  // {...{ borderRadius: 16 }}
+                  backdropColor="#000000b3"
+                  //backdropColor="rgba(0,0,0,0.4)"
+                  verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
+                  tooltipComponent={(props) => tooltipComponentTour(props as TourProps)}
+                >
+                  <ThemeProvider>
 
 
 
@@ -213,7 +213,7 @@ function RootLayoutNav() {
                       <Stack.Screen
                         name="(paginas)/calendario-academico/index"
                         //@ts-ignore
-                        options={{ ...configStack("Calendario Academico") }}
+                        options={{ ...configStack("Calendario Académico") }}
                       />
 
                       <Stack.Screen
@@ -256,7 +256,7 @@ function RootLayoutNav() {
                       <Stack.Screen
                         name="(home)/chat"
                         //@ts-ignore
-                        options={configStack("Chat UPDS")}
+                        options={configStack("UPDS Responde")}
                       />
 
                       <Stack.Screen
@@ -268,7 +268,7 @@ function RootLayoutNav() {
                       <Stack.Screen
                         name="(home)/ubicacion"
                         //@ts-ignore
-                        options={configStack("Ubicacion")}
+                        options={configStack("Ubicación")}
                       />
 
                       <Stack.Screen
@@ -298,7 +298,7 @@ function RootLayoutNav() {
                       <Stack.Screen
                         name="(estudiante)/historico-materias"
                         //@ts-ignore
-                        options={configStack("Historico de Materias")}
+                        options={configStack("Histórico de Materias")}
                       />
 
                       <Stack.Screen
@@ -349,14 +349,14 @@ function RootLayoutNav() {
                         options={configStack("Biblioteca")}
                       />
                     </Stack>
-                  </AutocompleteDropdownContextProvider>
-                  <Toast config={toastConfig} />
-                </ThemeProvider>
-              </TourGuideProvider>
-            </BottomSheetModalProvider>
+                  </ThemeProvider>
+                </TourGuideProvider>
+              </BottomSheetModalProvider>
+            </AutocompleteDropdownContextProvider>
           </ProyeccionesProvider>
         </CarreraProvider>
       </AuthProvider>
+      <Toast config={toastConfig} />
     </QueryClientProvider>
   );
 }

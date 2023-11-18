@@ -25,12 +25,12 @@ const CarouselPriorityNotices = () => {
         <View className="mb-5">
             <View className="flex-row justify-between">
                 <Texto className="text ml-5 pt-2 dark:text-white" weight="Bold">
-                    Mas Relevante
+                    Más Relevante
                 </Texto>
 
                 <Link href="/comunicados/" className="pt-2 mr-5 flex-row">
                     <View className="flex-row items-center justify-between">
-                        <Texto className="dark:text-white ">Ver Mas</Texto>
+                        <Texto className="dark:text-white ">Ver Más</Texto>
                         <View style={{ marginLeft: 10 }}>
                             <FontAwesome
                                 name="chevron-right"
