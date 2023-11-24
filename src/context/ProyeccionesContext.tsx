@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { FlatList } from 'react-native';
 
 type TutorialProyeccionesReady = {
   carreras: false,
@@ -25,7 +26,7 @@ interface ProyeccionesContext {
   boleta: number,
   tutorialBoletaReady: TutorialProyeccionesReady,
   tutorialEnCurso: TutorialInfo,
-  listref: React.MutableRefObject<FlashList<ISemestre> | null>
+  listref: React.MutableRefObject<FlatList | null>
   selectedTurns: string[]
   handleCarrera: Function
   handleModulo: Function
@@ -45,7 +46,7 @@ interface Props {
 }
 
 export const ProyeccionesProvider: React.FC<Props> = ({ children }) => {
-  const listref = useRef<FlashList<ISemestre> | null>(null);
+  const listref = useRef<FlatList | null>(null);
 
 
   const [carrera, setCarrera] = useState(-1)

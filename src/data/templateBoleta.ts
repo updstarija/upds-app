@@ -57,7 +57,7 @@ border-collapse: collapse;
 </head>
 <body>
 <p class="bold" style="text-align: center;">UNIVERSIDAD PRIVADA DOMINGO SAVIO</p>
-<p class="bold" style="text-align: center;">BOLETA DE PROYECCION</p>
+<p class="bold" style="text-align: center;">BOLETA DE PROYECCIÓN</p>
 
 <div class="datos">
   <div class="divlogo">
@@ -161,8 +161,8 @@ border-collapse: collapse;
 `;
 
 export const templateBoletaV3 = {
-generateHeader: () => {
-return `
+  generateHeader: () => {
+    return `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -173,6 +173,7 @@ return `
 <style>
     body{
         font-family: Arial, Helvetica, sans-serif;
+        padding: 40px;
     }
 
   .datos {
@@ -219,11 +220,11 @@ border-collapse: collapse;
 </head>
 <body>
 <p class="bold" style="text-align: center;">UNIVERSIDAD PRIVADA DOMINGO SAVIO</p>
-<p class="bold" style="text-align: center;">BOLETA DE PROYECCION</p>
+<p class="bold" style="text-align: center;">BOLETA DE PROYECCIÓN</p>
 
 `
-},
-  generateDatosHeader: (nombre:string, documento: string, carrera:string) => {
+  },
+  generateDatosHeader: (nombre: string, documento: string, carrera: string) => {
     return `
     <div class="datos">
   <div class="divlogo">
@@ -244,7 +245,7 @@ border-collapse: collapse;
   <div>
     <div>
       <span class="bold">Fecha:</span>
-      <span>${new Date().toLocaleDateString("es-ES", {day: "2-digit", month: "2-digit", year: "numeric"})}</span>
+      <span>${new Date().toLocaleDateString("es-ES", { day: "2-digit", month: "2-digit", year: "numeric" })}</span>
     </div>
 
     <div>
@@ -252,50 +253,51 @@ border-collapse: collapse;
       <span>${carrera}</span>
     </div>
   </div>
+  
 </div>
     `
   },
 
 
   generateBody: (modulos: IResponseModuloProyeccion["data"], materiasBoleta: IResponseDetalleBoleta["data"]) => {
- let newMaterias = [...materiasBoleta]
-  
-
- let htmlMaterias = "";
- 
- let htmlMateriasv2:string[]= [];
- let htmlTurnosv2:string[]= [];
+    let newMaterias = [...materiasBoleta]
 
 
- let cantidadMaterias = 0;
+    let htmlMaterias = "";
+
+    let htmlMateriasv2: string[] = [];
+    let htmlTurnosv2: string[] = [];
 
 
- while(newMaterias.length>0){
-
-  let htmlMats = "";
-  let htmlTurn = "";
+    let cantidadMaterias = 0;
 
 
-   
-    modulos.map((mod) => {
-      
-      const materia = newMaterias.find((mat) => mat.modulo == mod.nombre.split("-")[1].trim())
-    newMaterias = newMaterias.filter((mat) => mat.materiaAdmId != materia?.materiaAdmId)
+    while (newMaterias.length > 0) {
 
-    htmlMats+= `<td>${materia?.materia|| ''}</td>`
-    htmlTurn+= `<td>${materia?.turno|| ''}</td>`
-    //  return `<td>${materia?.materia|| ''}</td>`
-    })
-    
+      let htmlMats = "";
+      let htmlTurn = "";
 
-    htmlMateriasv2.push(htmlMats)
-    htmlTurnosv2.push(htmlTurn)
-cantidadMaterias++;
- }
 
- let bodyHtml = ""
- for(let i =0;i< cantidadMaterias ; i++){
-bodyHtml += `
+
+      modulos.map((mod) => {
+
+        const materia = newMaterias.find((mat) => mat.modulo == mod.nombre.split("-")[1].trim())
+        newMaterias = newMaterias.filter((mat) => mat.materiaAdmId != materia?.materiaAdmId)
+
+        htmlMats += `<td>${materia?.materia || ''}</td>`
+        htmlTurn += `<td>${materia?.turno || ''}</td>`
+        //  return `<td>${materia?.materia|| ''}</td>`
+      })
+
+
+      htmlMateriasv2.push(htmlMats)
+      htmlTurnosv2.push(htmlTurn)
+      cantidadMaterias++;
+    }
+
+    let bodyHtml = ""
+    for (let i = 0; i < cantidadMaterias; i++) {
+      bodyHtml += `
 <tr>
   <td class="gris">MATERIAS</td>
   ${htmlMateriasv2[i]}
@@ -303,17 +305,24 @@ bodyHtml += `
   
 
     <tr>
-      <td class="gris">Turno</td>
+      <td class="gris">TURNO</td>
       ${htmlTurnosv2[i]}
     </tr>`
- }
+    }
 
-return `
+
+    let modulosTable = ''
+
+    modulos.forEach((x) => {
+      modulosTable += `<th style="width:15%;">${x.nombre}</th>`
+    })
+    return `
+
 <table style="width: 100%; margin-top: 30px;">
   <thead>
     <tr>
-      <th>MODULOS</th>
-      ${modulos.map((x) => `<th>${x.nombre}</th>`)}
+      <th>MÓDULOS</th>
+    ${modulosTable}
     </tr>
   </thead>
   <tbody>

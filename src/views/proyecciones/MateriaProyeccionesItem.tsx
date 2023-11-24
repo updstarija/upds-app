@@ -1,4 +1,4 @@
-import { useState, useRef, memo } from "react";
+import { useState, useRef, memo, useEffect } from "react";
 import { View, Alert } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { MateriaStateProyecciones, SwiperV2 } from "@/components";
@@ -195,6 +195,88 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, cust
             />
         </SwiperV2>
     );
+
+    useEffect(() => {
+        let animationInterval: NodeJS.Timeout;
+
+        const startAnimation = async () => {
+            setTimeout(() => {
+                bottomSheetRef.current?.open();
+            }, 1000);
+
+            setTimeout(() => {
+                bottomSheetRef.current?.close();
+            }, 3500);
+
+            animationInterval = setInterval(() => {
+                setTimeout(() => {
+                    bottomSheetRef.current?.open();
+                }, 1000);
+
+                setTimeout(() => {
+                    bottomSheetRef.current?.close();
+                }, 3500);
+            }, 6000);
+        };
+
+        const stopAnimation = () => {
+            clearInterval(animationInterval);
+        };
+
+        if (tutorial?.inCourse && tutorial.step === 7) {
+            stopAnimation();
+            startAnimation();
+        } else {
+            stopAnimation();
+        }
+
+        return stopAnimation;
+    }, [tutorial?.inCourse, tutorial?.step]);
+
+    useEffect(() => {
+        let animationInterval: NodeJS.Timeout;
+
+        const startAnimation = async () => {
+            setTimeout(() => {
+                swiperRef.current?.openRight();
+            }, 1000);
+
+            setTimeout(() => {
+                swiperRef.current?.openLeft();
+            }, 3000);
+
+            setTimeout(() => {
+                swiperRef.current?.close();
+            }, 5000);
+
+            animationInterval = setInterval(() => {
+                setTimeout(() => {
+                    swiperRef.current?.openRight();
+                }, 1000);
+
+                setTimeout(() => {
+                    swiperRef.current?.openLeft();
+                }, 3000);
+
+                setTimeout(() => {
+                    swiperRef.current?.close();
+                }, 5000);
+            }, 10000);
+        };
+
+        const stopAnimation = () => {
+            clearInterval(animationInterval);
+        };
+
+        if (tutorial?.inCourse && tutorial.step === 6) {
+            stopAnimation();
+            startAnimation();
+        } else {
+            stopAnimation();
+        }
+
+        return stopAnimation;
+    }, [tutorial?.inCourse, tutorial?.step]);
 
     return (
         <CustomBottomSheetModal

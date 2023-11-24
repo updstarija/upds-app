@@ -6,6 +6,8 @@ import { ProyeccionesProvider } from '@/context/ProyeccionesContext';
 import { useTourGuideController } from 'rn-tourguide';
 import { useEffect } from 'react';
 import { verTutorial } from '@/helpers';
+import { Stack, router } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 
 const av = new Animated.Value(0);
 av.addListener(() => {
@@ -13,12 +15,16 @@ av.addListener(() => {
 });
 
 
+export const unstable_settings = {
+    initialRouteName: "boleta"
+}
+
 export default function Layout() {
     const isDarkMode = useThemeColor() === 'dark';
 
     const { canStart, start, tourKey, stop } = useTourGuideController("t-boleta")
 
-    const { tutorialBoletaReady, setTutorialEnCurso } = useProyeccionesContext();
+    const { tutorialBoletaReady, tutorialEnCurso, setTutorialEnCurso } = useProyeccionesContext();
 
     const startTutorial = async () => {
         if (!Object.values(tutorialBoletaReady).includes(false)) {
@@ -50,7 +56,13 @@ export default function Layout() {
                         useNativeDriver: true,
                     }).start();
                 },
+                blur: () => {
+                    if (tutorialEnCurso.inCourse) {
+                        router.push("/proyecciones/boleta")
+                    }
+                }
             }}
+
 
             screenOptions={{
 
@@ -69,25 +81,41 @@ export default function Layout() {
 
                 // API Reference: https://reactnavigation.org/docs/material-top-tab-navigator#options
             }}>
-            <MaterialTopTabs.Screen
-                name="index"
 
+
+            <Drawer.Screen
+                name="malla-curricular"
+
+                //@ts-ignore
                 options={{
-                    title: 'MALLA CURRICULAR',
 
-                    /*
-                 
-                  tabBarIcon: ({ color }) => (
-                         <MaterialIcons name="home" color={color} size={20} />
-                     ),*/
+                    drawerItemStyle: {
+                        display: "none"
+                    },
 
                 }}
+                listeners={() => ({
+                    focus: () => {
+                        if (tutorialEnCurso.inCourse) {
+                            router.push("/proyecciones/boleta")
+
+                        }
+
+                    },
+
+
+                })}
             />
+
+
             <MaterialTopTabs.Screen
                 name="boleta"
                 listeners={() => ({
                     blur: () => {
-                        stop()
+                        if (tutorialEnCurso.inCourse) {
+                            router.push("/proyecciones/boleta")
+
+                        }
                     },
                     focus: () => {
                         startTutorial()

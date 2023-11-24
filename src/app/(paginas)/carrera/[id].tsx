@@ -79,7 +79,7 @@ xd[0].parentElement.parentElement.parentElement.parentElement.remove()
                         source={{ uri: `https://www.upds.edu.bo/carrera/${id}` }}
                         onMessage={() => { }}
                         onNavigationStateChange={(x) => {
-                            console.log(x);
+                            //  console.log(x);
                         }}
                     />
                 </View>

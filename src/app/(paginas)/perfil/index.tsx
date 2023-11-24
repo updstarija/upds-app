@@ -31,7 +31,7 @@ const Perfil = () => {
                 <View className='mt-10 bg-white dark:bg-primario-dark flex-1 rounded-3xl p-4 max-w-2xl mx-auto w-full'>
                     <View className='mt-5'>
                         <View>
-                            <Texto className='text-center text-black dark:text-white text-xl' weight='Bold'>NFORMACIÓN PERSONAL</Texto>
+                            <Texto className='text-center text-black dark:text-white text-xl' weight='Bold'>INFORMACIÓN PERSONAL</Texto>
                             <View className='border-[.5px] border-gray-300 dark:border-gray-100 mt-1' />
                         </View>
 

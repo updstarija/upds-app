@@ -5,9 +5,10 @@ import { useState } from 'react';
 import Spinner from '@/components/Spinner';
 import { SelectCarrera } from '@/views/SelectCarrera';
 
-const HistoricoMaterias = () => {
+const MallaCurricular = () => {
     const { valueCarrera } = useCarreraContext();
-    const { semestresQuery } = useSemestres({ carrera: valueCarrera || -1 });
+
+    const { semestresQuery } = useSemestres({ carrera: valueCarrera });
 
     const [semestreOpen, setSemestreOpen] = useState(-1)
 
@@ -51,4 +52,4 @@ const HistoricoMaterias = () => {
     );
 };
 
-export default HistoricoMaterias;
+export default MallaCurricular;

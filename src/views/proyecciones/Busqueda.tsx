@@ -8,15 +8,20 @@ import { Texto } from '@/ui'
 import MateriaProyeccionesItem from './MateriaProyeccionesItem'
 import SelectTurnos from '../SelectTurnos'
 import { ScrollView } from 'react-native-gesture-handler'
+import { TourGuideZone } from 'rn-tourguide'
+import { SwiperV2 } from '@/components'
 
 
 interface Props {
-
+    tutorial?: {
+        inCourse: boolean;
+        step: number;
+    };
 }
 
 const materiaSearchTutorial = 'Deontologia';
 
-export const Busqueda: React.FC<Props> = () => {
+export const Busqueda: React.FC<Props> = ({ tutorial }) => {
     const dropwdownController = useRef<AutocompleteDropdownRef | null>(null)
     const isDarkMode = useThemeColor() === "dark"
 
@@ -46,13 +51,15 @@ export const Busqueda: React.FC<Props> = () => {
 
 
     const renderMaterias = () => {
-        if (!selectedItem) return <></>
+        if (!selectedItem && !tutorial?.inCourse) return <></>
         if (materiasProyeccionQuery.isLoading) return <Spinner className='h-28' />
         if (materiasProyeccionQuery.isError) return <Texto>HUBO UN ERROR</Texto>
 
+
+
         const isPendienteOCurso = (id: number) => id == 0 || id == 1
 
-        if (materiasProyeccionQuery.data.data.length === 0)
+        if (materiasProyeccionQuery.data.data.length === 0 && !tutorial?.inCourse)
             return (
                 <View className="p-4 items-center bg-white dark:bg-secondary-dark  border-[.5px] border-t-0">
                     <Texto className="dark:text-white text-center">NO HAY MATERIAS OFERTADAS</Texto>
@@ -60,19 +67,59 @@ export const Busqueda: React.FC<Props> = () => {
             );
 
         return <View className='mt-4'>
-            <SelectTurnos />
 
-            {!materiasProyeccionQuery.isLoading && !!!filterData.length && <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl m-4">
-                <Texto className="text-white">
-                    No hay datos que mostrar :(
-                </Texto>
-            </View>}
+            {/* <View className="">
+                    <SemestreProyeccionItem modulo={0} semestre={{ id: 0, nombre: "" }} withSearch />
+                </View> */}
+            <TourGuideZone
+                tourKey={"t-boleta"}
+                zone={5}
+                text="Filtrador de materias por diferentes turnos"
+            >
+                <SelectTurnos />
 
-            <ScrollView style={{ maxHeight: 400 }} nestedScrollEnabled>
-                {filterData.map(mat => (
-                    <MateriaProyeccionesItem key={mat.id} materia={mat} withModulo />
-                ))}
-            </ScrollView>
+            </TourGuideZone>
+
+            {[4, 5, 6, 7, 8, 9].includes(tutorial?.step || -1) ? (
+                <>
+                    <TourGuideZone
+                        tourKey={"t-boleta"}
+                        zone={6}
+                        text="Desliza para agregar la materia de tu boleta"
+                    >
+                        <TourGuideZone
+                            tourKey={"t-boleta"}
+                            zone={7}
+                            text="Presiona en el registro para ver los prerequisitos y coquerequistos"
+                        >
+                            <MateriaProyeccionesItem materia={{
+                                carrera: "Contabilidad Empresarial",
+                                materia: "Estadística",
+                                estado: { id: -1, nombre: "Tutorial" },
+                                id: -1,
+                                materiaAdmId: -1,
+                                modulo: "1.1.1",
+                                semestre: "PRIMER SEMESTRE",
+                                turno: "Mañana"
+                            }} withModulo tutorial={tutorial} />
+                        </TourGuideZone>
+                    </TourGuideZone>
+                </>
+            ) : (<>
+                {!materiasProyeccionQuery.isLoading && !!!filterData.length && <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl m-4">
+                    <Texto className="text-white">
+                        No hay datos que mostrar :(
+                    </Texto>
+                </View>}
+
+                <ScrollView style={{ maxHeight: 400 }} nestedScrollEnabled>
+                    {filterData.map(mat => (
+                        <MateriaProyeccionesItem key={mat.id} materia={mat} withModulo />
+                    ))}
+                </ScrollView>
+            </>)}
+
+
         </View>
     }
 
@@ -107,7 +154,6 @@ export const Busqueda: React.FC<Props> = () => {
             });
         });
     }, [, selectedTurns, materiasProyeccionQuery.data])
-
 
 
     useEffect(() => {
@@ -151,36 +197,45 @@ export const Busqueda: React.FC<Props> = () => {
 
     return (
         <View style={{ zIndex: -1 }}>
-            <AutocompleteDropdown
+            <TourGuideZone
+                tourKey={"t-boleta"}
+                zone={4}
+                text="Buscador de materias para proyectar"
+            >
+                <AutocompleteDropdown
+                    dataSet={sugerencias}
+                    closeOnBlur={true}
+                    useFilter={false}
+                    clearOnFocus={false}
+                    textInputProps={{
+                        placeholder: 'Busca una materia....',
+                        style: { color: isDarkMode ? "#FFF" : "#000" },
 
-                dataSet={sugerencias}
-                closeOnBlur={true}
-                useFilter={false}
-                clearOnFocus={false}
-                textInputProps={{
-                    placeholder: 'Busca una materia....',
-                    style: { color: isDarkMode ? "#FFF" : "#000" },
+                    }}
+                    controller={(controller) => {
+                        dropwdownController.current = controller
+                    }}
+                    onSelectItem={setSelectedItem}
+                    loading={isLoading}
+                    onChangeText={onChangeText}
+                    suggestionsListTextStyle={{
+                        color: isDarkMode ? '#FFF' : "#000",
+                    }}
+                    containerStyle={{ zIndex: -1 }}
+                    suggestionsListContainerStyle={{ backgroundColor: isDarkMode ? COLORS.dark.secondary : "#FFF" }}
+                    onClear={() => setInputText("")}
+                    inputContainerStyle={{ backgroundColor: isDarkMode ? COLORS.dark.secondary : "#FFF", borderColor: "#000", borderWidth: .5 }}
+                    debounce={600}
+                    EmptyResultComponent={<Texto className='text-black dark:text-white p-3 text-center'>{isLoading ? "Buscando Materia..." : inputText.length === 0 ? "Busca una materia para tu proyeccion" : "No se ha encontrado la materia o no esta disponible en tu plan de estudio"}</Texto>}
+                />
 
-                }}
-                controller={(controller) => {
-                    dropwdownController.current = controller
-                }}
-                onSelectItem={setSelectedItem}
-                loading={isLoading}
-                onChangeText={onChangeText}
-                suggestionsListTextStyle={{
-                    color: isDarkMode ? '#FFF' : "#000",
-                }}
-                containerStyle={{ zIndex: -1 }}
-                suggestionsListContainerStyle={{ backgroundColor: isDarkMode ? COLORS.dark.secondary : "#FFF" }}
-                onClear={() => setInputText("")}
-                inputContainerStyle={{ backgroundColor: isDarkMode ? COLORS.dark.secondary : "#FFF", borderColor: "#000", borderWidth: .5 }}
-                debounce={600}
-                EmptyResultComponent={<Texto className='text-black dark:text-white p-3 text-center'>{isLoading ? "Buscando Materia..." : inputText.length === 0 ? "Busca una materia para tu proyeccion" : "No se ha encontrado la materia o no esta disponible en tu plan de estudio"}</Texto>}
-            />
+            </TourGuideZone>
 
-
-            {renderMaterias()}
+            {[4, 5, 6, 7, 8, 9].includes(tutorial?.step || -1) && (
+                <>
+                    {renderMaterias()}
+                </>
+            )}
         </View>
     )
 }

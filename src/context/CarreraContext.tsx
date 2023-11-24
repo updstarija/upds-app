@@ -11,11 +11,11 @@ import { UseQueryResult } from '@tanstack/react-query';
 import { ICarrera } from '@/types'; //mport {useAuthContext, useCarreras} from '@/hooks';
 
 interface CarreraContext {
-  valueCarrera: number | null;
-  carrerasQuery: UseQueryResult<ICarrera[], unknown>;
-  setValueCarrera: Dispatch<SetStateAction<null | number>>;
-  boleta: number | null;
-  setBoleta: Dispatch<SetStateAction<null | number>>;
+  valueCarrera: number;
+  carreras: ICarrera[];
+  setValueCarrera: Dispatch<SetStateAction<number>>;
+  boleta: number;
+  setBoleta: Dispatch<SetStateAction<number>>;
 }
 export const CarreraContext = createContext<CarreraContext>(
   {} as CarreraContext,
@@ -26,26 +26,25 @@ interface Props {
 }
 
 export const CarreraProvider: React.FC<Props> = ({ children }) => {
-  const { status, userAuth } = useAuthContext();
+  const { userAuth } = useAuthContext();
 
-  const [valueCarrera, setValueCarrera] = useState<number | null>(null);
-  const [boleta, setBoleta] = useState<null | number>(null);
-
-  const { carrerasQuery } = useCarreras(status === 'autenticado');
-
-  //console.log(valueCarrera)
+  const [valueCarrera, setValueCarrera] = useState<number>(-1);
+  const [boleta, setBoleta] = useState<number>(-1);
 
   useEffect(() => {
-    if (carrerasQuery.data && !valueCarrera) {
-      setValueCarrera(carrerasQuery?.data[0]?.id);
+    console.log('render')
+    if (valueCarrera === -1 && userAuth.usuario.carreras.length) {
+
+      setValueCarrera(userAuth.usuario.carreras[0].id);
     }
-  }, [carrerasQuery.data, valueCarrera])
+  }, [userAuth.usuario.carreras])
+
 
   return (
     <CarreraContext.Provider
       value={{
         valueCarrera,
-        carrerasQuery,
+        carreras: userAuth.usuario.carreras,
         setValueCarrera,
         boleta,
         setBoleta,

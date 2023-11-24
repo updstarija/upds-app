@@ -66,7 +66,7 @@ const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
                     size={30}
                     color="#fff"
                     disabled={!isValid}
-                    style={{ paddingRight: 0, opacity: !isValid ? 0.5 : 1 }}
+                    style={{ paddingRight: 0, opacity: !isValid ? 0.3 : 1 }}
                 />
 
                 <MaterialCommunityIcons.Button
@@ -76,7 +76,7 @@ const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
                     color="#fff"
                     backgroundColor={"rgb(251 146 60)"}
                     disabled={!isValid}
-                    style={{ paddingRight: 0, opacity: !isValid ? 0.5 : 1 }}
+                    style={{ paddingRight: 0, opacity: !isValid ? 0.3 : 1 }}
                 />
             </>
         );
@@ -176,132 +176,176 @@ const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
 
     let tuto2: any = null;
     let tuto1: any = null;
-    /*     let tuto2 = null;
-        let tuto3 = null;
-        let tuto4 = null;
-        let tuto5 = null;
-        let tuto6 = null; */
-    /*     const animationTutorial = async () => {
-              if (!tutorial?.inCourse) return
-      
-              while (tutorial.step == 1) {
-                  console.log(tutorial.step)
-                  await sleep(1000)
-                  bottomSheetRef.current?.open()
-                  await sleep(5000)
-                  bottomSheetRef.current?.close()
-                  await sleep(2500)
-              }
-      
-              while (tutorial.step == 2) {
-                  console.log(tutorial.step)
-                  await sleep(1000)
+
+
+    /*   useEffect(() => {
+          if (!tutorial?.inCourse) return;
+          if (tutorial.step == 2) {
+              tuto2 = setTimeout(() => {
                   swiperRef.current?.openRight();
-                  await sleep(3000)
+  
+                  if (tutorial.step != 2) {
+                      clearTimeout(tuto2)
+                  }
+              }, 1000);
+  
+              tuto2 = setTimeout(() => {
                   swiperRef.current?.openLeft();
-                  await sleep(3000)
+  
+                  if (tutorial.step != 2) {
+                      clearTimeout(tuto2)
+                  }
+              }, 3000);
+  
+              tuto2 = setTimeout(() => {
                   swiperRef.current?.close();
-                  await sleep(1000)
-              }
-          } */
+  
+                  if (tutorial.step != 2) {
+                      clearTimeout(tuto2)
+                  }
+              }, 5000);
+  
+              tuto2 = setTimeout(() => {
+                  swiperRef.current?.openRight();
+  
+                  if (tutorial.step != 2) {
+                      clearTimeout(tuto2)
+                  }
+              }, 11000);
+  
+              tuto2 = setTimeout(() => {
+                  swiperRef.current?.openLeft();
+  
+                  if (tutorial.step != 2) {
+                      clearTimeout(tuto2)
+                  }
+              }, 13000);
+  
+              tuto2 = setTimeout(() => {
+                  swiperRef.current?.close();
+  
+                  if (tutorial.step != 2) {
+                      clearTimeout(tuto2)
+                  }
+              }, 15000);
+          } else if (tutorial.step == 1) {
+              tuto1 = setTimeout(() => {
+                  bottomSheetRef.current?.open();
+  
+  
+                  if (tutorial.step != 1) {
+                      clearTimeout(tuto1)
+                  }
+              }, 2000);
+  
+              tuto1 = setTimeout(() => {
+                  bottomSheetRef.current?.close();
+  
+                  if (tutorial.step != 1) {
+                      clearTimeout(tuto1)
+                  }
+              }, 6500);
+  
+              tuto1 = setTimeout(() => {
+                  bottomSheetRef.current?.open();
+  
+                  if (tutorial.step != 1) {
+                      clearTimeout(tuto1)
+                  }
+              }, 8500);
+  
+              tuto1 = setTimeout(() => {
+                  bottomSheetRef.current?.close();
+  
+                  if (tutorial.step != 1) {
+                      clearTimeout(tuto1)
+                  }
+              }, 15000);
+          }
+      }, [tutorial]); */
+
 
     useEffect(() => {
-        if (!tutorial?.inCourse) return;
-        if (tutorial.step == 2) {
-            tuto2 = setTimeout(() => {
-                swiperRef.current?.openRight();
+        let animationInterval: NodeJS.Timeout;
 
-                if (tutorial.step != 2) {
-                    clearTimeout(tuto2)
-                }
+        const startAnimation = async () => {
+            setTimeout(() => {
+                bottomSheetRef.current?.open();
             }, 1000);
 
-            tuto2 = setTimeout(() => {
-                swiperRef.current?.openLeft();
-
-                if (tutorial.step != 2) {
-                    clearTimeout(tuto2)
-                }
-            }, 3000);
-
-            tuto2 = setTimeout(() => {
-                swiperRef.current?.close();
-
-                if (tutorial.step != 2) {
-                    clearTimeout(tuto2)
-                }
-            }, 5000);
-
-            tuto2 = setTimeout(() => {
-                swiperRef.current?.openRight();
-
-                if (tutorial.step != 2) {
-                    clearTimeout(tuto2)
-                }
-            }, 11000);
-
-            tuto2 = setTimeout(() => {
-                swiperRef.current?.openLeft();
-
-                if (tutorial.step != 2) {
-                    clearTimeout(tuto2)
-                }
-            }, 13000);
-
-            tuto2 = setTimeout(() => {
-                swiperRef.current?.close();
-
-                if (tutorial.step != 2) {
-                    clearTimeout(tuto2)
-                }
-            }, 15000);
-        } else if (tutorial.step == 1) {
-            tuto1 = setTimeout(() => {
-                bottomSheetRef.current?.open();
-
-
-                if (tutorial.step != 1) {
-                    clearTimeout(tuto1)
-                }
-            }, 2000);
-
-            tuto1 = setTimeout(() => {
+            setTimeout(() => {
                 bottomSheetRef.current?.close();
+            }, 3500);
 
-                if (tutorial.step != 1) {
-                    clearTimeout(tuto1)
-                }
-            }, 6500);
+            animationInterval = setInterval(() => {
+                setTimeout(() => {
+                    bottomSheetRef.current?.open();
+                }, 1000);
 
-            tuto1 = setTimeout(() => {
-                bottomSheetRef.current?.open();
+                setTimeout(() => {
+                    bottomSheetRef.current?.close();
+                }, 3500);
+            }, 6000);
+        };
 
-                if (tutorial.step != 1) {
-                    clearTimeout(tuto1)
-                }
-            }, 8500);
+        const stopAnimation = () => {
+            clearInterval(animationInterval);
+        };
 
-            tuto1 = setTimeout(() => {
-                bottomSheetRef.current?.close();
-
-                if (tutorial.step != 1) {
-                    clearTimeout(tuto1)
-                }
-            }, 15000);
+        if (tutorial?.inCourse && tutorial.step === 1) {
+            stopAnimation();
+            startAnimation();
+        } else {
+            stopAnimation();
         }
-    }, [tutorial]);
+
+        return stopAnimation;
+    }, [tutorial?.inCourse, tutorial?.step]);
 
     useEffect(() => {
-        if (tutorial?.step != 2) {
-            clearTimeout(tuto2)
-            tuto2 = null
+        let animationInterval: NodeJS.Timeout;
+
+        const startAnimation = async () => {
+            setTimeout(() => {
+                swiperRef.current?.openRight();
+            }, 1000);
+
+            setTimeout(() => {
+                swiperRef.current?.openLeft();
+            }, 3000);
+
+            setTimeout(() => {
+                swiperRef.current?.close();
+            }, 5000);
+
+            animationInterval = setInterval(() => {
+                setTimeout(() => {
+                    swiperRef.current?.openRight();
+                }, 1000);
+
+                setTimeout(() => {
+                    swiperRef.current?.openLeft();
+                }, 3000);
+
+                setTimeout(() => {
+                    swiperRef.current?.close();
+                }, 5000);
+            }, 10000);
+        };
+
+        const stopAnimation = () => {
+            clearInterval(animationInterval);
+        };
+
+        if (tutorial?.inCourse && tutorial.step === 2) {
+            stopAnimation();
+            startAnimation();
+        } else {
+            stopAnimation();
         }
 
-        if (tutorial?.step != 1) {
-            clearTimeout(tuto1)
-            tuto1 = null
-        }
-    }, [tutorial?.step])
+        return stopAnimation;
+    }, [tutorial?.inCourse, tutorial?.step]);
 
     const content = (
         <SwiperV2

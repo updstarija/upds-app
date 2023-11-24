@@ -77,7 +77,7 @@ export const menuHomeStudent: Menu[] = [
     {
         text: 'Proyecciones',
         icon: 'table-view',
-        to: '/proyecciones',
+        to: '/proyecciones/boleta',
         link: false,
         auth: true
     },

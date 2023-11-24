@@ -8,6 +8,7 @@ import { TourGuideZone } from "rn-tourguide";
 import * as Animatable from "react-native-animatable";
 import { SwiperV2Ref } from "@/components/SwiperV2";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { sleep } from "@/helpers";
 
 interface Props {
   carrera: number;
@@ -18,11 +19,6 @@ interface Props {
 }
 
 const DetalleBoleta: React.FC<Props> = ({ carrera, tutorial }) => {
-
-  let tuto1: any = null;
-  let tuto2: any = null;
-  let tuto3: any = null;
-  let tuto4: any = null;
   const isDark = useThemeColor() === "dark";
   const swiperRef = useRef<SwiperV2Ref>(null);
   const [deleteTutorial, setDeleteTutorial] = useState(false);
@@ -37,20 +33,7 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorial }) => {
       }
     }, [boletaQuery.isLoading, boletaQuery.isError, boletaQuery.isFetching]) */
 
-  if (boletaQuery.isLoading)
-    return (
-      <Card classNameCard="my-4 flex">
-        <ActivityIndicator size="large" color="#ffffff" />
-        <Texto className="mt-2 text-center text-white">Cargando Boleta</Texto>
-      </Card>
-    );
 
-  if (boletaQuery.isError)
-    return (
-      <Texto className="text-black">
-        Hubo un error al cargal la boleta....
-      </Texto>
-    );
 
   const noMostrarMas = async () => {
     await AsyncStorage.setItem(
@@ -81,7 +64,6 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorial }) => {
     const mostrar = await AsyncStorage.getItem(
       `no-mostrar-confirmacion-eliminacion-materia`
     );
-    console.log(mostrar)
     if (mostrar == "true") {
       handleDeleteMateria(detalleBoletaId, boletaId);
       return;
@@ -99,7 +81,7 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorial }) => {
               "La proxima vez que elimines una materia no se te pedira confirmacion.\n\nPuedes cambiar esta configuracion desde los ajustes"
             );
             handleDeleteMateria(detalleBoletaId, boletaId);
-            // noMostrarMas();
+            noMostrarMas();
           },
         },
         {
@@ -160,41 +142,7 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorial }) => {
   };
 
   const renderContent = () => {
-    if (tutorial?.inCourse && tutorial.step == 3) {
-      tuto1 = setTimeout(() => {
-        swiperRef.current?.openRight();
-        // console.log("OPEN RIGHT")
-      }, 2000);
-
-      tuto2 = setTimeout(() => {
-        swiperRef.current?.close();
-        //console.log("CLOSE ")
-      }, 4000);
-
-      tuto3 = setTimeout(() => {
-        swiperRef.current?.openRight();
-        //console.log("OPEN RIGHT")
-      }, 11000);
-
-      tuto4 = setTimeout(() => {
-        swiperRef.current?.close();
-        //console.log("CLOSE ")
-      }, 13000);
-    }
-
-    if (tutorial?.inCourse && tutorial?.step != 3) {
-      clearTimeout(tuto1)
-      clearTimeout(tuto2)
-      clearTimeout(tuto3)
-      clearTimeout(tuto4)
-
-      tuto1 = null
-      tuto2 = null
-      tuto3 = null
-      tuto4 = null
-    }
-
-    if (!tutorial?.inCourse && boletaQuery.data.info.boleta === -1)
+    if (!tutorial?.inCourse && boletaQuery.data?.info.boleta === -1)
       return (
         <Card classNameCard="">
           <Texto className="text-center text-white">
@@ -211,7 +159,7 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorial }) => {
           <Texto className="text-white">Semestre</Texto>
         </View>
 
-        {!tutorial?.inCourse && boletaQuery.data.data.length == 0 && (
+        {!tutorial?.inCourse && boletaQuery.data?.data.length == 0 && (
           <View className="border border-t-0 border-primario">
             <Texto className=" p-5 text-center text-black dark:text-white">
               Agrega materias a tu boleta
@@ -261,7 +209,7 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorial }) => {
           </>
         ) : (
           <>
-            {!tutorial?.inCourse && boletaQuery.data.data.map((materia, index) => (
+            {!tutorial?.inCourse && boletaQuery.data?.data.map((materia, index) => (
               <SwiperV2
                 key={materia.id}
                 friction={1.5}
@@ -298,15 +246,57 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorial }) => {
     );
   };
 
-  /* useEffect(() => {
+  useEffect(() => {
+    let animationInterval: NodeJS.Timeout;
 
-    if (tutorial?.inCourse && tutorial?.step != 3) {
-      clearTimeout(tuto1)
-      clearTimeout(tuto2)
-      clearTimeout(tuto3)
-      clearTimeout(tuto4)
+    const startAnimation = async () => {
+      setTimeout(() => {
+        swiperRef.current?.openRight();
+      }, 2000);
+
+      setTimeout(() => {
+        swiperRef.current?.close();
+      }, 4000);
+
+      animationInterval = setInterval(() => {
+        setTimeout(() => {
+          swiperRef.current?.openRight();
+        }, 2000);
+        setTimeout(() => {
+          swiperRef.current?.close();
+        }, 4000);
+      }, 7000);
+    };
+
+    const stopAnimation = () => {
+      clearInterval(animationInterval);
+    };
+
+    if (tutorial?.inCourse && tutorial.step === 3) {
+      stopAnimation();
+      startAnimation();
+    } else {
+      stopAnimation();
     }
-  }, [tutorial?.step]) */
+
+    return stopAnimation;
+  }, [tutorial?.inCourse, tutorial?.step]);
+
+  if (boletaQuery.isLoading)
+    return (
+      <Card classNameCard="my-4 flex">
+        <ActivityIndicator size="large" color="#ffffff" />
+        <Texto className="mt-2 text-center text-white">Cargando Boleta</Texto>
+      </Card>
+    );
+
+  if (boletaQuery.isError)
+    return (
+      <Texto className="text-black">
+        Hubo un error al cargal la boleta....
+      </Texto>
+    );
+
   return (
     <View className="">
       {(tutorial?.inCourse && ![2, 3, 4].includes(tutorial.step)) ||

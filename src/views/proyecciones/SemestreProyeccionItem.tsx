@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef, memo, useMemo, useCallback } from "react";
-import { KeyboardAvoidingView, View } from "react-native";
-import { router } from "expo-router";
-import { AntDesign, FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { View } from "react-native";
+import { AntDesign, FontAwesome, } from "@expo/vector-icons";
 import { CustomBottomSheetModal, CustomSkeleton, Texto } from "@/ui";
 import { ISemestre } from "@/types";
 import { useBoleta, useCarreraContext, useMateriasProyeccion, useProyeccionesContext, useSearchMateria, useThemeColor } from "@/hooks";
@@ -9,12 +8,9 @@ import { SwiperV2Ref } from "@/components/SwiperV2";
 import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
 import { BottomSheetFlatList, BottomSheetTextInput, TouchableOpacity } from '@gorhom/bottom-sheet'
 import MateriaProyeccionesItem from "./MateriaProyeccionesItem";
-import { FlatList, ScrollView } from "react-native-gesture-handler";
 import clsx from "clsx";
-import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import { COLORS } from "~/constants";
 import { Spacer } from "@/components";
-import { AutocompleteDropdown } from "react-native-autocomplete-dropdown";
 import SelectTurnos from "../SelectTurnos";
 
 interface Props {
@@ -94,8 +90,6 @@ const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo, withSearch 
 
     );
 
-
-
     const filterData = useMemo(() => {
         if (data.isLoading || data.isError) return []
 
@@ -152,54 +146,19 @@ const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo, withSearch 
                     <BottomSheetFlatList
                         //data={filterData}
                         ListHeaderComponent={<>
-                            {withSearch
-                                ?
-                                <View>
-                                    <AutocompleteDropdown
-                                        dataSet={sugerencias}
-                                        closeOnBlur={true}
-                                        useFilter={false}
-                                        clearOnFocus={false}
-                                        textInputProps={{
-                                            placeholder: 'Busca una materia....',
-                                            style: { color: isDark ? "#FFF" : "#000" },
-                                            autoFocus: true,
-
-                                        }}
-                                        onSelectItem={setSelectedItem}
-                                        loading={isLoading}
-                                        onChangeText={onChangeText}
-                                        suggestionsListTextStyle={{
-                                            color: isDark ? '#FFF' : "#000",
-
-                                        }}
-
-                                        containerStyle={{
-                                            zIndex: -1, margin: 10,
-                                            marginBottom: 15,
-                                        }}
-                                        suggestionsListContainerStyle={{ backgroundColor: isDark ? COLORS.dark.secondary : "#FFF" }}
-                                        onClear={() => setInputText("")}
-                                        inputContainerStyle={{ backgroundColor: isDark ? COLORS.dark.secondary : "#FFF", borderColor: "#000", borderWidth: .5 }}
-                                        debounce={600}
-                                        EmptyResultComponent={<Texto className='text-black dark:text-white p-3 text-center'>{isLoading ? "Buscando Materia..." : inputText.length === 0 ? "Busca una materia para tu proyeccion" : "No se ha encontrado la materia o no esta disponible en tu plan de estudio"}</Texto>}
-                                    />
-                                </View>
-                                :
-                                <BottomSheetTextInput
-                                    value={filterText}
-                                    onChangeText={e => setFilterText(e)}
-                                    style={{
-                                        margin: 15,
-                                        borderRadius: 10,
-                                        backgroundColor: isDark ? COLORS.dark.secondary : "rgb(243 244 246)",
-                                        padding: 10,
-                                        color: isDark ? "#FFF" : "#000",
-                                    }}
-                                    placeholder="Buscar materia...."
-                                    placeholderTextColor={"#ccc"}
-                                    className={`rounded-2xl border bg-gray-100 p-4 text-gray-700 dark:bg-primario-dark dark:text-white`} />
-                            }
+                            <BottomSheetTextInput
+                                value={filterText}
+                                onChangeText={e => setFilterText(e)}
+                                style={{
+                                    margin: 15,
+                                    borderRadius: 10,
+                                    backgroundColor: isDark ? COLORS.dark.secondary : "rgb(243 244 246)",
+                                    padding: 10,
+                                    color: isDark ? "#FFF" : "#000",
+                                }}
+                                placeholder="Buscar materia...."
+                                placeholderTextColor={"#ccc"}
+                                className={`rounded-2xl border bg-gray-100 p-4 text-gray-700 dark:bg-primario-dark dark:text-white`} />
 
 
                             <SelectTurnos />

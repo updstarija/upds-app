@@ -261,15 +261,13 @@ const Login = () => {
   const onSubmit = async (data: IFormLogin) => {
     if (recordar) {
       await AsyncStorage.setItem("email-user", data.usuario)
+      await AsyncStorage.setItem("contrasena-user", data.contraseña)
     }
 
     const user = await login(data);
     if (user) {
       loginContext(user);
-
-
       navigateToHome()
-
     }
   };
 
@@ -302,8 +300,14 @@ const Login = () => {
   useEffect(() => {
     (async () => {
       const email = await AsyncStorage.getItem("email-user")
+      const contrasena = await AsyncStorage.getItem("contrasena-user")
       if (email) {
         setValue("usuario", email)
+        setRecordar(true)
+      }
+
+      if (contrasena) {
+        setValue("contraseña", contrasena)
         setRecordar(true)
       }
     })()

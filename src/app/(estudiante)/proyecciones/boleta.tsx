@@ -3,6 +3,7 @@ import {
     View,
     FlatList,
     Alert,
+    TouchableOpacity,
 } from "react-native";
 import {
     useAuthContext,
@@ -27,6 +28,7 @@ import { shareAsync } from "expo-sharing";
 import { templateBoletaV3 } from "@/data/";
 
 import {
+    TourGuideProvider,
     TourGuideZone,
     TourGuideZoneByPosition,
     useTourGuideController,
@@ -36,8 +38,11 @@ import { SelectCarrera } from "@/views/SelectCarrera";
 import { CustomModal, Texto } from "@/ui";
 import { BackHandler } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { Button, Spacer } from "@/components";
+import { AlertCard, Button, Spacer } from "@/components";
 import { verTutorial } from "@/helpers";
+import Accordion from 'react-native-collapsible/Accordion'
+import Collapsible from 'react-native-collapsible'
+import AlertsProyecciones from "@/views/proyecciones/AlertsProyecciones";
 
 
 interface Props {
@@ -65,18 +70,17 @@ const actionsFloatButton: IActionProps[] = [
 ];
 
 
-const Boleta: React.FC<Props> = () => {
-
-
-
-    const isDark = useThemeColor() === "dark";
-
+const Boleta = () => {
     const { userAuth } = useAuthContext();
     const { tutorialBoletaReady, setTutorialBoletaReady, tutorialEnCurso, setTutorialEnCurso, listref } = useProyeccionesContext();
     const { canStart, start, tourKey, eventEmitter } = useTourGuideController("t-boleta");
+    const isDark = useThemeColor() === "dark"
+
+    const [showAlerts, setShowAlerts] = useState(true)
 
     const {
         valueCarrera,
+        carreras
     } = useCarreraContext();
 
     const [modalBoleta, setModalBoleta] = useState(false);
@@ -85,17 +89,18 @@ const Boleta: React.FC<Props> = () => {
 
     const { carrerasQuery } = useCarreras();
     const { semestresQuery } = useSemestres({
-        carrera: valueCarrera || -1,
+        carrera: valueCarrera,
         proyeccion: true,
     });
     const { modulosQuery } = useModulos();
     const { onNewBoleta, boletaQuery } = useBoleta({
-        carrera: valueCarrera || -1,
+        carrera: valueCarrera,
     });
 
-    if (carrerasQuery.isLoading) return <Spinner />;
-    if (carrerasQuery.isError) return <Texto>Hubo un error....</Texto>;
 
+    const toggleShowAlert = () => {
+        setShowAlerts(!showAlerts)
+    }
     const handleBackButtonPress = () => {
         return tutorialEnCurso.inCourse
     };
@@ -106,23 +111,25 @@ const Boleta: React.FC<Props> = () => {
         setTutorialEnCurso({ ...tutorialEnCurso, step: step?.order || -1 })
     }
 
-    const renderBoleta = () => (
-        <>
-            {valueCarrera ? (
-                <DetalleBoleta
-                    carrera={valueCarrera}
-                    tutorial={tutorialEnCurso}
-                />
-            ) : (
-                <Texto className="mt-5 text-black">
-                    POR FAVOR SELECCIONE UNA CARRERA
-                </Texto>
-            )}
-        </>
-    );
-
     const renderHeaderBody = () => (
         <View className="bg-white  dark:bg-primario-dark">
+            <View className="flex-row justify-between">
+                <TouchableOpacity onPress={toggleShowAlert} className="flex-row items-center gap-1 pt-2 pr-2">
+                    <MaterialCommunityIcons name="comment-eye-outline" color={isDark ? "#FFF" : "#000"} />
+                    <Texto weight="Bold">{showAlerts ? "Ocultar Alertas" : "Mostrar Alertas"}</Texto>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={iniciarTutotial} className="flex-row items-center gap-1 pt-2 pr-2">
+                    <FontAwesome name="book" color={isDark ? "#FFF" : "#000"} />
+                    <Texto weight="Bold">Guia</Texto>
+                </TouchableOpacity>
+
+            </View>
+
+            <Spacer />
+
+            {showAlerts && <AlertsProyecciones />}
+
             <Spacer />
 
             <TourGuideZone
@@ -141,32 +148,34 @@ const Boleta: React.FC<Props> = () => {
                 zone={2}
                 text="Boleta de proyección de materias"
             >
-                {renderBoleta()}
+                {valueCarrera ? (
+                    <DetalleBoleta
+                        carrera={valueCarrera}
+                        tutorial={tutorialEnCurso.inCourse ? tutorialEnCurso : undefined}
+                    />
+                ) : (
+                    <Texto className="mt-5 text-black">
+                        POR FAVOR SELECCIONE UNA CARRERA
+                    </Texto>
+                )}
             </TourGuideZone>
+
+            <Spacer />
+
+
+            <Busqueda tutorial={tutorialEnCurso} />
+
 
             <Spacer />
 
             <TourGuideZone
                 tourKey={tourKey}
-                zone={4}
-                text="Buscador de materias para proyectar"
-            >
-                {/* <View className="">
-                    <SemestreProyeccionItem modulo={0} semestre={{ id: 0, nombre: "" }} withSearch />
-                </View> */}
-                <Busqueda />
-            </TourGuideZone>
-
-            <Spacer />
-
-            <TourGuideZone
-                tourKey={tourKey}
-                style={{ zIndex: 999 }}
-                zone={5}
+                style={{ zIndex: 999999 }}
+                zone={10}
                 text="Listado de los módulos de la oferta semestral"
             >
 
-                <SelectModulos valueModulo={valueModulo} setvalueModulo={setvalueModulo} />
+                <SelectModulos valueModulo={valueModulo} setvalueModulo={setvalueModulo} tutorial={tutorialEnCurso} />
 
             </TourGuideZone>
 
@@ -182,15 +191,19 @@ const Boleta: React.FC<Props> = () => {
 
         return (
             <>
-                <FlashList
+
+                <FlatList
                     ref={listref}
-                    estimatedItemSize={100}
+                    scrollEnabled={!tutorialEnCurso.inCourse}
+                    // estimatedItemSize={100}
                     data={semestresQuery.data}
                     keyExtractor={(item) => item.id.toString()}
                     showsVerticalScrollIndicator={false}
-                    ListHeaderComponent={<View className="z-50">
+                    // contentContainerStyle={{ zIndex: -1 }}
+                    ListHeaderComponentStyle={{ zIndex: 1 }}
+                    ListHeaderComponent={<>
                         {renderHeaderBody()}
-                    </View>}
+                    </>}
                     ItemSeparatorComponent={() => (
                         <View className="border-[.5px] border-primario-dark " />
                     )}
@@ -199,6 +212,8 @@ const Boleta: React.FC<Props> = () => {
                         <SemestreProyeccionItem semestre={item} modulo={valueModulo} />
                     )}
                 />
+
+
             </>
 
         );
@@ -227,7 +242,7 @@ const Boleta: React.FC<Props> = () => {
                     " " +
                     userAuth.usuario.apellidoMaterno,
                     userAuth.usuario.documentoIdentidad,
-                    carrerasQuery.data.find((x) => x.id === valueCarrera)?.nombre ||
+                    carreras.find((x) => x.id === valueCarrera)?.nombre ||
                     ""
                 )}
             ${templateBoletaV3.generateBody(
@@ -255,14 +270,14 @@ const Boleta: React.FC<Props> = () => {
                 " " +
                 userAuth.usuario.apellidoMaterno,
                 userAuth.usuario.documentoIdentidad,
-                carrerasQuery.data.find((x) => x.id === valueCarrera)?.nombre || ""
+                carreras.find((x) => x.id === valueCarrera)?.nombre || ""
             )}
         ${templateBoletaV3.generateBody(
                 modulosQuery.data?.data || [],
                 boletaQuery.data?.data || []
             )}
         ${templateBoletaV3.generateFooter()}
-        `,
+        `
         });
         await shareAsync(uri, { UTI: ".pdf", mimeType: "application/pdf" });
     };
@@ -288,6 +303,18 @@ const Boleta: React.FC<Props> = () => {
         "nueva_boleta": toggleModalBoleta
     }
 
+    const iniciarTutotial = () => {
+        if (canStart) {
+            setTutorialEnCurso({ ...tutorialEnCurso, inCourse: true })
+            listref.current?.scrollToOffset({ animated: true, offset: 0 })
+            setShowAlerts(false)
+            setTimeout(() => {
+                start();
+            }, 1000);
+        }
+        console.log(canStart)
+    }
+
     useEffect(() => {
         const backHandler = BackHandler.addEventListener(
             "hardwareBackPress",
@@ -295,7 +322,7 @@ const Boleta: React.FC<Props> = () => {
         );
 
         return () => backHandler.remove();
-    }, [tutorialEnCurso]);
+    }, [tutorialEnCurso.inCourse]);
 
     useEffect(() => {
         eventEmitter?.on('stop', handleOnStop)
@@ -342,7 +369,8 @@ const Boleta: React.FC<Props> = () => {
                 }
                 if (canStart && activarTutorial) {
                     setTutorialEnCurso({ ...tutorialEnCurso, inCourse: true })
-                    // listref.current?.scrollToOffset({ animated: true, offset: 0 })
+                    listref.current?.scrollToOffset({ animated: true, offset: 0 })
+                    setShowAlerts(false)
 
                     setTimeout(() => {
                         start();
@@ -353,15 +381,19 @@ const Boleta: React.FC<Props> = () => {
     }, [canStart, tutorialBoletaReady]);
 
 
+    if (carrerasQuery.isLoading) return <Spinner />;
+    if (carrerasQuery.isError) return <Texto>Hubo un error....</Texto>;
+
     return (
         <View className="flex-1">
             <View className="flex-1 dark:bg-primario-dark">
+
                 {renderPlan()}
 
                 <TourGuideZoneByPosition
                     tourKey={tourKey}
                     text="Si aún no creaste tu boleta, comienza el proceso aquí"
-                    zone={10}
+                    zone={11}
                     shape={"circle"}
                     isTourGuide={tutorialEnCurso.step > 3}
                     bottom={43}
@@ -372,6 +404,7 @@ const Boleta: React.FC<Props> = () => {
 
 
                 <FloatingAction
+                    visible={!tutorialEnCurso.inCourse || [2, 3, 4, 5, 6].includes(tutorialEnCurso?.step)}
                     overlayColor="#0000006a"
                     actions={actionsFloatButton}
                     distanceToEdge={{ horizontal: 40, vertical: 40 }}
@@ -427,6 +460,8 @@ const Boleta: React.FC<Props> = () => {
         </View>
     );
 };
+
+
 
 
 export default Boleta;

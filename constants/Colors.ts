@@ -36,3 +36,11 @@ export default {
     tabIconSelected: tintColorDark,
   },
 };
+
+
+export const COLORS_ALERT = {
+  success: "#07bc0c",
+  error: "#e74c3c",
+  warning: "#f1c40f",
+  info: "3498db",
+};

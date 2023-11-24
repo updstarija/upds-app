@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import { View, Text, BackHandler } from "react-native";
-import { FlashList, ListRenderItemInfo } from "@shopify/flash-list";
+import { View, Text, BackHandler, FlatList, ListRenderItemInfo } from "react-native";
 import {
   TourGuideZone,
   useTourGuideController,
@@ -18,7 +17,7 @@ const tutorialHistoricoSteps = {
 }
 
 const HistoricoMaterias = () => {
-  const listref = useRef<FlashList<IRegistroHistorico> | null>(null);
+  const listref = useRef<FlatList | null>(null);
 
   const [refreshing, setRefreshing] = useState(false)
 
@@ -111,7 +110,7 @@ const HistoricoMaterias = () => {
       if (index == 0) {
         return (
           <>
-            <View className="p-5 bg-white dark:bg-secondary-dark justify-center p-4">
+            <View className=" bg-white dark:bg-secondary-dark justify-center p-4">
 
               <View className="items-center justify-center">
                 <CustomSkeleton width={250} height={15} />
@@ -195,12 +194,12 @@ const HistoricoMaterias = () => {
 
   return (
     <View className="flex-1 bg-white dark:bg-primario-dark">
-      <FlashList
-        ref={listref}
+      <FlatList
+        // ref={listref}
         stickyHeaderIndices={!data.isLoading ? stickyHeaderIndices : undefined}
         scrollEnabled={!tutorialEnCurso.inCourse}
         data={!data.isLoading ? tutorialEnCurso.inCourse ? newRegistroHistorico.slice(0, 5) : newRegistroHistorico : [... new Array(15).fill(0)]}
-        estimatedItemSize={50}
+        // estimatedItemSize={50}
         extraData={tutorialEnCurso}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ItemSeparatorComponent={() => (

@@ -62,6 +62,7 @@
     "react-native-autocomplete-dropdown": "^3.0.2",
     "react-native-calendars": "^1.1300.0",
     "react-native-circular-progress-indicator": "^4.4.2",
+    "react-native-collapsible": "^1.6.1",
     "react-native-dropdown-picker": "5.4.6",
     "react-native-floating-action": "^1.22.0",
     "react-native-gesture-handler": "~2.12.0",
