@@ -130,6 +130,11 @@ function RootLayoutNav() {
                   preventOutsideInteraction
                   borderRadius={16}
                   // {...{ borderRadius: 16 }}
+                  tooltipStyle={
+                    {
+                      zIndex: 99999999
+                    }
+                  }
                   backdropColor="#000000b3"
                   //backdropColor="rgba(0,0,0,0.4)"
                   verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
@@ -299,6 +304,12 @@ function RootLayoutNav() {
                         name="(estudiante)/historico-materias"
                         //@ts-ignore
                         options={configStack("Histórico de Materias")}
+                      />
+
+                      <Stack.Screen
+                        name="(estudiante)/registro-materia"
+                        //@ts-ignore
+                        options={configStack("Registro de Materia")}
                       />
 
                       <Stack.Screen

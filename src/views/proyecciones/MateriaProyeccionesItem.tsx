@@ -4,7 +4,7 @@ import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { MateriaStateProyecciones, SwiperV2 } from "@/components";
 import { CustomBottomSheetModal, Texto } from "@/ui";
 import { MateriaProyeccion } from "@/types";
-import { useCarreraContext, useMateriasProyeccion, useProyeccionesContext, useThemeColor } from "@/hooks";
+import { useAuthContext, useCarreraContext, useMateriasProyeccion, useProyeccionesContext, useThemeColor } from "@/hooks";
 import { SwiperV2Ref } from "@/components/SwiperV2";
 import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -46,6 +46,7 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, cust
     const swiperRef = useRef<SwiperV2Ref>(null);
     const bottomSheetRef = useRef<CustomBottomSheetRef>(null);
     const isDark = useThemeColor() === "dark";
+    const { userAuth } = useAuthContext()
 
     const { valueCarrera } = useCarreraContext();
     const { boleta, scrollToTop } = useProyeccionesContext()
@@ -129,29 +130,34 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, cust
     const isAprobado = materia.estado.id == 1
     const isReprobado = materia.estado.id == 2
 
+    const isIrregular = userAuth.usuario.irregular
+
     const isValid = isPendiente ||
         isAprobado ||
         isReprobado
 
     const isValidForBoleta = () => {
-        if (isPendiente || isAprobado) return false
+        if (isPendiente || isAprobado || isIrregular) return false
         return true
     }
 
     const noMostrarMas = async () => {
-        await AsyncStorage.setItem(`mostrar-detalle-materia-seleccionada-${materia.estado.id}`, 'false')
+        await AsyncStorage.setItem(`mostrar-detalle-materia-seleccionada-${isIrregular ? 99 : materia.estado.id}`, 'false')
     }
 
     const message = async () => {
         if (!showMessage) return;
 
-        const mostrar = await AsyncStorage.getItem(`mostrar-detalle-materia-seleccionada-${materia.estado.id}`)
+        const mostrar = await AsyncStorage.getItem(`mostrar-detalle-materia-seleccionada-${isIrregular ? 99 : materia.estado.id}`)
+
         if (mostrar == 'false') {
             return;
         }
 
         let mensaje = "";
-        if (isPendiente) {
+        if (isIrregular) {
+            mensaje = "Actualmente, la proyección de materias no está disponible para estudiantes irregulares que realizaron convalidación de materias.\n\nPor lo tanto, no es posible agregarla a la boleta de proyección.\n\nEstamos trabajando en habilitar esta función. Gracias por su comprensión :)."
+        } else if (isPendiente) {
             mensaje = "Has seleccionado una materia que esta pendiente.\n\nLa materia seleccionada esta pendiente, Por lo tanto, no es posible agregarla a la boleta de proyección."
         }
         else if (isAprobado) {

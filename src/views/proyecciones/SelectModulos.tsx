@@ -4,6 +4,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import { useModulos, useThemeColor } from '@/hooks';
 import { Texto } from '@/ui';
 import { COLORS } from '~/constants';
+import { View } from 'react-native';
 
 interface Props {
     valueModulo: number
@@ -26,31 +27,27 @@ const SelectModulos: React.FC<Props> = ({ setvalueModulo, valueModulo, tutorial 
         let animationInterval: NodeJS.Timeout;
 
         const startAnimation = () => {
-            setTimeout(() => {
-                setOpenModulo(true)
-            }, 1500);
 
+            if (!modulosQuery.data?.data) return
             animationInterval = setInterval(() => {
-                setTimeout(() => {
-                    setOpenModulo(true)
-                }, 1500);
-
-                setTimeout(() => {
-                    setOpenModulo(false)
-                }, 3500);
-            }, 6000);
+                setvalueModulo(modulosQuery.data.data[Math.floor(Math.random() * modulosQuery.data.data.length)].id || modulosQuery.data.data[0].id)
+            }, 2000);
         };
 
         const stopAnimation = () => {
-            setOpenModulo(false)
+            if (modulosQuery.data?.data) {
+                setvalueModulo(modulosQuery.data.data[0].id)
+            }
+
             clearInterval(animationInterval);
         };
 
-        if (tutorial?.inCourse && tutorial.step === 5) {
+        if (tutorial?.inCourse && tutorial.step === 8) {
             stopAnimation();
             startAnimation();
         } else {
             stopAnimation();
+
         }
 
         return stopAnimation;
@@ -68,58 +65,64 @@ const SelectModulos: React.FC<Props> = ({ setvalueModulo, valueModulo, tutorial 
     if (modulosQuery.isError) return <Texto>HUBO UN ERROR MODYLO..</Texto>;
 
 
-
-
     return (
-        <DropDownPicker
-            listMode='SCROLLVIEW'
-            open={openModulo}
-            value={valueModulo}
-            maxHeight={400}
-            // @ts-ignore
-            items={modulosQuery.data.data}
-            setOpen={setOpenModulo}
-            setValue={setvalueModulo}
-            placeholder="Selecciona el modulo"
-            zIndex={99999999}
-            schema={{
-                label: "nombre",
-                value: "id",
-            }}
-            ArrowDownIconComponent={() => (
-                <FontAwesome
-                    size={18}
-                    color={isDark ? "#fff" : "#000"}
-                    style={{ paddingHorizontal: 5 }}
-                    name="angle-down"
-                />
-            )}
-            textStyle={{ color: isDark ? "#fff" : "#000" }}
-            ArrowUpIconComponent={() => (
-                <FontAwesome
-                    size={18}
-                    color={isDark ? "#fff" : "#000"}
-                    style={{ paddingHorizontal: 5 }}
-                    name="angle-up"
-                />
-            )}
-            TickIconComponent={() => (
-                <FontAwesome
-                    size={18}
-                    color={isDark ? "#fff" : "#000"}
-                    style={{ paddingHorizontal: 5 }}
-                    name="check"
-                />
-            )}
-            style={
-                isDark
-                    ? { backgroundColor: COLORS.dark.secondary }
-                    : { backgroundColor: "#fff" }
-            }
-            dropDownContainerStyle={
-                isDark && { backgroundColor: COLORS.dark.secondary }
-            }
-        />
+        <View style={{ zIndex: 999999 }}>
+            <DropDownPicker
+                listMode='SCROLLVIEW'
+                open={openModulo}
+                value={valueModulo}
+                maxHeight={400}
+                // @ts-ignore
+                items={modulosQuery.data.data}
+                setOpen={setOpenModulo}
+                setValue={setvalueModulo}
+                placeholder="Selecciona el modulo"
+                zIndex={99999999}
+                schema={{
+                    label: "nombre",
+                    value: "id",
+                }}
+                ArrowDownIconComponent={() => (
+                    <FontAwesome
+                        size={18}
+                        color={isDark ? "#fff" : "#000"}
+                        style={{ paddingHorizontal: 5 }}
+                        name="angle-down"
+                    />
+                )}
+                textStyle={{ color: isDark ? "#fff" : "#000" }}
+                ArrowUpIconComponent={() => (
+                    <FontAwesome
+                        size={18}
+                        color={isDark ? "#fff" : "#000"}
+                        style={{ paddingHorizontal: 5 }}
+                        name="angle-up"
+                    />
+                )}
+                TickIconComponent={() => (
+                    <FontAwesome
+                        size={18}
+                        color={isDark ? "#fff" : "#000"}
+                        style={{ paddingHorizontal: 5 }}
+                        name="check"
+                    />
+                )}
+                style={
+                    [isDark
+                        ? { backgroundColor: COLORS.dark.secondary }
+                        : { backgroundColor: "#fff" },
+                    { zIndex: 99999 }]
+                }
+                containerStyle={{ zIndex: 99999 }}
+                dropDownContainerStyle={
+                    [
+                        isDark && { backgroundColor: COLORS.dark.secondary }
+                        ,
+                        { zIndex: 99999 }
+                    ]
+                }
+            />
+        </View>
     )
 }
 export default SelectModulos

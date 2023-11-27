@@ -8,7 +8,7 @@ import Spacer from './Spacer'
 
 
 type Props = {
-    variant: "success" | "warning" | "danger",
+    variant: "success" | "warning" | "danger" | "info",
     header: string;
     content: string;
 }
@@ -27,7 +27,8 @@ const AlertCard: React.FC<React.PropsWithChildren<Props>> = ({ variant, content,
                     {
                         'bg-green-300 dark:bg-green-400': variant === 'success',
                         'bg-yellow-300 dark:bg-yellow-300': variant === 'warning',
-                        'bg-red-300 dark:bg-red-400': variant === 'danger'
+                        'bg-red-300 dark:bg-red-400': variant === 'danger',
+                        'bg-blue-500': variant === "info"
                     }
                 ])
             }
@@ -38,7 +39,7 @@ const AlertCard: React.FC<React.PropsWithChildren<Props>> = ({ variant, content,
                     clsx([
                         'dark:text-black uppercase text-ellipsis ',
                         {
-                            'text-white': variant === "danger"
+                            'text-white': ["danger", "info"].includes(variant)
                         }
                     ])
                 } weight='Bold'>{header}</Texto>
@@ -49,7 +50,7 @@ const AlertCard: React.FC<React.PropsWithChildren<Props>> = ({ variant, content,
                     clsx([
                         'dark:text-black',
                         {
-                            'text-white': variant === "danger"
+                            'text-white': ["danger", "info"].includes(variant)
                         }
                     ])
                 }>{content}</Texto>

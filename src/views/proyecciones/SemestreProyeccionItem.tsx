@@ -16,11 +16,15 @@ import SelectTurnos from "../SelectTurnos";
 interface Props {
     semestre: ISemestre;
     modulo: number;
-    withSearch?: boolean
+    withSearch?: boolean;
+    tutorial?: {
+        inCourse: boolean;
+        step: number;
+    };
 }
 
 
-const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo, withSearch }) => {
+const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo, withSearch, tutorial }) => {
     const [enabled, setEnabled] = useState(false);
     const swiperRef = useRef<SwiperV2Ref>(null);
     const bottomSheetRef = useRef<CustomBottomSheetRef>(null);
@@ -126,6 +130,31 @@ const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo, withSearch 
         }
     }, [boletaQuery.data?.info.boleta])
 
+    useEffect(() => {
+        let animationInterval: NodeJS.Timeout;
+        const startAnimation = async () => {
+            setEnabled(true)
+            handleSemestre(semestre.id)
+
+            setTimeout(() => {
+                bottomSheetRef.current?.open();
+            }, 3000);
+
+        };
+
+        const stopAnimation = () => {
+            clearInterval(animationInterval);
+        };
+
+        if (tutorial?.inCourse && tutorial.step === 11) {
+            stopAnimation();
+            startAnimation();
+        } else {
+            stopAnimation();
+        }
+
+        return stopAnimation;
+    }, [tutorial?.inCourse, tutorial?.step]);
 
     return (
         <CustomBottomSheetModal

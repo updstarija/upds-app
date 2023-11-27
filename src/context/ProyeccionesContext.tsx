@@ -26,7 +26,7 @@ interface ProyeccionesContext {
   boleta: number,
   tutorialBoletaReady: TutorialProyeccionesReady,
   tutorialEnCurso: TutorialInfo,
-  listref: React.MutableRefObject<FlatList | null>
+  listref: React.MutableRefObject<FlashList<any> | null>
   selectedTurns: string[]
   handleCarrera: Function
   handleModulo: Function
@@ -46,7 +46,7 @@ interface Props {
 }
 
 export const ProyeccionesProvider: React.FC<Props> = ({ children }) => {
-  const listref = useRef<FlatList | null>(null);
+  const listref = useRef<FlashList<any> | null>(null);
 
 
   const [carrera, setCarrera] = useState(-1)

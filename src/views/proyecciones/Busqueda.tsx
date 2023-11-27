@@ -51,9 +51,8 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
 
 
     const renderMaterias = () => {
-        console.log('render');
         if (!selectedItem && !tutorial?.inCourse) return <></>
-        if (tutorial && tutorial.step <= 3) return <></>
+        if (tutorial && tutorial.inCourse && tutorial.step <= 3) return <></>
         if (materiasProyeccionQuery.isLoading) return <Spinner className='h-28' />
         if (materiasProyeccionQuery.isError) return <Texto>HUBO UN ERROR</Texto>
 
@@ -157,7 +156,6 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
         });
     }, [, selectedTurns, materiasProyeccionQuery.data])
 
-    console.log(tutorial);
     useEffect(() => {
         if (tutorial && tutorial.step === 4) {
             const intervalId = setInterval(() => {

@@ -196,11 +196,11 @@ const HistoricoMaterias = () => {
     <View className="flex-1 bg-white dark:bg-primario-dark">
       <FlatList
         // ref={listref}
-        stickyHeaderIndices={!data.isLoading ? stickyHeaderIndices : undefined}
+        stickyHeaderIndices={!data.isLoading ? stickyHeaderIndices : [0]}
         scrollEnabled={!tutorialEnCurso.inCourse}
         data={!data.isLoading ? tutorialEnCurso.inCourse ? newRegistroHistorico.slice(0, 5) : newRegistroHistorico : [... new Array(15).fill(0)]}
         // estimatedItemSize={50}
-        extraData={tutorialEnCurso}
+        // extraData={tutorialEnCurso}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ItemSeparatorComponent={() => (
           <View className="border-[.5px] border-primario" />

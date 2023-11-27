@@ -116,7 +116,7 @@ const Boleta = () => {
             <View className="flex-row justify-between">
                 <TouchableOpacity onPress={toggleShowAlert} className="flex-row items-center gap-1 pt-2 pr-2">
                     <MaterialCommunityIcons name="comment-eye-outline" color={isDark ? "#FFF" : "#000"} />
-                    <Texto weight="Bold">{showAlerts ? "Ocultar Alertas" : "Mostrar Alertas"}</Texto>
+                    <Texto weight="Bold">{!showAlerts ? "Ocultar Alertas" : "Mostrar Alertas"}</Texto>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={iniciarTutotial} className="flex-row items-center gap-1 pt-2 pr-2">
@@ -128,7 +128,10 @@ const Boleta = () => {
 
             <Spacer />
 
-            {showAlerts && <AlertsProyecciones />}
+            {!showAlerts &&
+                <AlertsProyecciones />
+
+            }
 
             <Spacer />
 
@@ -192,25 +195,38 @@ const Boleta = () => {
         return (
             <>
 
-                <FlatList
+                <FlashList
                     ref={listref}
                     scrollEnabled={!tutorialEnCurso.inCourse}
-                    // estimatedItemSize={100}
+                    estimatedItemSize={100}
                     data={semestresQuery.data}
                     keyExtractor={(item) => item.id.toString()}
                     showsVerticalScrollIndicator={false}
                     // contentContainerStyle={{ zIndex: -1 }}
-                    ListHeaderComponentStyle={{ zIndex: 5 }}
+                    ListHeaderComponentStyle={{ zIndex: 999 }}
                     ListHeaderComponent={<>
                         {renderHeaderBody()}
                     </>}
                     ItemSeparatorComponent={() => (
                         <View className="border-[.5px] border-primario-dark " />
                     )}
-                    extraData={valueModulo}
-                    renderItem={({ item }) => (
-                        <SemestreProyeccionItem semestre={item} modulo={valueModulo} />
-                    )}
+                    extraData={[valueModulo, tutorialEnCurso]}
+                    renderItem={({ item, index }) => {
+                        if (index === 0) {
+                            return <TourGuideZone
+                                tourKey={tourKey}
+                                style={{ zIndex: 999999 }}
+                                zone={11}
+                                tooltipBottomOffset={250}
+                                text="Comienza explorando las materias de un semestre específico."
+                            >
+                                <SemestreProyeccionItem semestre={item} modulo={valueModulo} tutorial={tutorialEnCurso} />
+
+                            </TourGuideZone>
+                        }
+
+                        return <SemestreProyeccionItem semestre={item} modulo={valueModulo} />
+                    }}
                 />
 
 
@@ -307,7 +323,7 @@ const Boleta = () => {
         if (canStart) {
             setTutorialEnCurso({ ...tutorialEnCurso, inCourse: true })
             listref.current?.scrollToOffset({ animated: true, offset: 0 })
-            setShowAlerts(false)
+            setShowAlerts(true)
             setTimeout(() => {
                 start();
             }, 1000);
@@ -392,7 +408,7 @@ const Boleta = () => {
 
                 <TourGuideZoneByPosition
                     tourKey={tourKey}
-                    text="Si aún no creaste tu boleta, comienza el proceso aquí"
+                    text="Crea, imprime o exporta tu boleta de proyección aquí."
                     zone={10}
                     shape={"circle"}
                     isTourGuide={tutorialEnCurso.step > 3}

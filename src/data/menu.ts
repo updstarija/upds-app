@@ -94,6 +94,13 @@ export const menuHomeStudent: Menu[] = [
         link: false,
         auth: true
     },
+    {
+        text: 'Registro de Materia',
+        icon: 'account-tree',
+        to: '/registro-materia',
+        link: false,
+        auth: true
+    },
 
 ]
 
