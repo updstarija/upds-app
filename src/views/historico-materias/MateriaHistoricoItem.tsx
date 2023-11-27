@@ -1,5 +1,5 @@
-import { useState, useReducer, useEffect, useRef, memo } from "react";
-import { Pressable, View } from "react-native";
+import { useState, useEffect, useRef, memo } from "react";
+import { View } from "react-native";
 import { router } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { isMateriaInRangeMonths } from "@/helpers/isMateriaInRangeMonths";
@@ -12,7 +12,6 @@ import * as Animatable from "react-native-animatable";
 import { Image } from "expo-image";
 import { SwiperV2Ref } from "@/components/SwiperV2";
 import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
-import { sleep } from "@/helpers";
 import { MateriaProyeccionesItem } from "../proyecciones";
 
 interface Props {

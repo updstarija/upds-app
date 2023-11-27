@@ -83,30 +83,6 @@ export default function Layout() {
             }}>
 
 
-            <Drawer.Screen
-                name="malla-curricular"
-
-                //@ts-ignore
-                options={{
-
-                    drawerItemStyle: {
-                        display: "none"
-                    },
-
-                }}
-                listeners={() => ({
-                    focus: () => {
-                        if (tutorialEnCurso.inCourse) {
-                            router.push("/proyecciones/boleta")
-
-                        }
-
-                    },
-
-
-                })}
-            />
-
 
             <MaterialTopTabs.Screen
                 name="boleta"
@@ -114,7 +90,6 @@ export default function Layout() {
                     blur: () => {
                         if (tutorialEnCurso.inCourse) {
                             router.push("/proyecciones/boleta")
-
                         }
                     },
                     focus: () => {
@@ -123,6 +98,19 @@ export default function Layout() {
 
                 })}
             />
+
+
+            <Drawer.Screen
+                name="malla-curricular"
+                listeners={() => ({
+                    focus: () => {
+                        if (tutorialEnCurso.inCourse) {
+                            router.push("/proyecciones/boleta")
+                        }
+                    },
+                })}
+            />
+
         </MaterialTopTabs>
 
 

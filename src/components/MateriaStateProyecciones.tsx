@@ -24,7 +24,7 @@ const MateriaState: React.FC<Props> = ({ materia, withModulo = false }) => {
                         <Texto className={`text-black dark:text-white`} weight="Bold">
                             {materia.materia}
                         </Texto>
-                        <Texto className={`text-xs text-gray-400`}>{materia.carrera}</Texto>
+                        <Texto className={`text-xs text-gray-400 max-w-full text-ellipsis`} numberOfLines={1}>{materia.carrera}</Texto>
                         {withModulo && <Texto className={`text-xs text-gray-400`}>{materia.modulo}</Texto>}
                     </View>
                     <Texto className={`text-black dark:text-white`}>{materia.turno}</Texto>

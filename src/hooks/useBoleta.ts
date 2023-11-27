@@ -19,7 +19,7 @@ export const useBoleta = ({ carrera }: Params) => {
         onSuccess: () => {
             Toast.show({
                 type: "success",
-                text1: "Bien",
+                text1: "Excelente",
                 text2: "Se ha eliminado la materia con exito"
             })
             client.invalidateQueries(['boleta-proyecciones'])
@@ -34,7 +34,7 @@ export const useBoleta = ({ carrera }: Params) => {
         onSuccess: () => {
             Toast.show({
                 type: "success",
-                text1: "Bien",
+                text1: "Excelente",
                 text2: "Se ha generado la boleta con exito"
             })
             client.invalidateQueries(['boleta-proyecciones'])

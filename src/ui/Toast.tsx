@@ -25,11 +25,14 @@ export const Toast: React.FC<Props> = ({ type, ...props }) => {
         text1Style={{
           color: !isDarkMode ? COLORS.dark.background : "white",
           fontSize: 15,
+          textTransform: "uppercase",
+          fontFamily: `LatoBold`
         }}
         text2Style={{
           color: !isDarkMode ? COLORS.dark.background : "white",
-          fontSize: 12,
+          fontSize: 15,
           opacity: 0.9,
+          fontFamily: `LatoRegular`
         }}
         style={{
           borderLeftColor: toastColors[type],
@@ -38,6 +41,8 @@ export const Toast: React.FC<Props> = ({ type, ...props }) => {
           borderBottomColor: COLORS.light.background,
           borderRightColor: COLORS.light.background,
           borderWidth: 0.4,
+          height: "auto",
+          padding: 10
         }}
         contentContainerStyle={{ paddingHorizontal: 15 }}
       />

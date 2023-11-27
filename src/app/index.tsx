@@ -82,11 +82,14 @@ const Index = () => {
     const result = await messaging().requestPermission({ announcement: true })
 
     if (result === messaging.AuthorizationStatus.AUTHORIZED) {
-      Alert.alert("NOTIFICACIONES ACTIVADAS")
+      // ? DEBUG
+      //Alert.alert("NOTIFICACIONES ACTIVADAS")
     } else if (result === messaging.AuthorizationStatus.PROVISIONAL) {
-      Alert.alert("NOTIFICACIONES PROVISIONALES")
+      // ? DEBUG
+      // Alert.alert("NOTIFICACIONES PROVISIONALES")
     } else if (result === messaging.AuthorizationStatus.DENIED) {
-      Alert.alert("NOTIFICACIONES DENEGADAS")
+      // ? DEBUG
+      // Alert.alert("NOTIFICACIONES DENEGADAS")
     }
   }
 

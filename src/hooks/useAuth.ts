@@ -36,7 +36,7 @@ export const useAuth = () => {
 
             Toast.show({
                 type: "success",
-                text1: "Bien",
+                text1: "Excelente",
                 text2: "Has iniciado sesion correctamente :)"
             })
 
@@ -74,7 +74,7 @@ export const useAuth = () => {
 
             Toast.show({
                 type: "success",
-                text1: "Bien",
+                text1: "Excelente",
                 text2: "Bienvenido nuevamente :)"
             })
 

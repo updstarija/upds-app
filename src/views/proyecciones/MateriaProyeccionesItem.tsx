@@ -3,13 +3,15 @@ import { View, Alert } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { MateriaStateProyecciones, SwiperV2 } from "@/components";
 import { CustomBottomSheetModal, Texto } from "@/ui";
-import { ISemestre, MateriaProyeccion } from "@/types";
+import { MateriaProyeccion } from "@/types";
 import { useCarreraContext, useMateriasProyeccion, useProyeccionesContext, useThemeColor } from "@/hooks";
 import { SwiperV2Ref } from "@/components/SwiperV2";
 import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RequisitoMateria } from "./RequisitoMateria";
-
+import Toast from 'react-native-toast-message'
+import * as Animatable from "react-native-animatable";
+import { Image } from "expo-image";
 
 interface Props {
     materia: MateriaProyeccion;
@@ -21,6 +23,23 @@ interface Props {
         step: number
     },
 }
+
+const animationPulse = {
+    from: {
+        transform: [
+            {
+                scale: 1,
+            },
+        ],
+    },
+    to: {
+        transform: [
+            {
+                scale: 1.3,
+            },
+        ],
+    },
+};
 
 const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, customContent, showMessage = true, withModulo = false }) => {
     const [enabled, setEnabled] = useState(false);
@@ -55,52 +74,54 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, cust
         if (!tutorial || !tutorial.inCourse) return null
         const handImages = [require("~/assets/images/icons/hand-light.png"), require("~/assets/images/icons/hand-dark.png")]
 
-        /*   if (tutorial.step == 1) return <Animatable.View
-              useNativeDriver
-              animation={animationPulse}
-              iterationCount={"infinite"}
-              direction="alternate"
-              style={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  bottom: 0,
-                  left: 0,
-                  alignItems: "center",
-                  justifyContent: "center",
-              }}
-          >
-              <Image
-                  style={{
-                      width: 30,
-                      height: 30
-                  }}
-                  contentFit="contain"
-                  source={isDark ? handImages[1] : handImages[0]}
-              />
-          </Animatable.View>
-  
-          if (tutorial.step == 2) return <Animatable.View
-              useNativeDriver
-              animation="slideOutLeft"
-              iterationCount={"infinite"}
-              direction="alternate"
-              duration={2500}
-              style={{
-                  position: "absolute",
-                  top: 0,
-                  right: 0,
-                  alignItems: "flex-end",
-                  userSelect: "none"
-              }}
-          >
-              <MaterialCommunityIcons
-                  name="gesture-swipe-horizontal"
-                  size={40}
-                  color={isDark ? "#FFF" : "#000"}
-  
-              />
-          </Animatable.View> */
+        if (tutorial.step == 7) return <Animatable.View
+            useNativeDriver
+            animation={animationPulse}
+            iterationCount={"infinite"}
+            direction="alternate"
+            style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
+            <Image
+                style={{
+                    width: 30,
+                    height: 30
+                }}
+                contentFit="contain"
+                source={isDark ? handImages[1] : handImages[0]}
+            />
+        </Animatable.View>
+
+        if (tutorial.step == 6) return <Animatable.View
+            useNativeDriver
+            animation="slideOutLeft"
+            iterationCount={"infinite"}
+            direction="alternate"
+            duration={3000}
+            style={{
+                position: "absolute",
+                top: 0,
+                right: 0,
+                alignItems: "center",
+                justifyContent: "center",
+                userSelect: "none",
+                height: "100%"
+            }}
+        >
+            <MaterialCommunityIcons
+                name="gesture-swipe-horizontal"
+                size={40}
+                color={isDark ? "#FFF" : "#000"}
+
+            />
+        </Animatable.View>
     }
 
     const isElectiva = materia.materia.startsWith("Electiva - ")
@@ -185,14 +206,32 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, cust
         <SwiperV2
             ref={swiperRef}
             friction={1}
-            onRightOpen={handleAddMateria}
+            onRightOpen={() => {
+                if (tutorial && tutorial.inCourse) {
+                    Toast.show({
+                        type: "success",
+                        text1: 'Excelente',
+                        text2: "Se mostrara esta alerta cuando agregues una materia"
+                    })
+
+                    return
+                };
+
+                handleAddMateria()
+            }}
             // renderLeftActions={isValid ? renderLeftActions : undefined}
             renderRightActions={isValidForBoleta() ? renderRightActions : undefined}
         >
-            <MateriaStateProyecciones
-                materia={materia}
-                withModulo={withModulo}
-            />
+            <View className="relative">
+                <MateriaStateProyecciones
+                    materia={materia}
+                    withModulo={withModulo}
+                />
+
+                <Tutorial />
+            </View>
+
+
         </SwiperV2>
     );
 
@@ -242,12 +281,8 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, cust
             }, 1000);
 
             setTimeout(() => {
-                swiperRef.current?.openLeft();
-            }, 3000);
-
-            setTimeout(() => {
                 swiperRef.current?.close();
-            }, 5000);
+            }, 3000);
 
             animationInterval = setInterval(() => {
                 setTimeout(() => {
@@ -255,13 +290,9 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, cust
                 }, 1000);
 
                 setTimeout(() => {
-                    swiperRef.current?.openLeft();
-                }, 3000);
-
-                setTimeout(() => {
                     swiperRef.current?.close();
-                }, 5000);
-            }, 10000);
+                }, 4000);
+            }, 6000);
         };
 
         const stopAnimation = () => {

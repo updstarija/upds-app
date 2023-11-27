@@ -171,7 +171,7 @@ const Boleta = () => {
             <TourGuideZone
                 tourKey={tourKey}
                 style={{ zIndex: 999999 }}
-                zone={10}
+                zone={8}
                 text="Listado de los módulos de la oferta semestral"
             >
 
@@ -200,7 +200,7 @@ const Boleta = () => {
                     keyExtractor={(item) => item.id.toString()}
                     showsVerticalScrollIndicator={false}
                     // contentContainerStyle={{ zIndex: -1 }}
-                    ListHeaderComponentStyle={{ zIndex: 1 }}
+                    ListHeaderComponentStyle={{ zIndex: 5 }}
                     ListHeaderComponent={<>
                         {renderHeaderBody()}
                     </>}
@@ -393,7 +393,7 @@ const Boleta = () => {
                 <TourGuideZoneByPosition
                     tourKey={tourKey}
                     text="Si aún no creaste tu boleta, comienza el proceso aquí"
-                    zone={11}
+                    zone={10}
                     shape={"circle"}
                     isTourGuide={tutorialEnCurso.step > 3}
                     bottom={43}
@@ -404,7 +404,7 @@ const Boleta = () => {
 
 
                 <FloatingAction
-                    visible={!tutorialEnCurso.inCourse || [2, 3, 4, 5, 6].includes(tutorialEnCurso?.step)}
+                    visible={!tutorialEnCurso.inCourse || [2, 3, 4, 5, 6, 7, 8, 9, 10].includes(tutorialEnCurso?.step)}
                     overlayColor="#0000006a"
                     actions={actionsFloatButton}
                     distanceToEdge={{ horizontal: 40, vertical: 40 }}

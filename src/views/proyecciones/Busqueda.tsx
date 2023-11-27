@@ -26,7 +26,7 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
     const isDarkMode = useThemeColor() === "dark"
 
     const { valueCarrera } = useCarreraContext()
-    const { selectedTurns, tutorialEnCurso } = useProyeccionesContext()
+    const { selectedTurns } = useProyeccionesContext()
 
     const { data, getData, isLoading } = useSearchMateria()
     const [selectedItem, setSelectedItem] = useState<null | { id: string }>(null)
@@ -51,7 +51,9 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
 
 
     const renderMaterias = () => {
+        console.log('render');
         if (!selectedItem && !tutorial?.inCourse) return <></>
+        if (tutorial && tutorial.step <= 3) return <></>
         if (materiasProyeccionQuery.isLoading) return <Spinner className='h-28' />
         if (materiasProyeccionQuery.isError) return <Texto>HUBO UN ERROR</Texto>
 
@@ -74,13 +76,13 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
             <TourGuideZone
                 tourKey={"t-boleta"}
                 zone={5}
-                text="Filtrador de materias por diferentes turnos"
+                text="Filtra las materias según el turno de tu preferencia"
             >
                 <SelectTurnos />
 
             </TourGuideZone>
 
-            {[4, 5, 6, 7, 8, 9].includes(tutorial?.step || -1) ? (
+            {[4, 5, 6, 7, 8, 9, 10].includes(tutorial?.step || -1) && tutorial?.inCourse ? (
                 <>
                     <TourGuideZone
                         tourKey={"t-boleta"}
@@ -93,11 +95,11 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
                             text="Presiona en el registro para ver los prerequisitos y coquerequistos"
                         >
                             <MateriaProyeccionesItem materia={{
-                                carrera: "Contabilidad Empresarial",
-                                materia: "Estadística",
+                                carrera: "Ing. de Sistemas",
+                                materia: "Fundamentos de Matemáticas",
                                 estado: { id: -1, nombre: "Tutorial" },
                                 id: -1,
-                                materiaAdmId: -1,
+                                materiaAdmId: 1006,
                                 modulo: "1.1.1",
                                 semestre: "PRIMER SEMESTRE",
                                 turno: "Mañana"
@@ -106,7 +108,7 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
                     </TourGuideZone>
                 </>
             ) : (<>
-                {!materiasProyeccionQuery.isLoading && !!!filterData.length && <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl m-4">
+                {!materiasProyeccionQuery.isLoading && !!!filterData.length && !tutorial?.inCourse && <View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl m-4">
                     <Texto className="text-white">
                         No hay datos que mostrar :(
                     </Texto>
@@ -155,9 +157,9 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
         });
     }, [, selectedTurns, materiasProyeccionQuery.data])
 
-
+    console.log(tutorial);
     useEffect(() => {
-        if (tutorialEnCurso && tutorialEnCurso.step === 4) {
+        if (tutorial && tutorial.step === 4) {
             const intervalId = setInterval(() => {
                 if (inputText.length < materiaSearchTutorial.length) {
                     setInputText((prevText) => {
@@ -181,7 +183,7 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
             dropwdownController.current?.clear()
             dropwdownController.current?.close()
         }
-    }, [tutorialEnCurso]);
+    }, [tutorial]);
 
     useEffect(() => {
         if (inputText == materiaSearchTutorial) {
@@ -231,11 +233,9 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
 
             </TourGuideZone>
 
-            {[4, 5, 6, 7, 8, 9].includes(tutorial?.step || -1) && (
-                <>
-                    {renderMaterias()}
-                </>
-            )}
+
+            {renderMaterias()}
+
         </View>
     )
 }
