@@ -185,7 +185,7 @@
         <span style="font-weight: normal; cursor: pointer" class="btn-more-details" data-status="true"><span
             class="fa fa-plus"></span> Mostar más</span>
 
-        <button class="btn btn-sm btn-primary pull-right" disabled>
+        <button class="btn btn-sm btn-primary pull-right REG-3B5H7S7F4">
           Registrar
         </button>
       </div>
@@ -214,6 +214,8 @@
     </div>
   </div>
 
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+    integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
   <script>
     const options = {
@@ -311,29 +313,76 @@
     });
   </script>
 
-  <!-- 
 
-    <input type="hidden" id="url_register_print" value="/updsnet/5.8/home/ComprobantePrint/" />
-					<input type="hidden" id="se-turn-def" value="1-3" />
-					<input type="hidden" id="url_send_register" value="/updsnet/5.8/home/registerCourse/24599" />
-					<script>
-						$(document).ready(function () {
-            $('.btn-turn.btn-primary').trigger('click');//$('.register.box[data-set="' + ($('#se-turn-def').val()) + '"]').show(200);
-            $('.btn-more-details').click(function () {
-                $(this).children('span').toggleClass('fa-plus').toggleClass('fa-minus');
-                if ($(this).data('status')) {
-                    $(this).data('status', false);
-                    $(this).parent().next('div').show();
-                    //$(this).next('button').show(100);
-                } else {
-                    $(this).data('status', true);
-                    $(this).parent().next('div').hide();
-                    //$(this).next('button').hide(100);
-                }
-            });
+
+  <input type="hidden" id="url_register_print" value="/updsnet/5.8/home/ComprobantePrint/" />
+  <input type="hidden" id="se-turn-def" value="1-3" />
+  <input type="hidden" id="url_send_register" value="/updsnet/5.8/home/registerCourse/24599" />
+
+  <script>
+    $(document).ready(function () {
+      $('.register.box').on('click', 'button.on-press-report', function () {
+        var w = window.open($(this).data('url'), '_blank');
+        w.print();
+        setTimeout(function () { w.close(); }, 500);
+      });
+
+      $('.REG-3B5H7S7F4').click(function () {
+        $('button').attr('disabled', 'disabled');
+        var btn = $(this); btn.button('loading');
+        http.post($('#url_send_register').val(), {
+          arg1: $('#cb-ofertas').val(),
+          arg2: btn.data('arg')
+        }, function (data) {
+          var sw = false;
+          for (var i = 0; i < data.length; i++) {
+            if (data[i].result > 0) {
+              sw = true; break;
+            }
+          }
+          if (sw) {
+            fNotify('Materia registrada exitosamente.', 0, 6000);
+            btn.after($('<button>')
+              .html('<span class="fa fa-print"></span> Comprobante')
+              .addClass('btn btn-sm btn-default pull-right on-press-report')
+              .data('url', $('#url_register_print').val() + btn.data('arg') + '?arg=' + $('#cb-ofertas').val() + '&arg1=23599'))
+              .attr('title', 'Imprimir comprobante de registro');
+            $('.REG-3B5H7S7F4').remove();
+            $('#modal-register-materia').data('exist-register', true);
+          } else {
+            $('.REG-3B5H7S7F4').removeAttr('disabled');
+            btn.button('reset');
+            for (var i = 0; i < data.length; i++)
+              fNotify(data[i].msg, 2, 60000);
+          }
+        }, function (err) {
+          $('.REG-3B5H7S7F4').removeAttr('disabled');
+          btn.button('reset');
+          console.log(err);
+          fNotify('Error al conectarse al servidor. Revisa tu conexión a internet.', 3, 5000)
         });
-					</script>
-   -->
+        $('#load').hide();
+      });
+    });
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('.btn-turn.btn-primary').trigger('click');//$('.register.box[data-set="' + ($('#se-turn-def').val()) + '"]').show(200);
+      $('.btn-more-details').click(function () {
+        $(this).children('span').toggleClass('fa-plus').toggleClass('fa-minus');
+        if ($(this).data('status')) {
+          $(this).data('status', false);
+          $(this).parent().next('div').show();
+          //$(this).next('button').show(100);
+        } else {
+          $(this).data('status', true);
+          $(this).parent().next('div').hide();
+          //$(this).next('button').hide(100);
+        }
+      });
+    });
+  </script>
+
 </body>
 
 </html>
