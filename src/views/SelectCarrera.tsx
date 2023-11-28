@@ -16,13 +16,23 @@ export const SelectCarrera = () => {
 
     const [openCarrera, setOpenCarrera] = useState(false);
 
+    const newCarreras = carreras.map(carr => {
+
+        return {
+            ...carr,
+            // disabled: carr.estado.id != 0,
+            containerStyle: {
+                backgroundColor: carr.estado.id != 0 ? "#e74c3c" : ""
+            }
+        }
+    })
 
     return (
         <DropDownPicker
             open={openCarrera}
             value={valueCarrera}
-            // @ts-ignore
-            items={carreras}
+
+            items={newCarreras}
             setOpen={setOpenCarrera}
             setValue={setValueCarrera}
             placeholder="Selecciona la carrera"
@@ -43,6 +53,7 @@ export const SelectCarrera = () => {
                     name="angle-up"
                 />
             )}
+
             TickIconComponent={() => (
                 <FontAwesome
                     size={18}
