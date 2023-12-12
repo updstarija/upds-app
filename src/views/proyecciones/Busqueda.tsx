@@ -86,7 +86,7 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
                     <TourGuideZone
                         tourKey={"t-boleta"}
                         zone={6}
-                        text="Desliza para agregar la materia de tu boleta"
+                        text="Desliza para agregar la materia a tu boleta"
                     >
                         <TourGuideZone
                             tourKey={"t-boleta"}

@@ -9,6 +9,7 @@ import * as Animatable from "react-native-animatable";
 import { SwiperV2Ref } from "@/components/SwiperV2";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { sleep } from "@/helpers";
+import Toast from "react-native-toast-message";
 
 interface Props {
   carrera: number;
@@ -179,7 +180,15 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorial }) => {
                 friction={1}
                 //       onRightOpen={() => handleDeleteMateria(-1, -1)}
                 onRightOpen={() => {
-                  setDeleteTutorial(true)
+                  if (tutorial && tutorial.inCourse) {
+                    Toast.show({
+                      type: "success",
+                      text1: 'Excelente',
+                      text2: "Se mostrara esta alerta cuando elimines una materia"
+                    })
+
+                    return
+                  };
                 }}
                 renderRightActions={renderRightActions}
                 closeOnSwipe={false}
@@ -188,18 +197,16 @@ const DetalleBoleta: React.FC<Props> = ({ carrera, tutorial }) => {
                   className={` relative flex-row justify-between  border-[0.4px] border-primario p-4 bg-white dark:bg-[#253a68]`}
                 >
                   <Texto className="text-black dark:text-white">
-                    {deleteTutorial
-                      ? "x.x.xxxx"
-                      : `  1.1.${new Date().getFullYear()}`}
+                    {`1.1.${new Date().getFullYear()}`}
                   </Texto>
                   <Texto
                     className="text-black dark:text-white text-ellipsis max-w-[60%]"
                     numberOfLines={1}
                   >
-                    {deleteTutorial ? "XXXXXXXXX" : " Calculo :'("}
+                    Cálculo II
                   </Texto>
                   <Texto className="text-black dark:text-white">
-                    {deleteTutorial ? "XXXXX" : " Noche"}
+                    Noche
                   </Texto>
 
                   <Tutorial />

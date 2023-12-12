@@ -50,7 +50,7 @@ const Facturacion = () => {
     `
 
     useEffect(() => {
-        Alert.alert("Datos de Facturación", "Edita tus datos de facturación")
+        Alert.alert("Datos de Facturación", "Aqui podras editar tus datos de facturación")
     }, [])
 
 

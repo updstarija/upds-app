@@ -156,7 +156,7 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(({ materia, tutorial, cust
 
         let mensaje = "";
         if (isIrregular) {
-            mensaje = "Actualmente, la proyección de materias no está disponible para estudiantes irregulares que realizaron convalidación de materias.\n\nPor lo tanto, no es posible agregarla a la boleta de proyección.\n\nEstamos trabajando en habilitar esta función. Gracias por su comprensión :)."
+            mensaje = "Actualmente, la proyección de materias no está disponible para estudiantes irregulares que realizaron convalidación de materias.\n\nPor lo tanto, no es posible agregarla a la boleta de proyección.\n\nEstamos trabajando en habilitar esta función. Gracias por su comprensión."
         } else if (isPendiente) {
             mensaje = "Has seleccionado una materia que esta pendiente.\n\nLa materia seleccionada esta pendiente, Por lo tanto, no es posible agregarla a la boleta de proyección."
         }

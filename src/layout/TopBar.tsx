@@ -27,7 +27,7 @@ export const TopBar = () => {
             <DrawerToggleButton tintColor="#fff" />
           </View>
 
-          {/*  <Button title='tex' onPress={() => router.push("/bienvenida")} /> */}
+          <Button title='BIEnv' onPress={() => router.push("/bienvenida")} />
 
           <View className='flex-row items-center'>
             <Link className='p-2' href='/notificacion' >

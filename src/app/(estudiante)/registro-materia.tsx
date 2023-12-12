@@ -7,7 +7,12 @@ import { FontAwesome } from '@expo/vector-icons'
 import { SelectCarrera } from '@/views'
 import SelectTurnos from '@/views/SelectTurnos'
 import { Spacer } from '@/components'
-
+import { Link } from 'expo-router'
+import { Pressable } from 'react-native'
+import { router } from 'expo-router'
+import { openBrowserAsync } from 'expo-web-browser'
+import { sleep } from '@/helpers'
+import Toast from 'react-native-toast-message'
 
 const shadow = {
     shadowColor: "#000000",
@@ -106,6 +111,8 @@ const informacionDeRelleno = [
 const RegistroMateria = () => {
     const { carreras, valueCarrera } = useCarreraContext()
     const [selectedTurns, setSelectedTurns] = useState<string[]>([])
+    const [isLoading, setIsLoading] = useState(false)
+    const [selectedMateria, setSelectedMateria] = useState("")
 
     const { materiaRequisitoQuery: data } = useRegistroMateria({
         inscripcionCarrera: carreras.find(x => x.id === valueCarrera)?.inscripcionCarreraId || carreras[0].inscripcionCarreraId,
@@ -136,10 +143,27 @@ const RegistroMateria = () => {
 
 
 
+    const onRegisterMateria = async (id: string) => {
+        setSelectedMateria(id)
+        setIsLoading(true)
+        await sleep(3000)
+        setIsLoading(false)
+
+        Toast.show({
+            text1: "Excelente",
+            text2: "Materia registrada con exito"
+        })
+    }
+
 
     return (
         <View className='bg-white dark:bg-primario-dark flex-1'>
             <FlatList
+                ListEmptyComponent={<View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl">
+                    <Texto className="text-white">
+                        No hay datos que mostrar :(
+                    </Texto>
+                </View>}
                 contentContainerStyle={{ padding: 10 }}
                 data={filterData}
                 ListHeaderComponent={() => (
@@ -151,7 +175,7 @@ const RegistroMateria = () => {
                     </>
                 )}
                 renderItem={({ item }) => (
-                    <View className='bg-white  p-4 rounded-lg' style={{
+                    <View className='bg-white dark:bg-secondary-dark  p-4 rounded-lg' style={{
                         shadowColor: "#000000",
                         shadowOffset: {
                             width: 0,
@@ -199,14 +223,16 @@ const RegistroMateria = () => {
                             </View>
 
                             <View className='flex-row justify-between gap-2'>
-                                <CustomButton variant='white' className='flex-1 ' style={[shadow]}>
+
+                                <CustomButton variant='white' className='flex-1' onPress={() => openBrowserAsync("https://multipago.com/service/UPDS/first")} style={[shadow]} disabled={isLoading}>
                                     <View className='flex-row items-center justify-center gap-2'>
                                         <FontAwesome name='credit-card' size={20} />
-                                        <Texto className='text-center' weight='Bold'>PAGAR</Texto>
+                                        <Texto className='text-center dark:text-black' weight='Bold'>PAGAR</Texto>
                                     </View>
                                 </CustomButton>
 
-                                <CustomButton variant='primary' className='flex-1' style={[shadow]}>
+
+                                <CustomButton variant='primary' className='flex-1' style={[shadow]} onPress={() => onRegisterMateria(item.materia)} disabled={isLoading} showLoader={selectedMateria == item.materia}>
                                     <View className='flex-row items-center justify-center gap-2'>
                                         <FontAwesome name='plus' size={20} color={"#FFF"} />
                                         <Texto className='text-center text-white' weight='Bold'>REGISTRAR</Texto>
@@ -223,7 +249,7 @@ const RegistroMateria = () => {
                         <Texto>{item.turno}</Texto> */}
                     </View>
                 )}
-                ItemSeparatorComponent={() => <View className='mb-1' />}
+                ItemSeparatorComponent={() => <View className='mb-2' />}
 
             />
         </View>

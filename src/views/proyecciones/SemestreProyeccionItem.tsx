@@ -59,7 +59,7 @@ const SemestreProyeccionItem: React.FC<Props> = ({ semestre, modulo, withSearch,
             buscarMateria: Number(selectedItem?.id || 0),
         });
 
-    const { boletaQuery } = useBoleta({ carrera: valueCarrera || -1 });
+    const { boletaQuery } = useBoleta({ carrera: valueCarrera });
 
     const content = (
 

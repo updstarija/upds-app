@@ -105,7 +105,10 @@ const Boleta = () => {
         return tutorialEnCurso.inCourse
     };
 
-    const handleOnStop = () => setTutorialEnCurso({ ...tutorialEnCurso, inCourse: false })
+    const handleOnStop = () => {
+        setShowAlerts(false)
+        setTutorialEnCurso({ ...tutorialEnCurso, inCourse: false })
+    }
 
     const handleOnStepChange = (step: any) => {
         setTutorialEnCurso({ ...tutorialEnCurso, step: step?.order || -1 })
@@ -386,7 +389,7 @@ const Boleta = () => {
                 if (canStart && activarTutorial) {
                     setTutorialEnCurso({ ...tutorialEnCurso, inCourse: true })
                     listref.current?.scrollToOffset({ animated: true, offset: 0 })
-                    setShowAlerts(false)
+                    setShowAlerts(true)
 
                     setTimeout(() => {
                         start();

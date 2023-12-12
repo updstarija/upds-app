@@ -291,8 +291,8 @@ const Stats = () => {
     }
 
     return (
-        <View className='bg-white dark:bg-primario-dark '>
-            <View className='p-2'>
+        <View className='bg-white dark:bg-primario-dark flex-1'>
+            <View className='p-2 z-10'>
                 <SelectCarrera />
             </View>
 

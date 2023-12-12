@@ -21,33 +21,6 @@ import { Texto } from '../../ui';
 import { useEffect, useState } from 'react';
 
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  inner: {
-    padding: 24,
-    flex: 1,
-    justifyContent: 'space-around',
-    borderTopRightRadius: 50,
-    borderTopLeftRadius: 50
-  },
-  header: {
-    fontSize: 36,
-    marginBottom: 48,
-  },
-  textInput: {
-    height: 40,
-    borderColor: '#000000',
-    borderBottomWidth: 1,
-    marginBottom: 36,
-  },
-  btnContainer: {
-    backgroundColor: 'white',
-    marginTop: 12,
-  },
-});
-
 /* const KeyboardAvoidingComponent = () => {
   const navigation = useNavigation();
   const isDarkMode = useThemeColor() === 'dark';
@@ -340,17 +313,12 @@ const Login = () => {
         </View>
 
         <View className="flex-column items-center">
-          {isDarkMode ? (
-            <Image
-              source={require(`~/assets/images/app/logo-dark.png`)}
-              style={{ width: 80, height: 80 }}
-            />
-          ) : (
-            <Image
-              source={require(`~/assets/images/app/logo-light.png`)}
-              style={{ width: 80, height: 80 }}
-            />
-          )}
+
+          <Image
+            source={require(`~/assets/images/app/logo-dark.png`)}
+            style={{ width: 80, height: 80 }}
+          />
+
 
           <Texto className="text-xl text-white lg:text-3xl" weight="Bold">
             Inicia sesion con tu cuenta
@@ -386,7 +354,7 @@ const Login = () => {
                 value={recordar}
                 className='mr-1'
                 onValueChange={() => setRecordar(!recordar)}
-                color={'#4630EB'}
+                color={COLORS.light.background}
               />
 
               <Texto className="text-black dark:text-white">Recordarme</Texto>
