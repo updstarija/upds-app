@@ -7,33 +7,37 @@ import { router } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useThemeColor } from '@/hooks';
 import { COLORS } from '~/constants';
+import { Texto } from '@/ui';
 
 
 const sliders = [
   {
     title: true,
-    image: require("~/assets/images/pages/bienvenida.png"),
-    text: "Descubre, aprende y conecta con nosotros."
+    image: require("~/assets/images/onboarding/conectate.png"),
+    text: "Descubre, aprende y conecta con nosotros",
+    header: ""
   },
   {
     title: false,
-    image: require("~/assets/images/pages/bienvenida.png"),
-    text: "Realiza tu proyeccion de materias."
+    image: require("~/assets/images/onboarding/proyecciones.png"),
+    text: "Planifica tus asignaturas con la proyección de materias",
+    header: "Visualiza tu Ruta Académica"
   },
   {
     title: false,
-    image: require("~/assets/images/pages/bienvenida.png"),
-    text: " Consulta tu registro academico."
+    image: require("~/assets/images/onboarding/historico.png"),
+    text: " Consulta tu historial de materias",
+    header: "Progreso Académico"
   },
   {
     title: false,
-    image: require("~/assets/images/pages/bienvenida.png"),
-    text: "Chatea con Nosotros.\nRecibe notificaciones sobre nuestros eventos o comunicados.\n Y mucho mas"
+    image: require("~/assets/images/onboarding/notificaciones.png"),
+    text: "Conversa con nosotros, recibe notificaciones de nuestros comunicados y descubre mucho mas",
+    header: "Interactúa y Mantente Informado"
   },
 ]
 
 const BienvenidaScreen = () => {
-  const navigation = useNavigation();
   const { width, height } = useWindowDimensions()
 
   const [sliderActual, setCurrentSlideIndex] = useState(0);
@@ -101,9 +105,9 @@ const BienvenidaScreen = () => {
                 activeOpacity={0.8}
                 className='flex-1 h-[50] items-center justify-center rounded border border-white  dark:border-[#0D1F46]'
                 onPress={saltarSlider}>
-                <Text className='font-bold text-white lg:text-lg'>
+                <Texto className='font-bold text-white lg:text-lg'>
                   SALTAR
-                </Text>
+                </Texto>
               </TouchableOpacity>
 
 
@@ -111,9 +115,9 @@ const BienvenidaScreen = () => {
                 activeOpacity={0.8}
                 onPress={IrSiguienteSlide}
                 className='flex-1 h-[50] items-center justify-center bg-white dark:bg-[#0D1F46]  rounded'>
-                <Text className='font-bold text-[#223B82] dark:text-white  lg:text-lg'>
+                <Texto className='font-bold text-[#223B82] dark:text-white  lg:text-lg'>
                   SIGUIENTE
-                </Text>
+                </Texto>
               </TouchableOpacity>
             </View>
           )}
@@ -128,7 +132,7 @@ const BienvenidaScreen = () => {
     <>
       <StatusBar
         backgroundColor={
-          isDarkMode ? COLORS.dark.secondary : COLORS.light.background
+          isDarkMode ? COLORS.dark.background : COLORS.light.background
         }
         style="light"
       />
@@ -159,26 +163,32 @@ interface Props {
   title: boolean
   image: any
   text: string
+  header: string
 }
-const Slide: React.FC<Props> = ({ title, image, text }) => {
+const Slide: React.FC<Props> = ({ title, image, text, header }) => {
   const { width } = Dimensions.get("window")
 
   return (
     <View className=' flex-1 items-center justify-center px-4' style={{ width }}>
       {title && (
         <View>
-          <Text
-            className="text-white font-bold text-xl lg:text-3xl text-center uppercase">
-            Bienvenido a la app de la
-          </Text>
-          <Text className=' text-white font-bold text-3xl lg:text-6xl text-center uppercase'>¡UPDS Sede Tarija!</Text>
+          <Texto
+            className="text-white font-bold text-xl lg:text-3xl text-center uppercase" weight='Bold'>
+            Bienvenido a la app
+          </Texto>
+          <Texto className=' text-white font-bold text-3xl lg:text-6xl text-center uppercase' weight='Bold'>¡UPDS Tarija!</Texto>
         </View>
       )}
+      {!!header &&
+
+        <View>
+          <Texto className=' text-white font-bold text-xl lg:text-3xl text-center uppercase' weight='Bold'>{header}</Texto>
+        </View>}
 
       <View className="flex-column items-center mt-10">
         <Image source={image}
           style={{ height: width > 500 ? 600 : 300, resizeMode: "contain" }} />
-        <Text className='text-lg lg:text-2xl text-white dark:text-white text-center'>{text}</Text>
+        <Texto className='text-lg lg:text-2xl text-white dark:text-white text-center'>{text}</Texto>
       </View>
     </View>
   )

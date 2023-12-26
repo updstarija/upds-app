@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import DropDownPicker from 'react-native-dropdown-picker';
-import { useCarreraContext, useCarreras, useThemeColor } from '@/hooks';
+import { useAuthContext, useCarreraContext, useCarreras, useThemeColor } from '@/hooks';
 import { FontAwesome } from '@expo/vector-icons';
 import { COLORS } from '~/constants';
 import { Texto } from '@/ui';
@@ -11,22 +11,28 @@ export const SelectCarrera = () => {
     const {
         valueCarrera,
         setValueCarrera,
+        carreras
     } = useCarreraContext();
 
     const [openCarrera, setOpenCarrera] = useState(false);
 
+    const newCarreras = carreras.map(carr => {
 
-    const { carrerasQuery } = useCarreras()
-
-    if (carrerasQuery.isLoading) return <Texto>CARGANDO</Texto>
-    if (carrerasQuery.isError) return <Texto>ERROR</Texto>
+        return {
+            ...carr,
+            // disabled: carr.estado.id != 0,
+            containerStyle: {
+                backgroundColor: carr.estado.id != 0 ? "#e74c3c" : ""
+            }
+        }
+    })
 
     return (
         <DropDownPicker
             open={openCarrera}
             value={valueCarrera}
-            // @ts-ignore
-            items={carrerasQuery.data}
+
+            items={newCarreras}
             setOpen={setOpenCarrera}
             setValue={setValueCarrera}
             placeholder="Selecciona la carrera"
@@ -47,6 +53,7 @@ export const SelectCarrera = () => {
                     name="angle-up"
                 />
             )}
+
             TickIconComponent={() => (
                 <FontAwesome
                     size={18}

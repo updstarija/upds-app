@@ -14,7 +14,7 @@ import {
 } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { useAuthContext, useThemeColor } from "@/hooks";
-import { ThemeConfig } from "@/views";
+import { ThemeConfig } from "@/views/ThemeConfig";
 import { Texto } from "@/ui";
 import { menuFacultades } from "@/data";
 

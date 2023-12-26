@@ -4,10 +4,8 @@ type IconProp = keyof typeof FontAwesome.glyphMap;
 
 export const etiquetas: { [key: number]: { color: string, icon: IconProp } } = {
     "-1": {
-
         color: "transparent",
         icon: "unlock",
-
     },
     0: {
         color: "gray",

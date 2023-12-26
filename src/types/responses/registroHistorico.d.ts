@@ -10,6 +10,7 @@ export interface IRegistroHistoricoGroup {
 export interface IRegistroHistorico {
     id: number
     nombre: string
+    materiaId: number;
     nota: number
     grupo: number
     grupoMaestro: number | null

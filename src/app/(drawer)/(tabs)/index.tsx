@@ -1,6 +1,6 @@
-import { FlatList, ScrollView, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 import { menuHomeScreen } from '@/data';
-import { CardNavigation, CarouselCards } from '../../../components/';
+import { CardNavigation } from '../../../components/';
 import { CarouselPriorityNotices } from '@/views';
 
 
@@ -25,6 +25,7 @@ export default function TabOneScreen() {
           </>
         }
         renderItem={null}
+        showsVerticalScrollIndicator={false}
       />
       {/* 
       <ScrollView showsVerticalScrollIndicator={false}>

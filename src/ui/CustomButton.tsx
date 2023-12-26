@@ -1,10 +1,11 @@
 import { useThemeColor } from '@/hooks';
 import { TouchableOpacity, TouchableOpacityProps, ActivityIndicator } from 'react-native';
+import { COLORS } from '~/constants';
 
 const variants = {
-    'primary': 'rounded-md bg-primario border-primario',
-    'primary-dark': 'rounded-md bg-secondary-dark border-primario',
-    'white': 'rounded-md bg-white border border-primario',
+    'primary': 'rounded-md bg-primario ',
+    'primary-dark': 'rounded-md bg-secondary-dark ',
+    'white': 'rounded-md bg-white  ',
     'success': 'rounded-md bg-green-500 ',
     'danger': 'rounded-md bg-red-500',
     'custom': ''
@@ -33,12 +34,16 @@ const CustomButton: React.FC<Props> = ({
     const isDark = useThemeColor() === "dark"
     return (
         <TouchableOpacity
-            className={variant === 'custom' ? className : `${variants[variant]} ${sizes[size]} w-fit`}
-            activeOpacity={isDark ? .5 : .8}
             {...props}
+            style={[props.style, {
+                opacity: disabled ? 0.6 : 1
+            }]}
+            className={variant === 'custom' ? className : `${variants[variant]} ${sizes[size]} `}
+            activeOpacity={isDark ? .5 : .8}
+            disabled={disabled}
         >
             {disabled && showLoader ?
-                <ActivityIndicator color={"red"} size={20} /> : <>{children}</>}
+                <ActivityIndicator color={"#FFF"} size={20} /> : <>{children}</>}
         </TouchableOpacity>
     );
 };

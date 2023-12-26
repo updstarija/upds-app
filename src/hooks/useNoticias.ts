@@ -18,7 +18,7 @@ export const useNoticias = () => {
     const getOneData = async (id: string) => {
         setIsLoading(true)
         const response = await getOneNotice(id)
-        setIsLoading(false)
+        //setIsLoading(false)
         return response
     }
 
@@ -26,7 +26,7 @@ export const useNoticias = () => {
     const getPriorityNotices = async () => {
         setIsLoading(true)
         const response = await noticeService.getTopPriority()
-        setData(response)
+        setData(response.slice(0, 3))
         setIsLoading(false)
         return response
     }
@@ -35,6 +35,7 @@ export const useNoticias = () => {
 
     return {
         data,
+        setIsLoading,
         isLoading,
         getData,
         getOneData,

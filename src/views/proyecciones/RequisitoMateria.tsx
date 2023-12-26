@@ -5,7 +5,7 @@ import { AntDesign } from '@expo/vector-icons'
 import { useCarreraContext, useMateriaRequisito, useThemeColor } from '@/hooks'
 import { Spinner } from '@/components'
 import { MateriaProyeccion, MateriaRequisito } from '@/types'
-import { Texto } from '@/ui'
+import { CustomSkeleton, Texto } from '@/ui'
 
 interface Props {
     materia: MateriaProyeccion
@@ -61,7 +61,7 @@ export const RequisitoMateria: React.FC<Props> = ({ materia }) => {
 
     const renderPrerequisito = () => (<></>)
 
-    if (data.isLoading) return <Spinner size={30} />
+    /*     if (data.isLoading) return <Spinner size={30} /> */
     if (data.isError) return <Texto>ERROR</Texto>
 
 
@@ -72,7 +72,12 @@ export const RequisitoMateria: React.FC<Props> = ({ materia }) => {
                 {selectedMateria > 0 ? <TouchableOpacity onPress={prevMateria}><AntDesign name='leftcircleo' size={20} color={isDarkMode ? "#FFF" : "#000"} /></TouchableOpacity> : <View />}
 
                 <View style={{ maxWidth: 300 }}>
-                    <Texto weight='Bold' className='text-center text-xl mb-4 dark:text-white'>{materiasNombreHistory[selectedMateria]}</Texto>
+                    {data.isLoading
+                        ?
+                        <CustomSkeleton width={200} height={20} />
+                        :
+                        <Texto weight='Bold' className='text-center text-xl mb-4 dark:text-white'>{materiasNombreHistory[selectedMateria]}</Texto>
+                    }
                 </View>
 
                 {selectedMateria < materiasHistory.length - 1 ? <TouchableOpacity onPress={nextMateria}><AntDesign name='rightcircleo' size={20} color={isDarkMode ? "#FFF" : "#000"} /></TouchableOpacity> : <View />}
@@ -82,7 +87,7 @@ export const RequisitoMateria: React.FC<Props> = ({ materia }) => {
             <View className='flex-row items-center'>
                 <Texto>Pre-requisito: </Texto>
 
-                <TouchableOpacity activeOpacity={0.5} onPress={alertPrerequisito}>
+                <TouchableOpacity activeOpacity={0.5} onPress={alertPrerequisito} style={{ padding: 10 }}>
                     <AntDesign name="questioncircleo" color={isDarkMode ? "#FFF" : "#000"} />
                 </TouchableOpacity>
             </View>
@@ -92,17 +97,25 @@ export const RequisitoMateria: React.FC<Props> = ({ materia }) => {
             <View className='items-center'>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} >
                     <View className='flex-row gap-3 p-4 items-center'>
-                        {data.data.data.prerequisito.length === 0 && <View className='rounded-full p-2 border-[.5px] border-primario'>
-                            <Texto className='text-black dark:text-white'>SIN PRE-REQUISITO</Texto>
-                        </View>}
+                        {
+                            data.isLoading
+                                ?
+                                <CustomSkeleton width={200} radius={50} />
+                                :
+                                <>
+                                    {data.data.data.prerequisito.length === 0 && <View className='rounded-full p-2 border-[.5px] border-primario'>
+                                        <Texto className='text-black dark:text-white'>SIN PRE-REQUISITO</Texto>
+                                    </View>}
 
-                        {data.data.data.prerequisito.map(pre => (
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => addNewMateriaHistory(pre)} key={pre.id}>
-                                <View className='bg-primario block rounded-full p-2 border-[.5px]' >
-                                    <Texto className='text-white'>{pre.nombre}</Texto>
-                                </View>
-                            </TouchableOpacity>
-                        ))}
+                                    {data.data.data.prerequisito.map(pre => (
+                                        <TouchableOpacity activeOpacity={0.8} onPress={() => addNewMateriaHistory(pre)} key={pre.id}>
+                                            <View className='bg-primario block rounded-full p-2 border-[.5px]' >
+                                                <Texto className='text-white'>{pre.nombre}</Texto>
+                                            </View>
+                                        </TouchableOpacity>
+                                    ))}
+                                </>
+                        }
 
                     </View>
                 </ScrollView>
@@ -111,7 +124,7 @@ export const RequisitoMateria: React.FC<Props> = ({ materia }) => {
             <View className='flex-row items-center'>
                 <Texto>Co-requisito: </Texto>
 
-                <TouchableOpacity activeOpacity={0.5} onPress={alertPostRerequisito}>
+                <TouchableOpacity activeOpacity={0.5} onPress={alertPostRerequisito} style={{ padding: 10 }}>
                     <AntDesign name="questioncircleo" color={isDarkMode ? "#FFF" : "#000"} />
                 </TouchableOpacity>
             </View>
@@ -119,17 +132,27 @@ export const RequisitoMateria: React.FC<Props> = ({ materia }) => {
             <View className='items-center'>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} >
                     <View className='flex-row gap-3 p-4 items-center'>
-                        {data.data.data.corequisito.length === 0 && <View className='rounded-full p-2 border-[.5px] border-primario'>
-                            <Texto className='text-black dark:text-white'>SIN CO-REQUISITO</Texto>
-                        </View>}
+                        {
+                            data.isLoading
+                                ?
+                                <CustomSkeleton width={200} radius={50} />
+                                :
+                                <>
+                                    {data.data.data.corequisito.length === 0 && <View className='rounded-full p-2 border-[.5px] border-primario'>
+                                        <Texto className='text-black dark:text-white'>SIN CO-REQUISITO</Texto>
+                                    </View>}
 
-                        {data.data.data.corequisito.map(co => (
-                            <TouchableOpacity activeOpacity={0.8} onPress={() => addNewMateriaHistory(co)} key={co.id}>
-                                <View className='bg-primario block rounded-full p-2 border-[.5px]' style={{ maxWidth: 200 }}>
-                                    <Texto className='text-white text-center'>{co.nombre}</Texto>
-                                </View>
-                            </TouchableOpacity>
-                        ))}
+                                    {data.data.data.corequisito.map(co => (
+                                        <TouchableOpacity activeOpacity={0.8} onPress={() => addNewMateriaHistory(co)} key={co.id}>
+                                            <View className='bg-primario block rounded-full p-2 border-[.5px]' style={{ maxWidth: 200 }}>
+                                                <Texto className='text-white text-center'>{co.nombre}</Texto>
+                                            </View>
+                                        </TouchableOpacity>
+                                    ))}
+                                </>
+                        }
+
+
                     </View>
                 </ScrollView>
             </View>

@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IResponseLogin } from "@/types";
+import { IResponseLogin, IUser } from "@/types";
 import { yaPasoLaBienvenida } from "@/helpers";
 import { useQueryClient, QueryClient } from '@tanstack/react-query';
 
@@ -25,7 +25,7 @@ interface Props {
   children: JSX.Element | JSX.Element[];
 }
 
-const initialState = {
+const initialState: IResponseLogin["data"] = {
   usuario: {
     id: -1,
     nombre: "",
@@ -46,6 +46,10 @@ const initialState = {
     fechaRegistro: "",
     colegio: "",
     anioEgresoBachiller: -1,
+    boletaId: -1,
+    carreras: []
+    ,
+    irregular: false
   },
   token: "",
 };
@@ -56,48 +60,24 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [userAuth, setUserAuth] =
     useState<IResponseLogin["data"]>(initialState);
 
-  const getUserAuthStorage = async () => {
-    const data = await AsyncStorage.getItem("usuario");
-
-    if (data) {
-      setUserAuth(JSON.parse(data));
-      setStatus("autenticado");
-      return;
-    }
-    setStatus("no-autenticado");
-
-    /*   setUserAuth({
-      token: 'awdawd',
-      usuario: {
-        nombre: 'DANTE',
-        apellidoMaterno: 'Tarifga',
-        apellidoPaterno: 'Arias',
-        documentoIdentidad: '123545',
-      },
-    });
-
-    setStatus('autenticado'); */
-  };
-
   const verificarScreenBienvenida = async () => {
     if (await yaPasoLaBienvenida()) setMostrarBtnBackLogin(false);
   };
 
   const login = async (user: IResponseLogin["data"]) => {
     setUserAuth(user);
+
     setStatus("autenticado");
   };
 
   const logout = async () => {
+    setStatus("no-autenticado")
+    setUserAuth(initialState);
+
     await AsyncStorage.removeItem("usuario");
     AsyncStorage.removeItem("usuario").then((x) => {
-      console.log("DELETE INFP USER ", x)
+      //console.log("DELETE INFP USER ", x)
     })
-
-    const queryClient = useQueryClient()
-    await queryClient.invalidateQueries()
-    setUserAuth(initialState);
-    setStatus("no-autenticado")
 
   };
 
@@ -110,10 +90,10 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     })
   }
 
-
   useEffect(() => {
     verificarScreenBienvenida();
   }, []);
+
   return (
     <AuthContext.Provider
       value={{

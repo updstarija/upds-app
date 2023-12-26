@@ -27,7 +27,7 @@ const RedesSociales = () => {
 
     return (
       <FlashList
-        data={[...youtubeQuery.data.items, "VER MAS"]}
+        data={[...youtubeQuery.data.items, "VER MÁS"]}
         keyExtractor={(item) =>
           typeof item === "string" ? item : item.id.videoId
         }
@@ -68,7 +68,7 @@ const RedesSociales = () => {
 
     return (
       <FlashList
-        data={[...facebookQuery.data.data, "VER MAS"]}
+        data={[...facebookQuery.data.data, "VER MÁS"]}
         keyExtractor={(item) => (typeof item === "string" ? item : item.id)}
         estimatedItemSize={250}
         contentContainerStyle={{ padding: 10 }}
@@ -104,7 +104,7 @@ const RedesSociales = () => {
 
     return (
       <FlashList
-        data={[...instagramQuery.data.data, "VER MAS"]}
+        data={[...instagramQuery.data.data, "VER MÁS"]}
         estimatedItemSize={250}
         keyExtractor={(item) => (typeof item === "string" ? item : item.id)}
         contentContainerStyle={{ padding: 10 }}
@@ -239,7 +239,7 @@ ${url}
 
       await Share.open(shareOptions);
     } catch (error) {
-      console.log("Error al compartir la imagen:", error);
+      //console.log("Error al compartir la imagen:", error);
     }
   };
 
@@ -307,7 +307,7 @@ const VerMasCard: React.FC<{ url: string }> = ({ url }) => {
         </View>
 
         <Texto className="dark:text-white mt-4 text-xl" weight="Bold">
-          Ver Mas
+          Ver Más
         </Texto>
       </View>
     </TouchableOpacity>

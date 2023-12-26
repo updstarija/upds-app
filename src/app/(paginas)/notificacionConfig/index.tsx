@@ -23,11 +23,11 @@ const Notificaciones = () => {
     const toggleNotifications = async (x: boolean) => {
         /*  if (x) {
              const result = await messagin().registerDeviceForRemoteMessages()
-             console.log(result)
+             //console.log(result)
              return
          }
          const result = await messagin().unregisterDeviceForRemoteMessages()
-         console.log(result) */
+         //console.log(result) */
     }
     useEffect(() => {
         verificarNotificaciones()

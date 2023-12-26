@@ -5,9 +5,10 @@ import { useThemeColor } from "@/hooks";
 interface Props {
   iconName: string;
   textButton: string;
+  loader?: JSX.Element | JSX.Element[];
 }
 
-export const IconLabel: React.FC<Props> = ({ iconName, textButton }) => {
+export const IconLabel: React.FC<Props> = ({ iconName, textButton, loader }) => {
   const isDarkMode = useThemeColor() === "dark"
   return (
     <>
@@ -31,8 +32,13 @@ export const IconLabel: React.FC<Props> = ({ iconName, textButton }) => {
           />
         }
 
+        {loader
+          ?
+          <>{loader}</>
+          :
 
-        <Text className="text-black dark:text-white text-xs">{textButton}</Text>
+          <Text className="text-black dark:text-white text-xs">{textButton}</Text>
+        }
       </View>
     </>
   );

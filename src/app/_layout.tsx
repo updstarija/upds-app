@@ -18,8 +18,7 @@ import { toastConfig } from "@/config";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { Texto } from "@/ui";
 import { AntDesign } from "@expo/vector-icons";
-
-
+import { ProyeccionesProvider } from "@/context/ProyeccionesContext";
 
 const queryClient = new QueryClient();
 
@@ -58,13 +57,12 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
-
 interface ITourStep extends IStep {
-  tourKey: string
+  tourKey: string;
 }
 
 interface TourProps extends TooltipProps {
-  currentStep: ITourStep
+  currentStep: ITourStep;
 }
 
 function RootLayoutNav() {
@@ -72,287 +70,311 @@ function RootLayoutNav() {
   const isIos = Platform.OS == "ios";
 
   const onSkipOrFinishTutorial = async (tooltipProps: TourProps) => {
-    if (!tooltipProps.handleStop) return
-    tooltipProps.handleStop()
+    if (!tooltipProps.handleStop) return;
 
-    await AsyncStorage.setItem(tooltipProps.currentStep.tourKey, "true");
-  }
+    tooltipProps.handleStop();
+    AsyncStorage.setItem(tooltipProps.currentStep.tourKey, "true");
+  };
 
   const tooltipComponentTour = (tooltipProps: TourProps) => {
-    const { isLastStep, isFirstStep, handleNext, handlePrev, handleStop, currentStep } = tooltipProps
+    const {
+      isLastStep,
+      isFirstStep,
+      handleNext,
+      handlePrev,
+      handleStop,
+      currentStep,
+    } = tooltipProps;
 
     return (
       <View className="bg-primario dark:bg-secondary-dark p-2 rounded-xl w-72">
         <View className="p-2">
-          {typeof currentStep?.text == "string"
-            ?
-            <Texto className="text-white mb-2 text-center mt-2">{tooltipProps.currentStep.text}</Texto>
-            :
-            <>
-              {currentStep?.text}
-            </>
-          }
+          {typeof currentStep?.text == "string" ? (
+            <Texto className="text-white mb-2 text-center mt-2">
+              {tooltipProps.currentStep.text}
+            </Texto>
+          ) : (
+            <>{currentStep?.text}</>
+          )}
         </View>
-
 
         <View className="flex-row gap-4 justify-evenly">
           {/* {<TouchableOpacity onPress={() => handleStop()} className="p-2">
             <Texto className="text-white">Saltar</Texto>
           </TouchableOpacity>} */}
 
-          {!isFirstStep && <TouchableOpacity onPress={tooltipProps.handlePrev} className="p-4">
-            <Texto className="text-white">Anterior</Texto>
-          </TouchableOpacity>}
+          {!isFirstStep && (
+            <TouchableOpacity onPress={handlePrev} className="p-4">
+              <Texto className="text-white">Anterior</Texto>
+            </TouchableOpacity>
+          )}
 
-          {!isLastStep ? <TouchableOpacity onPress={tooltipProps.handleNext} className="p-4">
-            <Texto className="text-white">Siguiente</Texto>
-          </TouchableOpacity>
-            :
-            <TouchableOpacity onPress={() => onSkipOrFinishTutorial(tooltipProps)} className="p-4">
+          {!isLastStep ? (
+            <TouchableOpacity onPress={handleNext} className="p-4">
+              <Texto className="text-white">Siguiente</Texto>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => onSkipOrFinishTutorial(tooltipProps)}
+              className="p-4"
+            >
               <Texto className="text-white">Terminar</Texto>
-            </TouchableOpacity>}
+            </TouchableOpacity>
+          )}
         </View>
-
       </View>
-    )
-  }
+    );
+  };
 
   return (
-    <TourGuideProvider
-      preventOutsideInteraction
-      borderRadius={16}
-      // {...{ borderRadius: 16 }}
-      backdropColor="#000000b3"
-      //backdropColor="rgba(0,0,0,0.4)"
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <CarreraProvider>
+          <ProyeccionesProvider>
+            <AutocompleteDropdownContextProvider>
+              <BottomSheetModalProvider>
+                <TourGuideProvider
+                  preventOutsideInteraction
+                  borderRadius={16}
+                  // {...{ borderRadius: 16 }}
+                  tooltipStyle={{
+                    zIndex: 99999999,
+                  }}
+                  backdropColor="#000000b3"
+                  //backdropColor="rgba(0,0,0,0.4)"
+                  verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
+                  tooltipComponent={(props) =>
+                    tooltipComponentTour(props as TourProps)
+                  }
+                >
+                  <ThemeProvider>
+                    <Stack>
+                      <Stack.Screen
+                        name="index"
+                        options={{ headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="auth/login"
+                        options={{ headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="(drawer)"
+                        options={{ headerShown: false }}
+                      />
+                      <Stack.Screen
+                        name="bienvenida"
+                        options={{ headerShown: false }}
+                      />
 
-      verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
-      tooltipComponent={(props) => tooltipComponentTour(props as TourProps)}
-    >
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <CarreraProvider>
-            <BottomSheetModalProvider>
-              <ThemeProvider>
-                <AutocompleteDropdownContextProvider>
+                      <Stack.Screen
+                        name="(paginas)/carrera/[id]"
+                        //@ts-ignore
+                        options={configStack("Carrera")}
+                      />
 
+                      <Stack.Screen
+                        name="(paginas)/notificacion"
+                        //@ts-ignore
+                        options={{ ...configStack("Notificaciones") }}
+                      />
 
-                  <Stack>
-                    <Stack.Screen
-                      name="index"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="auth/login"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="(drawer)"
-                      options={{ headerShown: false }}
-                    />
-                    <Stack.Screen
-                      name="bienvenida"
-                      options={{ headerShown: false }}
-                    />
+                      <Stack.Screen
+                        name="(paginas)/perfil"
+                        //@ts-ignore
+                        options={{ ...configStack("Perfil") }}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/carrera/[id]"
-                      //@ts-ignore
-                      options={configStack("Carrera")}
-                    />
+                      <Stack.Screen
+                        name="(paginas)/about/index"
+                        //@ts-ignore
+                        options={{ ...configStack("Acerca de la aplicacion") }}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/notificacion"
-                      //@ts-ignore
-                      options={{ ...configStack("Notificaciones") }}
-                    />
+                      <Stack.Screen
+                        name="(paginas)/politica/index"
+                        //@ts-ignore
+                        options={{ ...configStack("Politica de Privacidad") }}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/perfil"
-                      //@ts-ignore
-                      options={{ ...configStack("Perfil") }}
-                    />
+                      <Stack.Screen
+                        name="(paginas)/notificacionConfig/index"
+                        //@ts-ignore
+                        options={{ ...configStack("Ajuste de Notificaciones") }}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/about/index"
-                      //@ts-ignore
-                      options={{ ...configStack("Acerca de la aplicacion") }}
-                    />
+                      <Stack.Screen
+                        name="(paginas)/terminos/index"
+                        //@ts-ignore
+                        options={{ ...configStack("Terminos de Uso") }}
+                      />
+                      <Stack.Screen
+                        name="(paginas)/tema/index"
+                        //@ts-ignore
+                        options={{ ...configStack("Ajustes de Tema") }}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/politica/index"
-                      //@ts-ignore
-                      options={{ ...configStack("Politica de Privacidad") }}
-                    />
+                      <Stack.Screen
+                        name="(paginas)/tutorialConfig/index"
+                        //@ts-ignore
+                        options={{ ...configStack("Ajustes de Tutoriales") }}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/notificacionConfig/index"
-                      //@ts-ignore
-                      options={{ ...configStack("Ajuste de Notificaciones") }}
-                    />
+                      <Stack.Screen
+                        name="(paginas)/calendario-academico/index"
+                        //@ts-ignore
+                        options={{ ...configStack("Calendario Académico") }}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/terminos/index"
-                      //@ts-ignore
-                      options={{ ...configStack("Terminos de Uso") }}
-                    />
-                    <Stack.Screen
-                      name="(paginas)/tema/index"
-                      //@ts-ignore
-                      options={{ ...configStack("Ajustes de Tema") }}
-                    />
+                      <Stack.Screen
+                        name="(paginas)/tutorial/index"
+                        //@ts-ignore
+                        options={{ ...configStack("Tutoriales") }}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/tutorialConfig/index"
-                      //@ts-ignore
-                      options={{ ...configStack("Ajustes de Tutoriales") }}
-                    />
+                      <Stack.Screen
+                        name="(paginas)/faq/index"
+                        //@ts-ignore
+                        options={{ ...configStack("Preguntas Frecuentes") }}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/calendario-academico/index"
-                      //@ts-ignore
-                      options={{ ...configStack("Calendario Academico") }}
-                    />
+                      <Stack.Screen
+                        name="(home)/redes-sociales"
+                        //@ts-ignore
+                        options={configStack("Redes Sociales")}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/tutorial/index"
-                      //@ts-ignore
-                      options={{ ...configStack("Tutoriales") }}
-                    />
+                      <Stack.Screen
+                        name="(home)/comunicados/index"
+                        //@ts-ignore
+                        options={configStack("Comunicados")}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas)/faq/index"
-                      //@ts-ignore
-                      options={{ ...configStack("Preguntas Frecuentes") }}
-                    />
+                      <Stack.Screen
+                        name="(home)/comunicados/[id]"
+                        //@ts-ignore
+                        options={{
+                          ...configStack("Comunicado"),
+                          headerShown: false,
+                        }}
+                      />
 
-                    <Stack.Screen
-                      name="(home)/redes-sociales"
-                      //@ts-ignore
-                      options={configStack("Redes Sociales")}
-                    />
+                      {/* FIX: NO DISPONINLE */}
+                      <Stack.Screen
+                        name="(home)/upds-responde"
+                        //@ts-ignore
+                        options={configStack("UPDS Responde")}
+                      />
 
-                    <Stack.Screen
-                      name="(home)/comunicados/index"
-                      //@ts-ignore
-                      options={configStack("Comunicados")}
-                    />
+                      <Stack.Screen
+                        name="(home)/chat"
+                        //@ts-ignore
+                        options={configStack("UPDS Responde")}
+                      />
 
-                    <Stack.Screen
-                      name="(home)/comunicados/[id]"
-                      //@ts-ignore
-                      options={configStack("Comunicado")}
-                    />
+                      <Stack.Screen
+                        name="(home)/test-vocacional"
+                        //@ts-ignore
+                        options={configStack("Test Vocacional")}
+                      />
 
-                    {/* FIX: NO DISPONINLE */}
-                    <Stack.Screen
-                      name="(home)/upds-responde"
-                      //@ts-ignore
-                      options={configStack("UPDS Responde")}
-                    />
+                      <Stack.Screen
+                        name="(home)/ubicacion"
+                        //@ts-ignore
+                        options={configStack("Ubicación")}
+                      />
 
-                    <Stack.Screen
-                      name="(home)/chat"
-                      //@ts-ignore
-                      options={configStack("Chat UPDS")}
-                    />
+                      <Stack.Screen
+                        name="(estudiante)/ayuda"
+                        //@ts-ignore
+                        options={configStack("AYUDA")}
+                      />
 
-                    <Stack.Screen
-                      name="(home)/test-vocacional"
-                      //@ts-ignore
-                      options={configStack("Test Vocacional")}
-                    />
+                      <Stack.Screen
+                        name="(estudiante)/servicios"
+                        //@ts-ignore
+                        options={configStack("Registro y Pagos")}
+                      />
 
-                    <Stack.Screen
-                      name="(home)/ubicacion"
-                      //@ts-ignore
-                      options={configStack("Ubicacion")}
-                    />
+                      <Stack.Screen
+                        name="(estudiante)/proyecciones"
+                        //@ts-ignore
+                        options={configStack("Proyecciones")}
+                      />
 
-                    <Stack.Screen
-                      name="(estudiante)/ayuda"
-                      //@ts-ignore
-                      options={configStack("AYUDA")}
-                    />
+                      {/*              <Stack.Screen
+                        name="(estudiante)/proyecciones"
+                        //@ts-ignore
+                        options={configStack("Proyecciones")}
+                      />
+ */}
+                      <Stack.Screen
+                        name="(estudiante)/historico-materias"
+                        //@ts-ignore
+                        options={configStack("Histórico de Materias")}
+                      />
 
-                    <Stack.Screen
-                      name="(estudiante)/servicios"
-                      //@ts-ignore
-                      options={configStack("Registro y Pagos")}
-                    />
+                      <Stack.Screen
+                        name="(estudiante)/registro-materia"
+                        //@ts-ignore
+                        options={configStack("Registro de Materia")}
+                      />
 
-                    <Stack.Screen
-                      name="(estudiante)/proyecciones"
-                      //@ts-ignore
-                      options={configStack("Proyecciones")}
-                    />
+                      <Stack.Screen
+                        name="(paginas-externas)/moodle/index"
+                        //@ts-ignore
+                        options={configStack("Plataforma Moodle")}
+                      />
 
-                    <Stack.Screen
-                      name="(estudiante)/proyecciones2"
-                      //@ts-ignore
-                      options={configStack("Proyecciones")}
-                    />
+                      <Stack.Screen
+                        name="(paginas-externas)/multipagos"
+                        //@ts-ignore
+                        options={configStack("Multipagos")}
+                      />
 
-                    <Stack.Screen
-                      name="(estudiante)/historico-materias"
-                      //@ts-ignore
-                      options={configStack("Historico de Materias")}
-                    />
+                      <Stack.Screen
+                        name="(paginas-externas)/moodle/[id]"
+                        //@ts-ignore
+                        options={configStack("Moodle Aula")}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas-externas)/moodle/index"
-                      //@ts-ignore
-                      options={configStack("Plataforma Moodle")}
-                    />
+                      <Stack.Screen
+                        name="(paginas-externas)/evaluacion/index"
+                        //@ts-ignore
+                        options={configStack("Plataforma Moodle")}
+                      />
+                      <Stack.Screen
+                        name="(paginas-externas)/evaluacion/[id]"
+                        //@ts-ignore
+                        options={configStack("Evaluacion Docente")}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas-externas)/multipagos"
-                      //@ts-ignore
-                      options={configStack("Multipagos")}
-                    />
+                      <Stack.Screen
+                        name="(paginas-externas)/updsnet"
+                        //@ts-ignore
+                        options={configStack("UpdsNet")}
+                      />
 
-                    <Stack.Screen
-                      name="(paginas-externas)/moodle/[id]"
-                      //@ts-ignore
-                      options={configStack("Moodle Aula")}
-                    />
-
-                    <Stack.Screen
-                      name="(paginas-externas)/evaluacion/index"
-                      //@ts-ignore
-                      options={configStack("Plataforma Moodle")}
-                    />
-                    <Stack.Screen
-                      name="(paginas-externas)/evaluacion/[id]"
-                      //@ts-ignore
-                      options={configStack("Evaluacion Docente")}
-                    />
-
-                    <Stack.Screen
-                      name="(paginas-externas)/updsnet"
-                      //@ts-ignore
-                      options={configStack("UpdsNet")}
-                    />
-
-                    {/*     <Stack.Screen
+                      {/*     <Stack.Screen
                     name="(paginas-externas)/ubicacion"
                     //@ts-ignore
                     options={configStack('Ubicacion')}
                   />
  */}
 
-                    <Stack.Screen
-                      name="(paginas-externas)/biblioteca"
-                      //@ts-ignore
-                      options={configStack("Biblioteca")}
-                    />
-                  </Stack>
-                </AutocompleteDropdownContextProvider>
-                <Toast config={toastConfig} />
-              </ThemeProvider>
-            </BottomSheetModalProvider>
-          </CarreraProvider>
-        </AuthProvider>
-      </QueryClientProvider>
-    </TourGuideProvider>
+                      <Stack.Screen
+                        name="(paginas-externas)/biblioteca"
+                        //@ts-ignore
+                        options={configStack("Biblioteca")}
+                      />
+                    </Stack>
+                  </ThemeProvider>
+                </TourGuideProvider>
+              </BottomSheetModalProvider>
+            </AutocompleteDropdownContextProvider>
+          </ProyeccionesProvider>
+        </CarreraProvider>
+      </AuthProvider>
+      <Toast config={toastConfig} />
+    </QueryClientProvider>
   );
 }

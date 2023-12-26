@@ -8,7 +8,7 @@ const data = [
     {
         id: '1',
         title: 'UPDS NET',
-        description: 'Registra tu materia.',
+        description: 'Registra tu materia',
         icon: "language",
         to: '/updsnet',
         link: false,
@@ -16,7 +16,7 @@ const data = [
     {
         id: '2',
         title: 'MULTIPAGOS',
-        description: 'Realiza tus pagos de manera rápida y sencilla',
+        description: 'Pagos de servicio',
         icon: "dollar",
         to: 'https://multipago.com/service/UPDS/first',
         // to: '/multipagos',

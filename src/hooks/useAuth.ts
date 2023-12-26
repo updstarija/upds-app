@@ -17,7 +17,6 @@ export const useAuth = () => {
                 method: "POST"
             }).then((x) => x.json())
                 .then(x => {
-                    console.log((x));
                     console.log('--------------------------------------------------------')
                     console.log('SE COMPLETO EL FETCH')
                     console.log('--------------------------------------------------------')
@@ -26,8 +25,6 @@ export const useAuth = () => {
         } catch {
             console.error('HUBO UN ERROR')
         }
-
-        console.log("XD")
 
         try {
             const { data } = await updsApi.post<IResponseLogin>("/auth/login", dataUser)
@@ -39,7 +36,7 @@ export const useAuth = () => {
 
             Toast.show({
                 type: "success",
-                text1: "Bien",
+                text1: "Excelente",
                 text2: "Has iniciado sesion correctamente :)"
             })
 
@@ -61,13 +58,23 @@ export const useAuth = () => {
     const refreshLogin = async () => {
         setIsLoading(true)
         try {
+
+            const dataTest = fetch("https://tarija.upds.edu.bo/ApiProyecciones/api/auth/perfil", {
+                method: "GET"
+            }).then((x) => x.json())
+                .then(x => {
+                    console.log('--------------------------------------------------------')
+                    console.log('SE COMPLETO EL FETCH')
+                    console.log('--------------------------------------------------------')
+                }).catch((x) => console.log("ERROR FETCH TEST"))
+
             const { data } = await updsApi<IResponseLogin>("/auth/perfil")
 
             await AsyncStorage.setItem('usuario', JSON.stringify(data.data));
 
             Toast.show({
                 type: "success",
-                text1: "Bien",
+                text1: "Excelente",
                 text2: "Bienvenido nuevamente :)"
             })
 

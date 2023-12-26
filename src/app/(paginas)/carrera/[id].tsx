@@ -20,10 +20,8 @@ const EvaluacionDocente = () => {
     const handleBackButtonPress = () => {
         try {
             webViewRef.current?.goBack()
-            console.log('xd');
             return true
         } catch (err) {
-            console.log("[handleBackButtonPress] Error : ", err)
             return false
         }
     }
@@ -81,7 +79,7 @@ xd[0].parentElement.parentElement.parentElement.parentElement.remove()
                         source={{ uri: `https://www.upds.edu.bo/carrera/${id}` }}
                         onMessage={() => { }}
                         onNavigationStateChange={(x) => {
-                            console.log(x);
+                            //  console.log(x);
                         }}
                     />
                 </View>

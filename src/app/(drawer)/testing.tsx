@@ -1,96 +1,75 @@
-import { View, Text } from 'react-native'
-import React from 'react'
-import { useFaq } from '@/hooks'
+import { View, Button } from 'react-native';
+import React, { useMemo, useRef, useState } from 'react';
+import {
+    BottomSheetModal,
+    BottomSheetModalProvider,
+    BottomSheetBackdrop,
+    BottomSheetTextInput,
+} from '@gorhom/bottom-sheet';
+import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { Texto } from '@/ui';
 
-const Testing = () => {
-    const { detalleGrupoMateriaQuery } = useFaq()
-
-    console.log(detalleGrupoMateriaQuery.data)
+const InputComponent = () => {
+    const [title, setTitle] = useState('');
     return (
-        <View>
-            <Text>{detalleGrupoMateriaQuery.isLoading ? "ESTA CARGANDO" : "NO ESTA CARGANDO"}</Text>
-            <Text>{detalleGrupoMateriaQuery.isFetching ? "ESTA FETCHIN" : "NO ESTA FETCHIN"}</Text>
-            <Text>{detalleGrupoMateriaQuery.isError ? "ESTA ERROR" : "NO ESTA ERROR"}</Text>
-
-            {detalleGrupoMateriaQuery.data?.map((x) => (
-                <Text>{x.descripcion}</Text>
-            ))}
-        </View>
+        <BottomSheetTextInput
+            style={{
+                borderBottomWidth: 1,
+            }}
+            placeholder="Title"
+            value={title}
+            onChangeText={(text) => setTitle(text)}
+        />
     )
 }
 
-export default Testing
-
-
-/* import { View, Text, ScrollView } from 'react-native';
-import { DetallePlanSemestre } from '@/views/historico-materias';
-import { useCarreraContext, useSemestres } from '@/hooks';
-import { useState } from 'react';
-import Spinner from '@/components/Spinner';
-import { SelectCarrera } from '@/views/SelectCarrera';
-import { FlatList } from 'react-native-gesture-handler';
-import { Texto } from '@/ui';
-import { DetalleMateriasSemestre } from '@/views/proyecciones';
-import { DetallePlanSemestreV2 } from '@/views/historico-materias/DetallePlanSemestreV2';
-
-const HistoricoMaterias = () => {
-    const mockup = [
-        {
-            id: 35,
-            nombre: 'awdawd'
-        },
-        {
-            id: 335,
-            nombre: 'awzzzdawd'
-        },
-        {
-            id: 3335,
-            nombre: 'awadawddawd'
-        }
-    ]
-
-
-    const [semestreOpen, setSemestreOpen] = useState(-1)
-
-    const onChangeSemestre = (val: number) => {
-        if (val === semestreOpen) {
-            setSemestreOpen(-1);
-            return;
-        }
-        setSemestreOpen(val);
-    };
-
-
+const Index = () => {
+    const snapPoints = useMemo(() => ['25%', '60%', '80%'], []);
+    const itemRef = useRef<BottomSheetModalMethods>(null);
     return (
         <>
-            <FlatList
-                data={null}
-                ListHeaderComponent={
-                    <>
-                        <View style={{ zIndex: 1 }}><Texto>HOLA</Texto></View>
-                        <FlatList
-                            data={mockup}
-                            showsVerticalScrollIndicator={false}
-                            renderItem={(item) => (
-                                <DetallePlanSemestreV2
-                                    semestre={item.item}
-                                    active={item.item.id === semestreOpen}
-                                    onChangeSemestre={onChangeSemestre}
-
-                                />
-                            )}
-                        />
-                    </>
-                }
-                renderItem={null}
-            />
+            <View
+                style={{
+                    flex: 1,
+                }}>
+                <Button onPress={() => itemRef.current?.present()} title="open modal" />
+            </View>
+            <BottomSheetModal
+                snapPoints={snapPoints}
+                index={1}
+                backdropComponent={BottomSheetBackdrop}
+                keyboardBehavior="interactive"
+                keyboardBlurBehavior="restore"
+                ref={itemRef}>
+                <View
+                    style={{
+                        paddingHorizontal: 20,
+                    }}>
+                    <InputComponent />
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
+                </View>
+            </BottomSheetModal>
         </>
     );
 };
 
-export default HistoricoMaterias; */
-
-
+export default Index;
 /* 
 
 import { View, Text, Button, TextInput, Alert, Pressable, StyleSheet, Platform } from "react-native";
@@ -190,7 +169,7 @@ const Busqueda = () => {
         bottomSheetModalRef.current?.present();
     }, []);
     const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
+        //console.log('handleSheetChanges', index);
     }, []);
 
     const renderBackdrop = useCallback(
@@ -282,8 +261,8 @@ const Busqueda = () => {
                 enableDynamicSizing
                 enablePanDownToClose
                 backdropComponent={renderBackdrop}
-                onDismiss={() => console.log('dismiss')}
-                onChange={() => console.log('change')}
+                //onDismiss={() => console.log('dismiss')}
+                //onChange={() => console.log('change')}
 
                 topInset={top}
                 keyboardBehavior={Platform.OS === 'android' ? 'extend' : 'interactive'}

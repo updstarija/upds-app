@@ -1,5 +1,4 @@
 import { View, Image, ScrollView, Pressable } from 'react-native'
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 import { useThemeColor } from '@/hooks'
 import { openBrowserAsync } from 'expo-web-browser'
 import { Texto } from '@/ui'
@@ -27,7 +26,7 @@ const Ubicacion = () => {
                     )}
                 </View>
 
-                <Texto className='text-center p-4 text-2xl dark:text-white' weight='Bold'>NUESTRA UBICACION</Texto>
+                <Texto className='text-center p-4 text-2xl dark:text-white' weight='Bold'>NUESTRA UBICACIÓN</Texto>
                 {/*   <MapView provider={PROVIDER_GOOGLE}
                     style={{ width: "100%", height: 500 }} /> */}
                 {/* <MapUpds /> */}
