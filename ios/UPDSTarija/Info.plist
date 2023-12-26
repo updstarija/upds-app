@@ -37,12 +37,6 @@
           <string>com.googleusercontent.apps.872888782411-elsdt9c0b78voiq5b1jbhsp9emo4fjk7</string>
         </array>
       </dict>
-      <dict>
-        <key>CFBundleURLSchemes</key>
-        <array>
-          <string>exp+upds-tarija</string>
-        </array>
-      </dict>
     </array>
     <key>CFBundleVersion</key>
     <string>15</string>
@@ -70,11 +64,7 @@
     <key>NSUserActivityTypes</key>
     <array>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
-      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
-      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
     </array>
-    <key>UIBackgroundModes</key>
-    <array/>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

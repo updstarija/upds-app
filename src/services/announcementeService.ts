@@ -1,6 +1,4 @@
-import firestore, {
-  Filter,
-} from "@react-native-firebase/firestore";
+import firestore from "@react-native-firebase/firestore";
 import { INotificacionNotice } from "@/types";
 import { IAnnouncement } from "@/types/announcement";
 import { QueryFunctionContext } from "@tanstack/react-query";
@@ -20,6 +18,7 @@ type QueryContext = QueryFunctionContext<(string | GetAllDataProps)[], any>;
 
 export const getAllData = async (context: QueryContext) => {
   try {
+    const Filter = firestore.Filter
     const { pageParam = undefined, queryKey } = context;
     const [, , args] = queryKey;
     const { category, limitResults, q } = args as GetAllDataProps;
@@ -31,7 +30,7 @@ export const getAllData = async (context: QueryContext) => {
 
 
     if (category) {
-      query = query.where(Filter.and(Filter("category", "==", category), "date", "<=", new Date()))
+      query = query.where(Filter("category", "==", category))
     }
 
     //query = query.where("date", "<=", new Date())
