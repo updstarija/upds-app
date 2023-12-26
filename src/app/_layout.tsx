@@ -20,8 +20,6 @@ import { Texto } from "@/ui";
 import { AntDesign } from "@expo/vector-icons";
 import { ProyeccionesProvider } from "@/context/ProyeccionesContext";
 
-
-
 const queryClient = new QueryClient();
 
 export { ErrorBoundary } from "expo-router";
@@ -59,13 +57,12 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 
-
 interface ITourStep extends IStep {
-  tourKey: string
+  tourKey: string;
 }
 
 interface TourProps extends TooltipProps {
-  currentStep: ITourStep
+  currentStep: ITourStep;
 }
 
 function RootLayoutNav() {
@@ -73,53 +70,63 @@ function RootLayoutNav() {
   const isIos = Platform.OS == "ios";
 
   const onSkipOrFinishTutorial = async (tooltipProps: TourProps) => {
-    if (!tooltipProps.handleStop) return
+    if (!tooltipProps.handleStop) return;
 
-    tooltipProps.handleStop()
+    tooltipProps.handleStop();
     AsyncStorage.setItem(tooltipProps.currentStep.tourKey, "true");
-  }
+  };
 
   const tooltipComponentTour = (tooltipProps: TourProps) => {
-    const { isLastStep, isFirstStep, handleNext, handlePrev, handleStop, currentStep } = tooltipProps
+    const {
+      isLastStep,
+      isFirstStep,
+      handleNext,
+      handlePrev,
+      handleStop,
+      currentStep,
+    } = tooltipProps;
 
     return (
       <View className="bg-primario dark:bg-secondary-dark p-2 rounded-xl w-72">
         <View className="p-2">
-          {typeof currentStep?.text == "string"
-            ?
-            <Texto className="text-white mb-2 text-center mt-2">{tooltipProps.currentStep.text}</Texto>
-            :
-            <>
-              {currentStep?.text}
-            </>
-          }
+          {typeof currentStep?.text == "string" ? (
+            <Texto className="text-white mb-2 text-center mt-2">
+              {tooltipProps.currentStep.text}
+            </Texto>
+          ) : (
+            <>{currentStep?.text}</>
+          )}
         </View>
-
 
         <View className="flex-row gap-4 justify-evenly">
           {/* {<TouchableOpacity onPress={() => handleStop()} className="p-2">
             <Texto className="text-white">Saltar</Texto>
           </TouchableOpacity>} */}
 
-          {!isFirstStep && <TouchableOpacity onPress={handlePrev} className="p-4">
-            <Texto className="text-white">Anterior</Texto>
-          </TouchableOpacity>}
+          {!isFirstStep && (
+            <TouchableOpacity onPress={handlePrev} className="p-4">
+              <Texto className="text-white">Anterior</Texto>
+            </TouchableOpacity>
+          )}
 
-          {!isLastStep ? <TouchableOpacity onPress={handleNext} className="p-4">
-            <Texto className="text-white">Siguiente</Texto>
-          </TouchableOpacity>
-            :
-            <TouchableOpacity onPress={() => onSkipOrFinishTutorial(tooltipProps)} className="p-4">
+          {!isLastStep ? (
+            <TouchableOpacity onPress={handleNext} className="p-4">
+              <Texto className="text-white">Siguiente</Texto>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => onSkipOrFinishTutorial(tooltipProps)}
+              className="p-4"
+            >
               <Texto className="text-white">Terminar</Texto>
-            </TouchableOpacity>}
+            </TouchableOpacity>
+          )}
         </View>
-
       </View>
-    )
-  }
+    );
+  };
 
   return (
-
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <CarreraProvider>
@@ -130,20 +137,17 @@ function RootLayoutNav() {
                   preventOutsideInteraction
                   borderRadius={16}
                   // {...{ borderRadius: 16 }}
-                  tooltipStyle={
-                    {
-                      zIndex: 99999999
-                    }
-                  }
+                  tooltipStyle={{
+                    zIndex: 99999999,
+                  }}
                   backdropColor="#000000b3"
                   //backdropColor="rgba(0,0,0,0.4)"
                   verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
-                  tooltipComponent={(props) => tooltipComponentTour(props as TourProps)}
+                  tooltipComponent={(props) =>
+                    tooltipComponentTour(props as TourProps)
+                  }
                 >
                   <ThemeProvider>
-
-
-
                     <Stack>
                       <Stack.Screen
                         name="index"
@@ -248,7 +252,10 @@ function RootLayoutNav() {
                       <Stack.Screen
                         name="(home)/comunicados/[id]"
                         //@ts-ignore
-                        options={configStack("Comunicado")}
+                        options={{
+                          ...configStack("Comunicado"),
+                          headerShown: false,
+                        }}
                       />
 
                       {/* FIX: NO DISPONINLE */}
