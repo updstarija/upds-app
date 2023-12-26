@@ -237,29 +237,31 @@ function RootLayoutNav() {
                         options={{ ...configStack("Preguntas Frecuentes") }}
                       />
 
-                      <Stack.Screen
+                      {/*    <Stack.Screen
                         name="(home)/redes-sociales"
                         //@ts-ignore
                         options={configStack("Redes Sociales")}
-                      />
+                      /> */}
 
                       <Stack.Screen
-                        name="(home)/comunicados/index"
+                        name="(home)"
                         //@ts-ignore
-                        options={configStack("Comunicados")}
+                        options={{
+                          headerShown: false
+                        }}
                       />
 
-                      <Stack.Screen
+                      {/*  <Stack.Screen
                         name="(home)/comunicados/[id]"
                         //@ts-ignore
                         options={{
                           ...configStack("Comunicado"),
                           headerShown: false,
                         }}
-                      />
+                      /> */}
 
                       {/* FIX: NO DISPONINLE */}
-                      <Stack.Screen
+                      {/*  <Stack.Screen
                         name="(home)/upds-responde"
                         //@ts-ignore
                         options={configStack("UPDS Responde")}
@@ -281,7 +283,7 @@ function RootLayoutNav() {
                         name="(home)/ubicacion"
                         //@ts-ignore
                         options={configStack("Ubicación")}
-                      />
+                      /> */}
 
                       <Stack.Screen
                         name="(estudiante)/ayuda"

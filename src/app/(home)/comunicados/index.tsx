@@ -146,11 +146,11 @@ const Comunicados = () => {
           }
           ListHeaderComponentStyle={{ marginTop: 5 }}
           numColumns={width > 1000 ? 2 : 1}
-          onEndReachedThreshold={0.1}
+          onEndReachedThreshold={0.8}
           onEndReached={announcementsQuery.fetchNextPage}
           //   keyExtractor={(item) => item.id}
           ListFooterComponent={
-            announcementsQuery.isLoading ? (
+            announcementsQuery.isFetchingNextPage || announcementsQuery.isLoading ? (
               <View className="flex-col gap-2">
                 {Array(3)
                   .fill(0)

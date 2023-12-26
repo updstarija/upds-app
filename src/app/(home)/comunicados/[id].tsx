@@ -246,9 +246,8 @@ export const NoticeDetail = () => {
               </View>
             ) : (
               <Texto
-                className={`text-${
-                  title.length > 30 ? "xl" : "xl"
-                } uppercase text-white text-center`}
+                className={`text-${title.length > 30 ? "xl" : "xl"
+                  } uppercase text-white text-center`}
                 weight="Bold"
               >
                 {title}
@@ -294,6 +293,7 @@ export const NoticeDetail = () => {
                 baseStyle={{ color: isDark ? "#FFF" : "#000" }}
                 contentWidth={width}
                 source={{ html: description }}
+                ignoredDomTags={['iframe']}
               />
             )}
           </View>

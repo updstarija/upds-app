@@ -4,6 +4,9 @@
     "slug": "upds-tarija",
     "version": "1.1.3",
     "orientation": "default",
+    "notification": {
+      "icon": "./assets/images/app/icon.png"
+    },
     "icon": "./assets/images/app/icon.png",
     "scheme": "updstarija",
     "userInterfaceStyle": "automatic",

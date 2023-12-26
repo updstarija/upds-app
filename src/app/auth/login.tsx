@@ -252,6 +252,10 @@ const Login = () => {
     navigation.navigate("(drawer)");
   };
 
+  const test = () => {
+    router.push("/(home)/comunicados");
+  }
+
   const omitir = async () => {
     setMostrarBtnBackLogin(false);
     await AsyncStorage.setItem("bienvenida", "true");
@@ -376,6 +380,16 @@ const Login = () => {
           >
             <Texto className="text-center text-xl text-white ">
               INICIAR SESION
+            </Texto>
+          </Button>
+
+          <Button
+            classNameBtn="mt-5 rounded-xl bg-primario py-3  h-13"
+            onPress={test}
+
+          >
+            <Texto className="text-center text-xl text-white ">
+              TEST
             </Texto>
           </Button>
 
