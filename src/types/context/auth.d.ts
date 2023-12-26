@@ -3,6 +3,10 @@ export type AuthContextType = {
   status: LoginStatus;
   login: Function;
   logout: Function;
+  welcomeScreen: {
+    isLoading: boolean,
+    value: boolean | null
+  }
   // mostrarBtnBackLogin: boolean;
   //  setMostrarBtnBackLogin: Function;
   // setNombreUsuarioNoAuth: Function;

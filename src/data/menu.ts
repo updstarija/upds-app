@@ -13,25 +13,25 @@ export const menuHomeScreen: Menu[] = [
         text: 'UPDS Tarija',
         icon: 'institution',
         //  to: 'https://www.360virtualbo.com/tour/educacion/updstarija',
-        to: "ubicacion",
+        to: "/upds",
         link: false
     },
     {
         text: 'Comunicados',
         icon: 'forum',
-        to: '/comunicados',
+        to: '/announcements',
         link: false
     },
     {
         text: 'Redes Sociales',
         icon: 'groups',
-        to: '/redes-sociales',
+        to: '/social-networks',
         link: false
     },
     {
         text: 'UPDS Responde',
         icon: 'device-unknown',
-        to: '/chat',
+        to: '/upds-responde',
         link: false
     },
     /*   {
@@ -43,7 +43,7 @@ export const menuHomeScreen: Menu[] = [
     {
         text: 'Calendario Académico',
         icon: 'calendar',
-        to: '/calendario-academico',
+        to: '/academic-calendar',
         link: false,
         auth: false
     },
@@ -108,45 +108,45 @@ export const menuAjustes: Menu[] = [
     {
         icon: "user-circle",
         text: "Mi perfil",
-        to: "perfil",
+        to: "profile",
         link: false,
         auth: true
     },
     {
         icon: "notifications",
         text: "Notificaciones",
-        to: "notificacionConfig",
+        to: "config/notifications",
         link: false
     },
     {
         icon: "grid-view",
         text: "Tutoriales, Guías, Avisos, etc.",
-        to: "tutorialConfig",
+        to: "config/guides",
         link: false
     },
     {
         icon: "moon-o",
         text: "Tema",
-        to: "tema",
+        to: "config/theme",
         link: false
     },
     {
         icon: "article",
         text: "Terminos de Uso",
-        to: "terminos",
+        to: "config/terms-of-service",
         link: false
     },
     {
         //@ts-ignore
         icon: "shield-check",
         text: "Política de Privacidad",
-        to: "politica",
+        to: "config/privacy-policy",
         link: false
     },
     {
         icon: "info-circle",
-        text: "Acerca de la Aplicación",
-        to: "about",
+        text: "Acerca de la aplicación",
+        to: "config/about",
         link: false
     }
 ]

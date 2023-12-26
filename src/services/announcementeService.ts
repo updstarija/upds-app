@@ -1,5 +1,5 @@
 import firestore, {
-  FirebaseFirestoreTypes,
+  Filter,
 } from "@react-native-firebase/firestore";
 import { INotificacionNotice } from "@/types";
 import { IAnnouncement } from "@/types/announcement";
@@ -26,12 +26,16 @@ export const getAllData = async (context: QueryContext) => {
 
     let query = db
       .collection(DB_ANNOUNCEMENT_KEY)
-      .where("date", "<=", new Date())
-      .orderBy("date", "desc");
+      .orderBy("priority", "desc").orderBy("date", "desc")
+    // .where("date", "<=", new Date())
+
 
     if (category) {
-      query = query.where("category", "==", category);
+      query = query.where(Filter.and(Filter("category", "==", category), "date", "<=", new Date()))
     }
+
+    //query = query.where("date", "<=", new Date())
+
 
     if (pageParam) {
       query = query.startAfter(pageParam);
@@ -40,6 +44,8 @@ export const getAllData = async (context: QueryContext) => {
     if (limitResults) {
       query = query.limit(limitResults || 1);
     }
+
+
 
     const snapshot = await query.get();
 

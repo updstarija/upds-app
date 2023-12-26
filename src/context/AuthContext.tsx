@@ -17,7 +17,7 @@ interface Props {
 export const AuthProvider: React.FC<Props> = ({ children }) => {
   //  const [mostrarBtnBackLogin, setMostrarBtnBackLogin] = useState(true);
 
-  const [x, setShowWelcomeScreen] = useStorageState<number>(
+  const [[isLoadingShowWelcomeScreen, showWelcomeScreen], setShowWelcomeScreen] = useStorageState<boolean>(
     keysStorage.SAW_WELCOME_SCREEN
   );
 
@@ -32,7 +32,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
   const login = async (user: IResponseLogin["data"]) => {
     setuser(user);
-
     setStatus("authenticated");
   };
 
@@ -56,18 +55,19 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     });
   };
 
-  useEffect(() => {
-    verificarScreenBienvenida();
-  }, []);
 
   return (
     <AuthContext.Provider
       value={{
         status,
-        //  mostrarBtnBackLogin,
         user,
         login,
         logout,
+        welcomeScreen: {
+          isLoading: isLoadingShowWelcomeScreen,
+          value: showWelcomeScreen
+        }
+        //  mostrarBtnBackLogin,
         //setMostrarBtnBackLogin,
         // setNombreUsuarioNoAuth,
       }}

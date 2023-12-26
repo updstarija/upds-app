@@ -19,7 +19,7 @@ function useAsyncState<T>(
 export async function setStorageItemAsync(
   key: string,
   value: any | null,
-  options: { isObject: boolean }
+  options?: { isObject: boolean }
 ) {
   if (Platform.OS === "web") {
     try {
@@ -40,15 +40,18 @@ export async function setStorageItemAsync(
       await AsyncStorage.removeItem(key);
       //    await SecureStore.deleteItemAsync(key);
     } else {
-      await AsyncStorage.setItem(key, value);
-      //await SecureStore.setItemAsync(key, value);
+      if (typeof value !== "string") {
+        await AsyncStorage.setItem(key, JSON.stringify(value));
+      } else {
+        await AsyncStorage.setItem(key, value);
+      }
     }
   }
 }
 
-export function useStorageState<T extends string>(
+export function useStorageState<T = string>(
   key: string,
-  options: { isObject: boolean }
+  options?: { isObject: boolean }
 ): UseStateHook<T> {
   const [state, setState] = useAsyncState<T>();
 
@@ -57,13 +60,11 @@ export function useStorageState<T extends string>(
     if (Platform.OS === "web") {
       try {
         if (typeof localStorage !== "undefined") {
-          if (!options.isObject) {
+          if (options && !options.isObject) {
             setState(localStorage.getItem(key) as T);
           } else {
             const val = localStorage.getItem(key);
-            if (val) {
-              setState(JSON.parse(val));
-            }
+            if (val) setState(JSON.parse(val));
           }
         }
       } catch (e) {
@@ -79,7 +80,7 @@ export function useStorageState<T extends string>(
   // Set
   const setValue = useCallback(
     (value: T | null) => {
-      setStorageItemAsync(key, value).then(() => {
+      setStorageItemAsync(key, value, options).then(() => {
         setState(value as T);
       });
     },

@@ -16,7 +16,9 @@ import {
 import { tieneToken, yaPasoLaBienvenida, tieneTema } from "@/helpers";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useColorScheme } from "nativewind";
-import messaging, { FirebaseMessagingTypes } from "@react-native-firebase/messaging";
+import messaging, {
+  FirebaseMessagingTypes,
+} from "@react-native-firebase/messaging";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import * as Notifications from "expo-notifications";
 import { useAuth, useAuthContext } from "@/hooks";
@@ -24,7 +26,8 @@ import { useAuth, useAuthContext } from "@/hooks";
 const Index = () => {
   const { logout, login } = useAuthContext();
 
-  const [initialNotification, setInitialNotification] = useState<FirebaseMessagingTypes.RemoteMessage | null>(null)
+  const [initialNotification, setInitialNotification] =
+    useState<FirebaseMessagingTypes.RemoteMessage | null>(null);
 
   const isIos = Platform.OS == "ios";
 
@@ -169,19 +172,20 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
-    if (!navigationState.key || isLoading) return
+    if (!navigationState.key || isLoading) return;
 
-    if (initialNotification &&
-      initialNotification?.data && initialNotification?.data.to) {
+    if (
+      initialNotification &&
+      initialNotification?.data &&
+      initialNotification?.data.to
+    ) {
       router.push(initialNotification.data.to);
     }
-  }, [initialNotification, navigationState.key, isLoading])
+  }, [initialNotification, navigationState.key, isLoading]);
 
   useEffect(() => {
-
-
     messaging().onNotificationOpenedApp(async (remoteMessage) => {
-      console.log(remoteMessage)
+      console.log(remoteMessage);
       /* if (data && data?.to && data.to.length > 0) {
         const datos = data.to.split("|"); //[0] ruta [1] id
         if (datos[0] === "comunicados") {
@@ -199,11 +203,11 @@ const Index = () => {
       } */
     });
 
-    messaging().getInitialNotification()
-      .then(msg => {
-
+    messaging()
+      .getInitialNotification()
+      .then((msg) => {
         if (msg?.data && msg?.data.to) {
-          setInitialNotification(msg)
+          setInitialNotification(msg);
           /*  setTimeout(() => {
              router.push("/(home)/comunicados");
            }, 3000); */
@@ -212,7 +216,7 @@ const Index = () => {
           /* console.log(msg, "GET INITIAL NOTIFICATION AND REDIRECTO TO " + `/(home)${msg.data.to}`)
           router.push(`/(home)${msg.data.to}`) */
         }
-      })
+      });
   }, []);
 
   if (isLoading) return null;

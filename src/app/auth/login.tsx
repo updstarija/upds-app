@@ -223,9 +223,9 @@ const Login = () => {
 
   const { login, isLoading } = useAuth();
   const {
-    mostrarBtnBackLogin,
+    // mostrarBtnBackLogin,
     login: loginContext,
-    setMostrarBtnBackLogin,
+    //setMostrarBtnBackLogin,
   } = useAuthContext();
 
   const { control, handleSubmit, setValue } = useForm<IFormLogin>({
@@ -257,7 +257,7 @@ const Login = () => {
   }
 
   const omitir = async () => {
-    setMostrarBtnBackLogin(false);
+    // setMostrarBtnBackLogin(false);
     await AsyncStorage.setItem("bienvenida", "true");
     navigateToHome();
   };

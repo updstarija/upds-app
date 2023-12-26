@@ -31,7 +31,7 @@ export const AnnouncementCard: React.FC<Props> = ({ announcement }) => {
 
   return (
     <View
-      className="bg-primario dark:bg-secondary-dark shadow rounded-xl dark:border-[#0e285b] overflow-hidden"
+      className=" dark:bg-secondary-dark rounded-xl  "
       style={{
         position: "relative",
         shadowColor: "#000000",
@@ -39,12 +39,12 @@ export const AnnouncementCard: React.FC<Props> = ({ announcement }) => {
           width: 0,
           height: 4,
         },
-        shadowOpacity: 0.19,
-        shadowRadius: 5.62,
+        shadowOpacity: 0.4,
+        shadowRadius: 7.62,
         elevation: 6,
       }}
     >
-      <View>
+      <View className="overflow-hidden">
         {!!images.length && (
           <View className="h-[200]">
             <Image
@@ -52,7 +52,7 @@ export const AnnouncementCard: React.FC<Props> = ({ announcement }) => {
                 maxWidth: width,
                 width: "auto",
               }}
-              className="h-full w-full" //h56
+              className="h-full w-full rounded-t-xl"
               source={images[0].url}
             />
           </View>
