@@ -1,94 +1,60 @@
 import { createContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IResponseLogin, IUser } from "@/types";
-import { yaPasoLaBienvenida } from "@/helpers";
-import { useQueryClient, QueryClient } from '@tanstack/react-query';
+import { IResponseLogin } from "@/types";
+import { AuthContextType, LoginStatus } from "@/types/context/auth";
+import { initialStateAuthContext } from "@/data/context/auth";
+import { keysStorage } from "@/data/storage/keys";
+import { useStorageState } from "@/hooks/useStorageState";
 
-export type LoginStatus =
-  | "pendiente"
-  | "autenticado"
-  | "no-autenticado"
-  | "nuevo";
-
-interface AuthContext {
-  userAuth: IResponseLogin["data"];
-  status: LoginStatus;
-  login: Function;
-  logout: Function;
-  mostrarBtnBackLogin: boolean;
-  setMostrarBtnBackLogin: Function;
-  setNombreUsuarioNoAuth: Function
-}
-export const AuthContext = createContext<AuthContext>({} as AuthContext);
+export const AuthContext = createContext<AuthContextType>(
+  {} as AuthContextType
+);
 
 interface Props {
   children: JSX.Element | JSX.Element[];
 }
 
-const initialState: IResponseLogin["data"] = {
-  usuario: {
-    id: -1,
-    nombre: "",
-    apellidoPaterno: "",
-    apellidoMaterno: "",
-    documentoIdentidad: "",
-    fechaNacimiento: "",
-    celular: "",
-    direccion: "",
-    sexo: "",
-    tipoSangre: "",
-    estadoCivil: "",
-    nacionalidad: "",
-    emailOffice365: "",
-    email: "",
-    telefonoReferencia: "",
-    sede: "",
-    fechaRegistro: "",
-    colegio: "",
-    anioEgresoBachiller: -1,
-    boletaId: -1,
-    carreras: []
-    ,
-    irregular: false
-  },
-  token: "",
-};
-
 export const AuthProvider: React.FC<Props> = ({ children }) => {
-  const [mostrarBtnBackLogin, setMostrarBtnBackLogin] = useState(true);
-  const [status, setStatus] = useState<LoginStatus>("pendiente");
-  const [userAuth, setUserAuth] =
-    useState<IResponseLogin["data"]>(initialState);
+  //  const [mostrarBtnBackLogin, setMostrarBtnBackLogin] = useState(true);
+
+  const [x, setShowWelcomeScreen] = useStorageState<number>(
+    keysStorage.SAW_WELCOME_SCREEN
+  );
+
+  const [status, setStatus] = useState<LoginStatus>("pending");
+  const [user, setuser] = useState<IResponseLogin["data"]>(
+    initialStateAuthContext
+  );
 
   const verificarScreenBienvenida = async () => {
-    if (await yaPasoLaBienvenida()) setMostrarBtnBackLogin(false);
+    //if (await yaPasoLaBienvenida()) setMostrarBtnBackLogin(false);
   };
 
   const login = async (user: IResponseLogin["data"]) => {
-    setUserAuth(user);
+    setuser(user);
 
-    setStatus("autenticado");
+    setStatus("authenticated");
   };
 
   const logout = async () => {
-    setStatus("no-autenticado")
-    setUserAuth(initialState);
+    setStatus("no-authenticated");
+    setuser(initialStateAuthContext);
 
     await AsyncStorage.removeItem("usuario");
     AsyncStorage.removeItem("usuario").then((x) => {
       //console.log("DELETE INFP USER ", x)
-    })
-
+    });
   };
 
   const setNombreUsuarioNoAuth = (nombre: string) => {
-    setUserAuth({
-      ...userAuth, usuario: {
-        ...userAuth.usuario,
-        nombre
-      }
-    })
-  }
+    setuser({
+      ...user,
+      usuario: {
+        ...user.usuario,
+        nombre,
+      },
+    });
+  };
 
   useEffect(() => {
     verificarScreenBienvenida();
@@ -98,12 +64,12 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     <AuthContext.Provider
       value={{
         status,
-        mostrarBtnBackLogin,
-        userAuth,
+        //  mostrarBtnBackLogin,
+        user,
         login,
         logout,
-        setMostrarBtnBackLogin,
-        setNombreUsuarioNoAuth
+        //setMostrarBtnBackLogin,
+        // setNombreUsuarioNoAuth,
       }}
     >
       {children}
