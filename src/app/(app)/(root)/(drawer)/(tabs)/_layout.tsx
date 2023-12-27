@@ -38,6 +38,7 @@ export default function Layout() {
           }}
           tabBarPosition="bottom"
           screenOptions={{
+            lazy: true,
             tabBarStyle: {
               backgroundColor: isDarkMode ? COLORS.dark.secondary : "#FFF",
             },

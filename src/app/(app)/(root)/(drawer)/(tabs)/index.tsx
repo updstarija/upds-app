@@ -2,6 +2,12 @@ import { FlatList, View } from "react-native";
 import { menuHomeScreen } from "@/data";
 import { CardNavigation } from "@/components";
 import { CarouselPriorityNotices } from "@/views";
+import { Texto } from "@/ui";
+import Animated, {
+  FadeInDown,
+  FadeInLeft,
+  FadeInUp,
+} from "react-native-reanimated";
 
 export default function IndexTab() {
   return (
@@ -10,11 +16,19 @@ export default function IndexTab() {
         data={null}
         ListHeaderComponent={
           <>
-            <View className="flex flex-row  flex-wrap items-center justify-evenly mt-5 max-w-2xl mx-auto w-full">
-              {menuHomeScreen.map((menu) => (
-                <View className="mb-5 mr-2" key={menu.text}>
+            <View className="flex flex-row  flex-wrap items-center justify-evenly mt-5 max-w-2xl mx-auto w-full z-50">
+              {menuHomeScreen.map((menu, i) => (
+                <Animated.View
+                  style={{ marginBottom: 20, marginRight: 1 }}
+                  entering={FadeInDown.duration(100).delay(500 * i)}
+                  key={menu.text}
+                >
                   <CardNavigation {...menu} />
-                </View>
+                </Animated.View>
+
+                /*         <View className="mb-5 mr-2" key={menu.text}>
+                
+                </View> */
               ))}
             </View>
 
