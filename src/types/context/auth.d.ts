@@ -1,3 +1,5 @@
+import { IResponseLogin } from "../responses";
+
 export type AuthContextType = {
   user: IResponseLogin["data"];
   status: LoginStatus;
@@ -5,8 +7,10 @@ export type AuthContextType = {
   logout: Function;
   welcomeScreen: {
     isLoading: boolean,
-    value: boolean | null
+    value: boolean | null,
+    completeWelcome: Function
   }
+  token: string | null
   // mostrarBtnBackLogin: boolean;
   //  setMostrarBtnBackLogin: Function;
   // setNombreUsuarioNoAuth: Function;

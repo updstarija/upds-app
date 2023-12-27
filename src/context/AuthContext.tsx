@@ -17,8 +17,13 @@ interface Props {
 export const AuthProvider: React.FC<Props> = ({ children }) => {
   //  const [mostrarBtnBackLogin, setMostrarBtnBackLogin] = useState(true);
 
-  const [[isLoadingShowWelcomeScreen, showWelcomeScreen], setShowWelcomeScreen] = useStorageState<boolean>(
-    keysStorage.SAW_WELCOME_SCREEN
+  const [
+    [isLoadingShowWelcomeScreen, showWelcomeScreen],
+    setShowWelcomeScreen,
+  ] = useStorageState<boolean>(keysStorage.SAW_WELCOME_SCREEN);
+
+  const [[isLoadingToken, token], setToken] = useStorageState(
+    keysStorage.JWT_TOKEN
   );
 
   const [status, setStatus] = useState<LoginStatus>("pending");
@@ -38,11 +43,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   const logout = async () => {
     setStatus("no-authenticated");
     setuser(initialStateAuthContext);
-
-    await AsyncStorage.removeItem("usuario");
-    AsyncStorage.removeItem("usuario").then((x) => {
-      //console.log("DELETE INFP USER ", x)
-    });
+    setToken(null);
   };
 
   const setNombreUsuarioNoAuth = (nombre: string) => {
@@ -55,6 +56,9 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     });
   };
 
+  const completeWelcome = () => {
+    setShowWelcomeScreen(true);
+  };
 
   return (
     <AuthContext.Provider
@@ -65,8 +69,10 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         logout,
         welcomeScreen: {
           isLoading: isLoadingShowWelcomeScreen,
-          value: showWelcomeScreen
-        }
+          value: showWelcomeScreen,
+          completeWelcome,
+        },
+        token,
         //  mostrarBtnBackLogin,
         //setMostrarBtnBackLogin,
         // setNombreUsuarioNoAuth,

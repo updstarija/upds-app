@@ -13,13 +13,13 @@ export default function StudentTab() {
         <View className="lg:items-center lg:justify-center">
           <View className="mt-5 flex flex-row  flex-wrap items-center justify-evenly max-w-2xl mx-auto w-full">
             {menuHomeStudent.map((menu, i) => (
-              <Animated.View
+              <View
                 style={{ marginBottom: 20, marginRight: 1 }}
-                entering={FadeInDown.duration(100).delay(200 * i)}
+                // entering={FadeInDown.duration(100).delay(200 * i)}
                 key={menu.text}
               >
                 <CardNavigation {...menu} />
-              </Animated.View>
+              </View>
             ))}
           </View>
         </View>

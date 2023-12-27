@@ -4,11 +4,11 @@ import {
   createContext,
   useEffect,
   useState,
-} from 'react';
-import { useAuthContext } from '@/hooks/useAuthContext';
-import { useCarreras } from '@/hooks/useCarreras';
-import { UseQueryResult } from '@tanstack/react-query';
-import { ICarrera } from '@/types'; //mport {useAuthContext, useCarreras} from '@/hooks';
+} from "react";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import { useCarreras } from "@/hooks/useCarreras";
+import { UseQueryResult } from "@tanstack/react-query";
+import { ICarrera } from "@/types"; //mport {useAuthContext, useCarreras} from '@/hooks';
 
 interface CarreraContext {
   valueCarrera: number;
@@ -18,7 +18,7 @@ interface CarreraContext {
   setBoleta: Dispatch<SetStateAction<number>>;
 }
 export const CarreraContext = createContext<CarreraContext>(
-  {} as CarreraContext,
+  {} as CarreraContext
 );
 
 interface Props {
@@ -26,20 +26,23 @@ interface Props {
 }
 
 export const CarreraProvider: React.FC<Props> = ({ children }) => {
-  const { userAuth } = useAuthContext();
+  const { user } = useAuthContext();
 
   const [valueCarrera, setValueCarrera] = useState<number>(-1);
   const [boleta, setBoleta] = useState<number>(-1);
 
-  const carreras = userAuth.usuario.carreras
+  const carreras = user.usuario.carreras;
 
   useEffect(() => {
-    console.log('render')
-    if ((valueCarrera === -1 && carreras.length) || (carreras.length && !carreras.map((carr) => carr.id).includes(valueCarrera))) {
-      setValueCarrera(userAuth.usuario.carreras[0].id);
+    console.log("render");
+    if (
+      (valueCarrera === -1 && carreras.length) ||
+      (carreras.length &&
+        !carreras.map((carr) => carr.id).includes(valueCarrera))
+    ) {
+      setValueCarrera(user.usuario.carreras[0].id);
     }
-  }, [userAuth.usuario.carreras])
-
+  }, [user.usuario.carreras]);
 
   return (
     <CarreraContext.Provider
@@ -49,7 +52,8 @@ export const CarreraProvider: React.FC<Props> = ({ children }) => {
         setValueCarrera,
         boleta,
         setBoleta,
-      }}>
+      }}
+    >
       {children}
     </CarreraContext.Provider>
   );

@@ -1,25 +1,44 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import configScreen from "@/helpers/configScreen";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { TourGuideProvider } from "rn-tourguide";
+import { ProyeccionesProvider } from "@/context/ProyeccionesContext";
+import { useAuthContext } from "@/hooks";
+import { Texto } from "@/ui";
 
 const RootLayout = () => {
-  return (
-    <Stack>
-      <Stack.Screen
-        name="(drawer)"
-        options={{
-          headerShown: false,
-        }}
-      />
+  const { welcomeScreen } = useAuthContext();
+  if (welcomeScreen.isLoading) {
+    return <Texto>VERIFINGWELCOME SCREEN</Texto>;
+  }
 
-      <Stack.Screen
-        name="(screens)"
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack>
+  if (!welcomeScreen.value) {
+    return <Redirect href={"/welcome"} />;
+  }
+  return (
+    <ProyeccionesProvider>
+      <BottomSheetModalProvider>
+        <TourGuideProvider>
+          <Stack>
+            <Stack.Screen
+              name="(drawer)"
+              options={{
+                headerShown: false,
+              }}
+            />
+
+            <Stack.Screen
+              name="(screens)"
+              options={{
+                headerShown: false,
+              }}
+            />
+          </Stack>
+        </TourGuideProvider>
+      </BottomSheetModalProvider>
+    </ProyeccionesProvider>
   );
 };
 

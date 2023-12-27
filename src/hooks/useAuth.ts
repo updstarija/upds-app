@@ -3,8 +3,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage"
 import Toast from "react-native-toast-message"
 import { updsApi } from "@/api"
 import { IFormLogin, IResponseLogin } from "@/types"
+import { useAuthContext } from "./useAuthContext"
+import { useMutation, useQuery } from "@tanstack/react-query"
+import authService from "@/services/authService"
 
 export const useAuth = () => {
+    const { logout, token } = useAuthContext()
     const [isLoading, setIsLoading] = useState(false)
 
     const login = async (dataUser: IFormLogin) => {
@@ -55,19 +59,35 @@ export const useAuth = () => {
         return null
     }
 
+    const signIn = useMutation(
+        ['auth', 'session'],
+        (data: IFormLogin) => authService.login(data),
+        {
+            onSuccess: () => {
+
+            },
+            onError: () => {
+
+            }
+        }
+    )
+
+    const refreshSession = useMutation(
+        ['auth', 'session'],
+        authService.getProfile,
+        {
+            onSuccess: () => {
+
+            },
+            onError: () => {
+
+            }
+        }
+    )
+
     const refreshLogin = async () => {
         setIsLoading(true)
         try {
-
-            const dataTest = fetch("https://tarija.upds.edu.bo/ApiProyecciones/api/auth/perfil", {
-                method: "GET"
-            }).then((x) => x.json())
-                .then(x => {
-                    console.log('--------------------------------------------------------')
-                    console.log('SE COMPLETO EL FETCH')
-                    console.log('--------------------------------------------------------')
-                }).catch((x) => console.log("ERROR FETCH TEST"))
-
             const { data } = await updsApi<IResponseLogin>("/auth/perfil")
 
             await AsyncStorage.setItem('usuario', JSON.stringify(data.data));
@@ -94,9 +114,15 @@ export const useAuth = () => {
         return null
     }
 
+    const signOut = () => {
+        logout()
+    }
     return {
+        signIn,
         refreshLogin,
+        refreshSession,
         isLoading,
-        login
+        login,
+        signOut
     }
 }

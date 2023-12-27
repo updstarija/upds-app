@@ -18,33 +18,36 @@ export const CardNavigation: React.FC<Menu> = ({
 
   const isIos = Platform.OS === "ios";
 
-
   const getIcon = () => {
     if (Object.keys(AntDesign.glyphMap).includes(icon)) {
-      return <AntDesign
-        //@ts-ignore
-        name={icon}
-        size={80}
-        color={isDarkMode ? "#fff" : COLORS.light.background}
-      />
+      return (
+        <AntDesign
+          //@ts-ignore
+          name={icon}
+          size={80}
+          color={isDarkMode ? "#fff" : COLORS.light.background}
+        />
+      );
     } else if (Object.keys(MaterialIcons.glyphMap).includes(icon)) {
-      return <MaterialIcons
-        //@ts-ignore
-        name={icon}
-        size={80}
-        color={isDarkMode ? "#fff" : COLORS.light.background}
-      />
+      return (
+        <MaterialIcons
+          //@ts-ignore
+          name={icon}
+          size={80}
+          color={isDarkMode ? "#fff" : COLORS.light.background}
+        />
+      );
+    } else if (Object.keys(FontAwesome.glyphMap).includes(icon)) {
+      return (
+        <FontAwesome
+          //@ts-ignore
+          name={icon}
+          size={80}
+          color={isDarkMode ? "#fff" : COLORS.light.background}
+        />
+      );
     }
-    else if (Object.keys(FontAwesome.glyphMap).includes(icon)) {
-      return <FontAwesome
-        //@ts-ignore
-        name={icon}
-        size={80}
-        color={isDarkMode ? "#fff" : COLORS.light.background}
-      />
-    }
-
-  }
+  };
 
   return (
     <Link
@@ -61,8 +64,17 @@ export const CardNavigation: React.FC<Menu> = ({
     >
       <Pressable>
         <View
-          className={`bg-white dark:bg-secondary-dark h-40 w-40 lg:h-52  lg:w-52 rounded-xl justify-center p-8 items-center ${isIos ? "shadow-md" : ""}`}
-          style={{ elevation: 5 }}
+          className={`bg-white dark:bg-secondary-dark h-40 w-40 lg:h-52  lg:w-52 rounded-xl justify-center p-8 items-center`}
+          style={{
+            shadowColor: "#000000",
+            shadowOffset: {
+              width: 0,
+              height: 0,
+            },
+            shadowOpacity: 0.1,
+            shadowRadius: 7.68,
+            elevation: 10,
+          }}
         >
           {getIcon()}
 

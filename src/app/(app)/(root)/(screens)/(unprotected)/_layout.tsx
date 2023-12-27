@@ -47,6 +47,11 @@ const UnprotectedLayout = () => {
       />
 
       <Stack.Screen
+        name="config/developer/index"
+        options={configScreen.Stack("Developer")}
+      />
+
+      <Stack.Screen
         name="faq/index"
         options={configScreen.Stack("PREGUNTAS FRECUENTES")}
       />

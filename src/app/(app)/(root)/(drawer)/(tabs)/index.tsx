@@ -18,13 +18,13 @@ export default function IndexTab() {
           <>
             <View className="flex flex-row  flex-wrap items-center justify-evenly mt-5 max-w-2xl mx-auto w-full z-50">
               {menuHomeScreen.map((menu, i) => (
-                <Animated.View
+                <View
                   style={{ marginBottom: 20, marginRight: 1 }}
-                  entering={FadeInDown.duration(100).delay(500 * i)}
+                  // entering={FadeInDown.duration(100).delay(500 * i)}
                   key={menu.text}
                 >
                   <CardNavigation {...menu} />
-                </Animated.View>
+                </View>
 
                 /*         <View className="mb-5 mr-2" key={menu.text}>
                 
