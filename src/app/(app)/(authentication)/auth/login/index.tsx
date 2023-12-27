@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { router, useNavigation } from "expo-router";
+import { Link, router, useNavigation } from "expo-router";
 import { useForm } from "react-hook-form";
 import { StatusBar } from "expo-status-bar";
 import Checkbox from "expo-checkbox";
@@ -248,7 +248,8 @@ const Login = () => {
   };
 
   const navigateToHome = () => {
-    router.replace("/");
+    router.push("/");
+    alert("push");
     //@ts-ignore
     //navigation.navigate("(drawer)");
   };
@@ -315,8 +316,14 @@ const Login = () => {
         <View className="flex-end m-3 flex-row items-center justify-between">
           <View />
 
-          <TouchableOpacity onPress={omitirLogin} className="p-4 pr-0">
-            <Texto className="text-white opacity-80">Omitir por ahora</Texto>
+          <Link href={"/"} asChild>
+            <TouchableOpacity className="p-4 pr-0">
+              <Texto className="text-white opacity-80">Omitir por ahora</Texto>
+            </TouchableOpacity>
+          </Link>
+
+          <TouchableOpacity onPress={() => router.back()} className="p-4 pr-0">
+            <Texto className="text-white opacity-80">xd</Texto>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={test} className="p-4 pr-0">
