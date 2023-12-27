@@ -6,7 +6,7 @@ import { Texto } from "@/ui";
 
 const LayoutAuthentication = () => {
   const { status, welcomeScreen } = useAuthContext();
-
+  console.log("RENDER AUTH LAYOUT");
   if (status === "pending" || welcomeScreen.isLoading) {
     return <Texto>VERIFING SESSION AND WELCOME SCREEN</Texto>;
   }
@@ -19,16 +19,7 @@ const LayoutAuthentication = () => {
     return <Redirect href={"/"} />;
   }
 
-  return (
-    <Stack>
-      <Stack.Screen
-        name="auth/login/index"
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack>
-  );
+  return <Stack />;
 };
 
 export default LayoutAuthentication;

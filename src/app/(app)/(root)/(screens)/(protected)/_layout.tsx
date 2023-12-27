@@ -6,6 +6,7 @@ import { Redirect, Stack } from "expo-router";
 
 const UnprotectedLayout = () => {
   const { status } = useAuthContext();
+  console.log("RENDER PROYECTED LAYOUT");
 
   if (status !== "authenticated") {
     return <Redirect href={"/auth/login"} />;

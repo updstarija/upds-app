@@ -12,7 +12,7 @@ import {
   Ionicons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { useAuthContext, useThemeColor } from "@/hooks";
 import { ThemeConfig } from "@/views/ThemeConfig";
 import { Texto } from "@/ui";
@@ -154,21 +154,20 @@ const CustomDrawer = (props: DrawerContentComponentProps) => {
             </View>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity
-            onPress={() => router.push("/auth/login")}
-            style={{ paddingVertical: 15 }}
-          >
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-              <Ionicons
-                name="log-in"
-                size={22}
-                color={isDarkMode ? "#FFF" : "#000"}
-              />
-              <Text className="text-black dark:text-white ml-2 text-center">
-                Iniciar Sesion
-              </Text>
-            </View>
-          </TouchableOpacity>
+          <Link href={"/auth/login"} asChild>
+            <TouchableOpacity style={{ paddingVertical: 15 }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Ionicons
+                  name="log-in"
+                  size={22}
+                  color={isDarkMode ? "#FFF" : "#000"}
+                />
+                <Text className="text-black dark:text-white ml-2 text-center">
+                  Iniciar Sesion
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </Link>
         )}
       </View>
     </View>
