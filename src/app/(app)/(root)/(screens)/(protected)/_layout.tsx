@@ -1,8 +1,7 @@
 import { CarreraProvider } from "@/context";
-import { ProyeccionesProvider } from "@/context/ProyeccionesContext";
 import configScreen from "@/helpers/configScreen";
 import { useAuthContext } from "@/hooks";
-import { Redirect, Stack } from "expo-router";
+import { Redirect, Stack, useFocusEffect } from "expo-router";
 
 const UnprotectedLayout = () => {
   const { status } = useAuthContext();

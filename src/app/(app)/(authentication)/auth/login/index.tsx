@@ -225,6 +225,7 @@ const Login = () => {
   const {
     // mostrarBtnBackLogin,
     login: loginContext,
+    callBack,
     //setMostrarBtnBackLogin,
   } = useAuthContext();
 
@@ -253,7 +254,9 @@ const Login = () => {
   };
 
   const test = () => {
-    router.push("/(home)/comunicados");
+    console.log(callBack.value);
+    //  router.push("/");
+    router.push(callBack.value?.prev as any);
   };
 
   const omitir = async () => {
@@ -314,6 +317,10 @@ const Login = () => {
 
           <TouchableOpacity onPress={omitirLogin} className="p-4 pr-0">
             <Texto className="text-white opacity-80">Omitir por ahora</Texto>
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={test} className="p-4 pr-0">
+            <Texto className="text-white opacity-80">test</Texto>
           </TouchableOpacity>
         </View>
 

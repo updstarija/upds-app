@@ -2,7 +2,7 @@ import { View, TouchableOpacity, RefreshControl } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { Feather, FontAwesome5 } from "@expo/vector-icons";
-import clsx from 'clsx'
+import clsx from "clsx";
 import { useNotification, useThemeColor } from "@/hooks";
 import { Button, Spinner } from "@/components";
 import { CustomBottomSheetModal, Texto } from "@/ui";
@@ -14,14 +14,21 @@ const Notificacion = () => {
   const router = useRouter();
   const isDark = useThemeColor() === "dark";
 
-  const { data, isLoading, getNotifications, marcarComoLeido, marcarComoNoLeido, deleteNotificacion } = useNotification()
-  const [refreshing, setRefreshing] = useState(false)
+  const {
+    data,
+    isLoading,
+    getNotifications,
+    marcarComoLeido,
+    marcarComoNoLeido,
+    deleteNotificacion,
+  } = useNotification();
+  const [refreshing, setRefreshing] = useState(false);
 
   const handleRefresh = async () => {
-    setRefreshing(true)
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-    setRefreshing(false)
-  }
+    setRefreshing(true);
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    setRefreshing(false);
+  };
 
   const navigation = async (item: INotificacion) => {
     await marcarComoLeido(item.id);
@@ -29,7 +36,7 @@ const Notificacion = () => {
     if (item.to) {
       const data = item.to.split("|");
       router.push({
-        pathname: `/(home)/comunicados/[id]`,
+        pathname: `/(app)/(root)/(screens)/(unprotected)/(home)/announcements/[id]`,
         params: {
           id: data[1],
         },
@@ -40,18 +47,19 @@ const Notificacion = () => {
   const NotificacionItem = (item: INotificacion) => {
     return (
       <View
-        className={
-          clsx(['px-2 py-1',
-            {
-              'bg-white dark:bg-[#0a1f4a]': item.type == "read",
-              'bg-[#c4cee1] dark:bg-transparent': item.type != "read"
-            }])
-        }
+        className={clsx([
+          "px-2 py-1",
+          {
+            "bg-white dark:bg-[#0a1f4a]": item.type == "read",
+            "bg-[#c4cee1] dark:bg-transparent": item.type != "read",
+          },
+        ])}
       >
         <View className="flex-row justify-between items-center ">
           <TouchableOpacity
             onPress={() => navigation(item)}
-            className="flex-1 mr-4">
+            className="flex-1 mr-4"
+          >
             <Texto
               className="text-black dark:text-white text-lg"
               weight="Bold"
@@ -132,14 +140,29 @@ const Notificacion = () => {
   return (
     <View className="bg-white dark:bg-primario-dark flex-1">
       <FlashList
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
         data={data}
         renderItem={({ item }) => <NotificacionItem {...item} />}
         estimatedItemSize={100}
         onEndReachedThreshold={0.1}
         onEndReached={getNotifications}
-        ListFooterComponent={isLoading ? <Spinner showText text="Cargando notificaciones" classNameContainer="p-4 items-center" size={25} /> : <View />}
-        ItemSeparatorComponent={() => (<View className='border-[0.5px] border-secondary-dark' />)}
+        ListFooterComponent={
+          isLoading ? (
+            <Spinner
+              showText
+              text="Cargando notificaciones"
+              classNameContainer="p-4 items-center"
+              size={25}
+            />
+          ) : (
+            <View />
+          )
+        }
+        ItemSeparatorComponent={() => (
+          <View className="border-[0.5px] border-secondary-dark" />
+        )}
       />
     </View>
   );

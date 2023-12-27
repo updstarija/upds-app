@@ -11,7 +11,7 @@ export default function StudentTab() {
     <View className=" flex-1 bg-white dark:bg-primario-dark">
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="lg:items-center lg:justify-center">
-          <View className="mt-5 flex flex-row  flex-wrap items-center justify-evenly max-w-2xl mx-auto w-full">
+          <View className="mt-5 flex flex-row  flex-wrap items-center justify-evenly max-w-2xl mx-auto w-full pb-10">
             {menuHomeStudent.map((menu, i) => (
               <View
                 style={{ marginBottom: 20, marginRight: 1 }}

@@ -18,10 +18,8 @@ export const TopBar = () => {
             <DrawerToggleButton tintColor="#fff" />
           </View>
 
-          <Button title="BIEnv" onPress={() => router.push("/bienvenida")} />
-
           <View className="flex-row items-center">
-            <Link className="p-2" href="/notificacion">
+            <Link className="p-2" href="/notifications">
               <MaterialIcons name="notifications" color={"#FFF"} size={23} />
 
               <Animatable.View
@@ -47,7 +45,7 @@ export const TopBar = () => {
               ></Animatable.View>
             </Link>
 
-            {status === "autenticado" && (
+            {status === "authenticated" && (
               <Link className="mr-4 p-2 " href="/perfil">
                 <FontAwesome name="user-circle-o" size={20} color="#fff" />
               </Link>

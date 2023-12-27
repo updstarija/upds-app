@@ -8,42 +8,42 @@ const UnprotectedLayout = () => {
 
       <Stack.Screen
         name="academic-calendar/index"
-        options={configScreen.Stack("CALENDARIO ACADÉMICO")}
+        options={configScreen.Stack("Calendario Académico")}
       />
 
       <Stack.Screen
         name="carrer/index"
-        options={configScreen.Stack("CARRERAS")}
+        options={configScreen.Stack("Carreras")}
       />
 
       <Stack.Screen
         name="config/about/index"
-        options={configScreen.Stack("ACERCA DE")}
+        options={configScreen.Stack("Acerca de")}
       />
 
       <Stack.Screen
         name="config/guides/index"
-        options={configScreen.Stack("GUIAS")}
+        options={configScreen.Stack("Guias")}
       />
 
       <Stack.Screen
         name="config/notifications/index"
-        options={configScreen.Stack("NOTIFICACIONES")}
+        options={configScreen.Stack("Notificaciones")}
       />
 
       <Stack.Screen
         name="config/privacy-policy/index"
-        options={configScreen.Stack("POLÍTICAS DE PRIVACIDAD")}
+        options={configScreen.Stack("Políticas de Privacidad")}
       />
 
       <Stack.Screen
         name="config/terms-of-service/index"
-        options={configScreen.Stack("TÉRMINOS DE USO")}
+        options={configScreen.Stack("Términos de Uso")}
       />
 
       <Stack.Screen
         name="config/theme/index"
-        options={configScreen.Stack("TEMA")}
+        options={configScreen.Stack("Tema")}
       />
 
       <Stack.Screen
@@ -53,32 +53,47 @@ const UnprotectedLayout = () => {
 
       <Stack.Screen
         name="faq/index"
-        options={configScreen.Stack("PREGUNTAS FRECUENTES")}
+        options={configScreen.Stack("Preguntas Frecuentes")}
+      />
+
+      <Stack.Screen
+        name="notifications/index"
+        options={configScreen.Stack("Notificaciones")}
       />
 
       <Stack.Screen
         name="tutorial/index"
-        options={configScreen.Stack("NOTIFICACIONES")}
+        options={configScreen.Stack("Tutoriales")}
       />
 
       <Stack.Screen
         name="web/e-libro/index"
-        options={configScreen.Stack("NOTIFICACIONES")}
+        options={configScreen.Stack("Biblioteca UPDS")}
       />
 
       <Stack.Screen
         name="web/evaluacion-docente/index"
-        options={configScreen.Stack("NOTIFICACIONES")}
+        options={configScreen.Stack("Evaluacion Docente")}
       />
 
       <Stack.Screen
         name="web/moodle/index"
-        options={configScreen.Stack("NOTIFICACIONES")}
+        options={configScreen.Stack("Moodle")}
       />
 
       <Stack.Screen
         name="web/upds-net/index"
-        options={configScreen.Stack("NOTIFICACIONES")}
+        options={configScreen.Stack("Upds Net")}
+      />
+
+      <Stack.Screen
+        name="(student)/help/index"
+        options={configScreen.Stack("Ayuda")}
+      />
+
+      <Stack.Screen
+        name="(student)/services/index"
+        options={configScreen.Stack("Servicios")}
       />
     </Stack>
   );

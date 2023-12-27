@@ -50,9 +50,9 @@ const Drawer = (
       backgroundColor: isDark ? COLORS.dark.secondary : COLORS.light.background,
     },
     headerTintColor: "#fff",
-    headerTitleStyle: {
+    /*   headerTitleStyle: {
       textTransform: "uppercase",
-    },
+    }, */
     drawerIcon: ({ color }) => (
       <Ionicons name="settings-outline" size={20} color={color} />
     ),

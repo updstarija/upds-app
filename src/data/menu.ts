@@ -1,9 +1,9 @@
 import { MaterialIcons, FontAwesome, AntDesign } from '@expo/vector-icons';
-
+import { Route } from "expo-router"
 export interface Menu {
     text: string;
     icon: keyof typeof MaterialIcons.glyphMap | keyof typeof FontAwesome.glyphMap | keyof typeof AntDesign.glyphMap
-    to: string;
+    to: Route<string>;
     link: boolean
     auth?: boolean
 }
@@ -13,25 +13,25 @@ export const menuHomeScreen: Menu[] = [
         text: 'UPDS Tarija',
         icon: 'institution',
         //  to: 'https://www.360virtualbo.com/tour/educacion/updstarija',
-        to: "/upds",
+        to: "/upds/",
         link: false
     },
     {
         text: 'Comunicados',
         icon: 'forum',
-        to: '/announcements',
+        to: '/announcements/',
         link: false
     },
     {
         text: 'Redes Sociales',
         icon: 'groups',
-        to: '/social-networks',
+        to: '/social-networks/',
         link: false
     },
     {
         text: 'UPDS Responde',
         icon: 'device-unknown',
-        to: '/upds-responde',
+        to: '/upds-responde/',
         link: false
     },
     /*   {
@@ -43,7 +43,7 @@ export const menuHomeScreen: Menu[] = [
     {
         text: 'Calendario Académico',
         icon: 'calendar',
-        to: '/academic-calendar',
+        to: '/academic-calendar/',
         link: false,
         auth: false
     },
@@ -53,33 +53,33 @@ export const menuHomeStudent: Menu[] = [
     {
         text: 'Plataforma Moodle',
         icon: 'laptop-mac',
-        to: '/moodle',
+        to: '/web/moodle/',
         link: false
     },
     {
         text: 'Registro y Pagos',
         icon: 'CodeSandbox',
-        to: '/servicios',
+        to: '/services/',
         link: false
     },
     {
         text: 'Ayuda',
         icon: 'help-outline',
-        to: '/ayuda',
+        to: '/help/',
         link: false
     },
     {
         text: 'Bliblioteca UPDS',
         icon: 'auto-stories',
-        to: '/biblioteca',
+        to: '/web/e-libro/',
         link: false
     },
     {
         text: 'Proyecciones',
         icon: 'table-view',
-        to: '/projections',
+        to: '/projections/projection-stament',
         link: false,
-        auth: false
+        auth: true
     },
     /*   {
           text: 'TESTING',
@@ -90,7 +90,7 @@ export const menuHomeStudent: Menu[] = [
     {
         text: 'Registro Histórico',
         icon: 'account-tree',
-        to: '/historico-materias',
+        to: '/historical-academic/',
         link: false,
         auth: true
     },

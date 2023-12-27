@@ -14,14 +14,21 @@ export const configStack = (title: string) => {
       backgroundColor: isDarkMode
         ? COLORS.dark.secondary
         : COLORS.light.background,
-
     },
     headerTintColor: "#fff",
     headerTitleStyle: {
       textTransform: "uppercase",
     },
     headerLeft: () => {
-      return <AntDesign name="left" onPress={() => router.back()} size={25} color={"#FFF"} style={{ padding: 10, marginRight: 15 }} />
-    }
+      return (
+        <AntDesign
+          name="left"
+          onPress={() => router.back()}
+          size={25}
+          color={"#FFF"}
+          style={{ padding: 10, marginRight: 15 }}
+        />
+      );
+    },
   };
 };

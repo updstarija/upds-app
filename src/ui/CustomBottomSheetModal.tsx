@@ -120,160 +120,157 @@ export default CustomBottomSheetModal;
  */
 
 import {
-    Ref,
-    forwardRef,
-    useCallback,
-    useEffect,
-    useImperativeHandle,
-    useMemo,
-    useRef,
-    useState,
+  Ref,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState,
 } from "react";
 import {
-    BackHandler,
-    TouchableOpacityProps,
-    TouchableOpacity,
-    Platform
+  BackHandler,
+  TouchableOpacityProps,
+  TouchableOpacity,
+  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
-    BottomSheetBackdrop,
-    BottomSheetModal,
-    BottomSheetModalProps,
-    BottomSheetScrollView,
-    BottomSheetView,
+  BottomSheetBackdrop,
+  BottomSheetModal,
+  BottomSheetModalProps,
+  BottomSheetScrollView,
+  BottomSheetView,
 } from "@gorhom/bottom-sheet";
 import { useThemeColor } from "@/hooks";
 import { View } from "react-native-animatable";
 
 export interface CustomBottomSheetRef {
-    close: () => void;
-    open: () => void;
+  close: () => void;
+  open: () => void;
 }
 
 interface Props extends BottomSheetModalProps {
-    content: JSX.Element | JSX.Element[];
-    onPressButton?: Function;
-    onCloseModal?: Function;
-    snapPointsProp?: string[];
-    touchableProps?: TouchableOpacityProps;
-    withoutScrollView?: boolean;
-    ref?: Ref<CustomBottomSheetRef>;
-
+  content: JSX.Element | JSX.Element[];
+  onPressButton?: Function;
+  onCloseModal?: Function;
+  snapPointsProp?: string[];
+  touchableProps?: TouchableOpacityProps;
+  withoutScrollView?: boolean;
+  ref?: Ref<CustomBottomSheetRef>;
 }
 
-const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> = forwardRef(({
-    content,
-    children,
-    onPressButton,
-    withoutScrollView = false,
-    snapPointsProp = [],
-    onCloseModal,
-    ...props
-}, ref) => {
-    const isDark = useThemeColor() === "dark"
-    const [isOpen, setIsOpen] = useState(false);
+const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> =
+  forwardRef(
+    (
+      {
+        content,
+        children,
+        onPressButton,
+        withoutScrollView = false,
+        snapPointsProp = [],
+        onCloseModal,
+        ...props
+      },
+      ref
+    ) => {
+      const isDark = useThemeColor() === "dark";
+      const [isOpen, setIsOpen] = useState(false);
 
-    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+      const bottomSheetModalRef = useRef<BottomSheetModal>(null);
 
-    const snapPoints = useMemo(() => snapPointsProp, [snapPointsProp]);
-    const { top } = useSafeAreaInsets();
+      const snapPoints = useMemo(() => snapPointsProp, [snapPointsProp]);
+      const { top } = useSafeAreaInsets();
 
-    const handleOpenModal = useCallback(() => {
+      const handleOpenModal = useCallback(() => {
         if (onPressButton) {
-            onPressButton()
+          onPressButton();
         }
 
         bottomSheetModalRef.current?.present();
-    }, []);
+      }, []);
 
-    const renderBackdrop = useCallback(
+      const renderBackdrop = useCallback(
         (props: any) => (
-            <BottomSheetBackdrop
-                {...props}
-                disappearsOnIndex={-1}
-                appearsOnIndex={2}
-            />
+          <BottomSheetBackdrop
+            {...props}
+            disappearsOnIndex={-1}
+            appearsOnIndex={2}
+          />
         ),
         []
-    );
+      );
 
-    const handleChange = (index: number) => {
+      const handleChange = (index: number) => {
         if (index < 0) setIsOpen(false);
         else setIsOpen(true);
-    };
+      };
 
-    const handleBackPress = () => {
+      const handleBackPress = () => {
         if (isOpen) bottomSheetModalRef?.current?.close();
         return isOpen;
-    };
+      };
 
+      const onDismiss = () => {
+        setIsOpen(false);
+        if (onCloseModal) onCloseModal();
+      };
 
-    const onDismiss = () => {
-        setIsOpen(false)
-        if (onCloseModal) onCloseModal()
-    }
-
-    useImperativeHandle(ref, () => ({
+      useImperativeHandle(ref, () => ({
         close: () => {
-            bottomSheetModalRef.current?.dismiss()
+          bottomSheetModalRef.current?.dismiss();
         },
         open: () => {
-            bottomSheetModalRef.current?.present()
-        }
-    }));
+          bottomSheetModalRef.current?.present();
+        },
+      }));
 
-    useEffect(() => {
+      useEffect(() => {
         BackHandler.addEventListener("hardwareBackPress", handleBackPress);
 
         return () => {
-            BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
+          BackHandler.removeEventListener("hardwareBackPress", handleBackPress);
         };
-    }, [isOpen]);
+      }, [isOpen]);
 
-    return (
+      return (
         <>
-            {/*             <View>
+          {/*             <View>
                 {content}
             </View> */}
-            <TouchableOpacity onPress={handleOpenModal} activeOpacity={1}>
-                {content}
-            </TouchableOpacity>
+          <TouchableOpacity onPress={handleOpenModal} activeOpacity={1}>
+            {content}
+          </TouchableOpacity>
 
-            <BottomSheetModal
-                {...props}
-                ref={bottomSheetModalRef}
-                snapPoints={snapPoints}
-                topInset={top}
-                enableDynamicSizing={snapPointsProp?.length == 0}
-                backdropComponent={renderBackdrop}
-                onDismiss={onDismiss}
-                onChange={handleChange}
-                // keyboardBehavior={Platform.OS === "android" ? "fillParent" : "interactive"}
-
-                keyboardBlurBehavior="restore"
-                android_keyboardInputMode="adjustResize"
-                handleIndicatorStyle={{ backgroundColor: '#0D1F46' }}
-                backgroundStyle={{ backgroundColor: isDark ? '#040e22' : '#fff' }}>
-                {!withoutScrollView
-                    ?
-                    <BottomSheetScrollView style={{ padding: 0 }}>
-                        <View className="mb-2 mx-4">
-                            {children}
-                        </View>
-                    </BottomSheetScrollView>
-                    :
-                    <>
-                        {children}
-                    </>
-                }
-
-
-
-            </BottomSheetModal>
+          <BottomSheetModal
+            snapPoints={snapPoints}
+            topInset={top}
+            enableDynamicSizing={snapPointsProp?.length == 0}
+            backdropComponent={renderBackdrop}
+            onDismiss={onDismiss}
+            onChange={handleChange}
+            keyboardBehavior={
+              Platform.OS === "android" ? "fillParent" : "interactive"
+            }
+            keyboardBlurBehavior="restore"
+            android_keyboardInputMode="adjustResize"
+            handleIndicatorStyle={{ backgroundColor: "#0D1F46" }}
+            backgroundStyle={{ backgroundColor: isDark ? "#040e22" : "#fff" }}
+            {...props}
+            ref={bottomSheetModalRef}
+          >
+            {!withoutScrollView ? (
+              <BottomSheetScrollView style={{ padding: 0 }}>
+                <View className="mb-2 mx-4">{children}</View>
+              </BottomSheetScrollView>
+            ) : (
+              <>{children}</>
+            )}
+          </BottomSheetModal>
         </>
-    );
-});
-
+      );
+    }
+  );
 
 export default CustomBottomSheetModal;

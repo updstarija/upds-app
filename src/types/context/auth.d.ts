@@ -1,4 +1,6 @@
+import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
 import { IResponseLogin } from "../responses";
+import { CallBackUrlType } from "@/context";
 
 export type AuthContextType = {
   user: IResponseLogin["data"];
@@ -10,7 +12,13 @@ export type AuthContextType = {
     value: boolean | null,
     completeWelcome: Function
   }
-  token: string | null
+  token: string | null;
+  modalAuthRef: React.RefObject<CustomBottomSheetRef>
+  callBack: {
+    value: CallBackUrlType | null;
+    clearCallback: () => void
+    setCallback: (url: CallBackUrlType) => void
+  }
   // mostrarBtnBackLogin: boolean;
   //  setMostrarBtnBackLogin: Function;
   // setNombreUsuarioNoAuth: Function;
