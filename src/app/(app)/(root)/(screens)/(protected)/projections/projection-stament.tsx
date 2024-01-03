@@ -101,12 +101,17 @@ const Boleta = () => {
   };
 
   const handleOnStop = () => {
-    setShowAlerts(false);
-    setTutorialEnCurso({ ...tutorialEnCurso, inCourse: false });
+    console.log("STOP");
+    setTutorialEnCurso((prev) => ({ ...prev, inCourse: false }));
+    return;
   };
 
   const handleOnStepChange = (step: any) => {
-    setTutorialEnCurso({ ...tutorialEnCurso, step: step?.order || -1 });
+    console.log("STEP CHANGE");
+    if (step?.order) {
+      setTutorialEnCurso((prev) => ({ ...prev, step: step.order }));
+    }
+    return;
   };
 
   const renderHeaderBody = () => (
@@ -256,12 +261,12 @@ const Boleta = () => {
         html: `
             ${templateBoletaV3.generateHeader()}
             ${templateBoletaV3.generateDatosHeader(
-              user.usuario.nombre +
+              user.nombre +
                 " " +
-                user.usuario.apellidoPaterno +
+                user.apellidoPaterno +
                 " " +
-                user.usuario.apellidoMaterno,
-              user.usuario.documentoIdentidad,
+                user.apellidoMaterno,
+              user.documentoIdentidad,
               carreras.find((x) => x.id === valueCarrera)?.nombre || ""
             )}
             ${templateBoletaV3.generateBody(
@@ -283,12 +288,8 @@ const Boleta = () => {
       html: `
         ${templateBoletaV3.generateHeader()}
         ${templateBoletaV3.generateDatosHeader(
-          user.usuario.nombre +
-            " " +
-            user.usuario.apellidoPaterno +
-            " " +
-            user.usuario.apellidoMaterno,
-          user.usuario.documentoIdentidad,
+          user.nombre + " " + user.apellidoPaterno + " " + user.apellidoMaterno,
+          user.documentoIdentidad,
           carreras.find((x) => x.id === valueCarrera)?.nombre || ""
         )}
         ${templateBoletaV3.generateBody(
@@ -344,14 +345,16 @@ const Boleta = () => {
   }, [tutorialEnCurso.inCourse]);
 
   useEffect(() => {
-    eventEmitter?.on("stop", handleOnStop);
-    eventEmitter?.on("stepChange", handleOnStepChange);
+    if (eventEmitter) {
+      eventEmitter.on("stop", handleOnStop);
+      eventEmitter.on("stepChange", handleOnStepChange);
 
-    return () => {
-      eventEmitter?.off("stop", handleOnStop);
-      eventEmitter?.off("stepChange", handleOnStepChange);
-    };
-  }, [tutorialEnCurso.inCourse]);
+      return () => {
+        eventEmitter.off("stop", handleOnStop);
+        eventEmitter.off("stepChange", handleOnStepChange);
+      };
+    }
+  }, [canStart]);
 
   useEffect(() => {
     if (!tutorialBoletaReady.carreras && carrerasQuery.data) {
@@ -453,8 +456,7 @@ const Boleta = () => {
             Nombres:
           </Texto>
           <Texto>
-            {user.usuario.nombre} {user.usuario.apellidoPaterno}{" "}
-            {user.usuario.apellidoMaterno}
+            {user.nombre} {user.apellidoPaterno} {user.apellidoMaterno}
           </Texto>
 
           <Texto className="mt-2  text-black dark:text-white" weight="Bold">

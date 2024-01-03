@@ -1,8 +1,5 @@
-import { useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
-import { updsApi } from "@/api";
-import { IFormLogin, IResponseLogin } from "@/types";
+import { IFormLogin } from "@/types";
 import { useAuthContext } from "./useAuthContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import authService from "@/services/authService";
@@ -45,11 +42,10 @@ export const useAuth = () => {
     enabled: !!token,
   });
 
-  console.log(token);
-
   const signOut = () => {
     logout();
   };
+
   return {
     signIn,
     refreshSession,

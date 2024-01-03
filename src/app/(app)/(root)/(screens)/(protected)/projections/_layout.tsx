@@ -78,6 +78,9 @@ export default function Layout() {
     >
       <MaterialTopTabs.Screen
         name="projection-stament"
+        options={{
+          title: "Boleta",
+        }}
         listeners={() => ({
           blur: () => {
             if (tutorialEnCurso.inCourse) {
@@ -92,6 +95,9 @@ export default function Layout() {
 
       <Drawer.Screen
         name="academic-curriculum"
+        options={{
+          title: "Malla Curricular",
+        }}
         listeners={() => ({
           focus: () => {
             if (tutorialEnCurso.inCourse) {

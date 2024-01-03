@@ -11,10 +11,10 @@ interface Params {
 export const usePlanEstudio = ({ carrera, semestre, enabled }: Params) => {
     const client = useQueryClient();
 
-    const { userAuth } = useAuthContext()
+    const { user } = useAuthContext()
 
     const planEstudioQuery = useQuery(
-        ['plan-estudio', carrera, semestre, userAuth?.usuario?.documentoIdentidad],
+        ['plan-estudio', carrera, semestre, user?.documentoIdentidad],
         () => getPlanEstudio(carrera, semestre),
         {
             staleTime: 1000 * 60,

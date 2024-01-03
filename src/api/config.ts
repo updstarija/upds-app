@@ -13,16 +13,15 @@ export const updsApi = axios.create({
 updsApi.interceptors.request.use(
   async (config) => {
     const getToken = async () => {
-      const data = await AsyncStorage.getItem("usuario");
-      if (data) {
-        return JSON.parse(data).token;
-      }
-      return null;
+      const token = await AsyncStorage.getItem(keysStorage.JWT_TOKEN);
+      return token
     };
 
     const token = await getToken();
+    if (token) {
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
 
-    config.headers["Authorization"] = `Bearer ${token}`;
     return config;
   },
   //     if (token) config.headers["Authorization"] = `Bearer ${token}`
@@ -43,7 +42,7 @@ updsApi.interceptors.request.use(
 updsApi.interceptors.response.use(
   (config) => config,
   (error) => {
-    console.log("ERROR EN RESPONSE", error.response);
+    console.log("ERROR EN RESPONSE", error);
 
     if (error.response.status === 401) {
       Toast.show({

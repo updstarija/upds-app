@@ -1,4 +1,4 @@
-import { Alert, View } from "react-native";
+import { Alert, Platform, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
 import { PermissionStatus, requestPermissionsAsync } from "expo-notifications";
@@ -25,22 +25,25 @@ const Notifications = () => {
 
   const toggleNotifications = async (x: boolean) => {
     if (x) {
-      const { status } = await requestPermissionsAsync();
-      if (status === "denied") {
-        Alert.alert(
-          "Alerta",
-          "Activa las notificacions desde los ajustes de tu dispositivo",
-          [
-            {
-              text: "Ok",
-              onPress: async () => {
-                await openSettings();
-                await verificarNotificaciones();
+      if (Platform.OS === "android") {
+        const { status } = await requestPermissionsAsync();
+        if (status === "denied") {
+          Alert.alert(
+            "Alerta",
+            "Activa las notificacions desde los ajustes de tu dispositivo",
+            [
+              {
+                text: "Ok",
+                onPress: async () => {
+                  await openSettings();
+                  await verificarNotificaciones();
+                },
               },
-            },
-          ]
-        );
+            ]
+          );
+        }
       }
+
       await messagin().requestPermission();
       await messagin().subscribeToTopic(
         FirebaseNotification.NOTIFICATION_TOPIC

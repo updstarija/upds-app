@@ -1,8 +1,7 @@
 import { updsApi } from "@/api";
-import { sleep } from "@/helpers";
 import { IFormLogin, IResponseLogin } from "@/types";
 
-const fakeResponse: IResponseLogin = {
+const fakeResponse: any = {
   data: {
     usuario: {
       id: 123,
@@ -45,10 +44,10 @@ const fakeResponse: IResponseLogin = {
 
 const login = async (data: IFormLogin): Promise<IResponseLogin> => {
   try {
-    //TODO: FIX LOGIN
-    await sleep(4000);
-
-    return fakeResponse;
+    /*  //TODO: FIX LOGIN
+     await sleep(4000);
+ 
+     return fakeResponse; */
 
     const response = await updsApi.post<IResponseLogin>("/auth/login", data);
     return response.data;
@@ -60,11 +59,11 @@ const login = async (data: IFormLogin): Promise<IResponseLogin> => {
 const getProfile = async (): Promise<IResponseLogin> => {
   try {
     console.log("GETTING PROFILE");
-    await sleep(4000);
-    throw new Error();
-    return fakeResponse;
+    /*  await sleep(4000);
+     throw new Error();
+     return fakeResponse; */
 
-    const response = await updsApi.post<IResponseLogin>("/auth/perfil");
+    const response = await updsApi<IResponseLogin>("/auth/perfil");
     return response.data;
   } catch (e: any) {
     console.log(e);

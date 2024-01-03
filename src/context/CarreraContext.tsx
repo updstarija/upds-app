@@ -6,8 +6,6 @@ import {
   useState,
 } from "react";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import { useCarreras } from "@/hooks/useCarreras";
-import { UseQueryResult } from "@tanstack/react-query";
 import { ICarrera } from "@/types"; //mport {useAuthContext, useCarreras} from '@/hooks';
 
 interface CarreraContext {
@@ -34,7 +32,6 @@ export const CarreraProvider: React.FC<Props> = ({ children }) => {
   const carreras = user.carreras;
 
   useEffect(() => {
-    console.log("render");
     if (
       (valueCarrera === -1 && carreras.length) ||
       (carreras.length &&
