@@ -3,275 +3,84 @@ import {
   TouchableOpacity,
   Image,
   Alert,
-  StyleSheet,
-  Button as Btn,
+  BackHandler,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { Link, router, useNavigation } from "expo-router";
+import { router } from "expo-router";
 import { useForm } from "react-hook-form";
 import { StatusBar } from "expo-status-bar";
 import Checkbox from "expo-checkbox";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAuth, useAuthContext, useThemeColor } from "@/hooks";
 import { IFormLogin } from "@/types";
 import { COLORS } from "~/constants";
 import { Button, TextField } from "@/components";
 import { Texto } from "@/ui";
-import { useEffect, useState } from "react";
-import { openURL } from "expo-linking";
-
-/* const KeyboardAvoidingComponent = () => {
-    const navigation = useNavigation();
-    const isDarkMode = useThemeColor() === 'dark';
-  
-    const { login, isLoading } = useAuth();
-    const {
-      mostrarBtnBackLogin,
-      login: loginContext,
-      setMostrarBtnBackLogin,
-    } = useAuthContext();
-  
-    const { control, handleSubmit } = useForm<IFormLogin>({ mode: 'onChange' });
-    const [recordar, setRecordar] = useState(false)
-  
-    const onSubmit = async (data: IFormLogin) => {
-      const user = await login(data);
-      if (user) {
-        loginContext(user);
-  
-  
-        navigateToHome()
-  
-      }
-    };
-  
-    const navigateToHome = () => {
-      router.replace('(drawer)');
-      //@ts-ignore
-      navigation.navigate('(drawer)');
-  
-    };
-  
-    const omitir = async () => {
-      setMostrarBtnBackLogin(false);
-      await AsyncStorage.setItem('bienvenida', 'true');
-      navigateToHome();
-    };
-  
-    const omitirLogin = () => {
-      Alert.alert(
-        'Aviso',
-        'Al omitir la autenticación no tendras acceso a varias funcionalidades. Si eres estudiante de la UPDS inicia sesion por favor.',
-        [{ text: 'Ok', onPress: omitir, style: 'destructive' }, { text: 'Cancelar' }],
-        { cancelable: false },
-      );
-    };
-  
-  
-    return (
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}>
-        <View className="flex-end m-3 flex-row items-center justify-between">
-          {mostrarBtnBackLogin ? (
-            <TouchableOpacity onPress={() => router.push('/bienvenida')}>
-              <MaterialCommunityIcons
-                name="arrow-left"
-                size={25}
-                color="#fff"
-              />
-            </TouchableOpacity>
-          ) : (
-            <View></View>
-          )}
-  
-          <TouchableOpacity onPress={omitirLogin}>
-            <Texto className="text-white opacity-80">Omitir por ahora</Texto>
-          </TouchableOpacity>
-        </View>
-  
-        <View className="flex-column items-center">
-          {isDarkMode ? (
-            <Image
-              source={require(`~/assets/images/app/logo-dark.png`)}
-              style={{ width: 80, height: 80 }}
-            />
-          ) : (
-            <Image
-              source={require(`~/assets/images/app/logo-light.png`)}
-              style={{ width: 80, height: 80 }}
-            />
-          )}
-  
-          <Texto className="text-xl text-white" weight="Bold">
-            Inicia sesion con tu cuenta
-          </Texto>
-        </View>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          {/*  <View
-            className="flex-1"
-            style={styles.inner}>
-  
-            <TextField
-              control={control}
-              label="Usuario"
-              name="usuario"
-              rules={{ required: 'El usuario es requerido' }}
-            />
-            <TextField
-              control={control}
-              label="Contraseña"
-              name="contraseña"
-              rules={{ required: 'La contraseña es requerida' }}
-              secureTextEntry
-            />
-  
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center" >
-                <Checkbox
-  
-                  value={recordar}
-                  className='mr-1'
-                  onValueChange={() => setRecordar(!recordar)}
-                  color={'#4630EB'}
-                />
-  
-                <Texto className="text-black dark:text-white">Recordarme</Texto>
-              </View>
-  
-              <TouchableOpacity>
-                <Texto className="text-black dark:text-white">
-                  Olvidaste tu contraseña?
-                </Texto>
-              </TouchableOpacity>
-            </View>
-  
-            <Button
-              classNameBtn="mt-5 rounded-xl bg-primario py-3  h-13"
-              onPress={handleSubmit(onSubmit)}
-              disabled={isLoading} showLoader>
-              <Texto className="text-center text-xl text-white ">
-                INICIAR SESION
-              </Texto>
-            </Button>
-          </View> 
-          <View className='flex-1 bg-white ' style={styles.inner}>
-            <View>
-              <TextField
-                control={control}
-                label="Usuario"
-                name="usuario"
-                rules={{ required: 'El usuario es requerido' }}
-              />
-              <TextField
-                control={control}
-                label="Contraseña"
-                name="contraseña"
-                rules={{ required: 'La contraseña es requerida' }}
-                secureTextEntry
-              />
-  
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center" >
-                  <Checkbox
-  
-                    value={recordar}
-                    className='mr-1'
-                    onValueChange={() => setRecordar(!recordar)}
-                    color={'#4630EB'}
-                  />
-  
-                  <Texto className="text-black dark:text-white">Recordarme</Texto>
-                </View>
-  
-                <TouchableOpacity>
-                  <Texto className="text-black dark:text-white">
-                    Olvidaste tu contraseña?
-                  </Texto>
-                </TouchableOpacity>
-              </View>
-  
-              <Button
-                classNameBtn="mt-5 rounded-xl bg-primario py-3  h-13"
-                onPress={handleSubmit(onSubmit)}
-                disabled={isLoading} showLoader>
-                <Texto className="text-center text-xl text-white ">
-                  INICIAR SESION
-                </Texto>
-              </Button>
-            </View>
-  
-            <View />
-            <View />
-            <View />
-            <View />
-            <View />
-            <View />
-            <View />
-            <View />
-          </View>
-  
-        </TouchableWithoutFeedback>
-      </KeyboardAvoidingView>
-    );
-  }; */
+import { useEffect } from "react";
+import { useStorageState } from "@/hooks/useStorageState";
+import { keysStorage } from "@/data/storage/keys";
+import { KeyboardAvoidingScrollView } from "react-native-keyboard-avoiding-scroll-view";
 
 const Login = () => {
-  const navigation = useNavigation();
   const isDarkMode = useThemeColor() === "dark";
 
-  const { login, isLoading } = useAuth();
-  const {
-    // mostrarBtnBackLogin,
-    login: loginContext,
-    callBack,
-    //setMostrarBtnBackLogin,
-  } = useAuthContext();
+  const { signIn } = useAuth();
+  const { login: loginContext, callBack } = useAuthContext();
 
   const { control, handleSubmit, setValue } = useForm<IFormLogin>({
     mode: "onChange",
   });
-  const [recordar, setRecordar] = useState(false);
+
+  const [
+    [isLoadingRememberCredentials, rememberCredentials],
+    setRememberCredentials,
+  ] = useStorageState<boolean>(keysStorage.CREDENTIALS_AUTH_REMEMBER);
+
+  const [[isLoadingEmailStorage, emailStorage], setEmailStorage] =
+    useStorageState<string>(keysStorage.EMAIL_AUTH_REMEMBER);
+
+  const [[isLoadingPasswordStorage, passwordStorage], setPasswordStorage] =
+    useStorageState<string>(keysStorage.PASSWORD_AUTH_REMEMBER);
 
   const onSubmit = async (data: IFormLogin) => {
-    if (recordar) {
-      await AsyncStorage.setItem("email-user", data.usuario);
-      await AsyncStorage.setItem("contrasena-user", data.contraseña);
+    if (rememberCredentials) {
+      setEmailStorage(data.usuario);
+      setPasswordStorage(data.contraseña);
+    } else {
+      setEmailStorage(null);
+      setPasswordStorage(null);
     }
 
-    const user = await login(data);
+    const user = await signIn.mutateAsync(data);
+    console.log(user, "DESDE FRONT");
     if (user) {
-      loginContext(user);
-      navigateToHome();
+      navigateScreen();
     }
   };
 
-  const navigateToHome = () => {
-    router.push("/");
-    alert("push");
-    //@ts-ignore
-    //navigation.navigate("(drawer)");
+  const navigateScreen = (auth: boolean = false) => {
+    if (auth && callBack.value?.auth) {
+      router.replace(callBack.value?.auth as any);
+      return;
+    }
+
+    if (!auth && callBack.value?.prev) {
+      router.replace(callBack.value?.prev as any);
+      return;
+    }
+
+    router.replace("/");
   };
 
-  const test = () => {
-    console.log(callBack.value);
-    //  router.push("/");
-    router.push(callBack.value?.prev as any);
+  const skip = async () => {
+    navigateScreen();
   };
 
-  const omitir = async () => {
-    // setMostrarBtnBackLogin(false);
-    await AsyncStorage.setItem("bienvenida", "true");
-    navigateToHome();
-  };
-
-  const omitirLogin = () => {
+  const skipAuthConfirmation = () => {
     Alert.alert(
       "Aviso",
       "Al omitir la autenticación no tendras acceso a varias funcionalidades. Si eres estudiante de la UPDS inicia sesion por favor.",
       [
-        { text: "Ok", onPress: omitir, style: "destructive" },
+        { text: "Ok", onPress: skip, style: "destructive" },
         { text: "Cancelar" },
       ],
       { cancelable: false }
@@ -287,7 +96,7 @@ const Login = () => {
     );
   };
 
-  useEffect(() => {
+  /* useEffect(() => {
     (async () => {
       const email = await AsyncStorage.getItem("email-user");
       const contrasena = await AsyncStorage.getItem("contrasena-user");
@@ -301,7 +110,35 @@ const Login = () => {
         setRecordar(true);
       }
     })();
-  }, []);
+  }, []); */
+
+  useEffect(() => {
+    if (emailStorage) {
+      setValue("usuario", emailStorage);
+    }
+
+    if (passwordStorage) {
+      setValue("contraseña", passwordStorage);
+    }
+  }, [emailStorage, passwordStorage]);
+
+  const handleBackButtonPress = () => {
+    if (callBack.value?.prev) {
+      router.push((callBack.value?.prev as any) || "/");
+      callBack.clearCallback();
+      return true;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      handleBackButtonPress
+    );
+
+    return () => backHandler.remove();
+  }, [callBack.value]);
 
   return (
     <>
@@ -313,105 +150,104 @@ const Login = () => {
       />
 
       <SafeAreaView className="flex-1 bg-primario dark:bg-primario-dark">
-        <View className="flex-end m-3 flex-row items-center justify-between">
-          <View />
-
-          <Link href={"/"} asChild>
-            <TouchableOpacity className="p-4 pr-0">
-              <Texto className="text-white opacity-80">Omitir por ahora</Texto>
-            </TouchableOpacity>
-          </Link>
-
-          <TouchableOpacity onPress={() => router.back()} className="p-4 pr-0">
-            <Texto className="text-white opacity-80">xd</Texto>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={test} className="p-4 pr-0">
-            <Texto className="text-white opacity-80">test</Texto>
-          </TouchableOpacity>
-        </View>
-
-        <View className="flex-column items-center">
-          <Image
-            source={require(`~/assets/images/app/logo-dark.png`)}
-            style={{ width: 80, height: 80 }}
-          />
-
-          <Texto className="text-xl text-white lg:text-3xl" weight="Bold">
-            Inicia sesion con tu cuenta
-          </Texto>
-        </View>
-
-        <View
-          className="bg-white dark:bg-secondary-dark mt-5 flex-1 px-8 pt-8 max-w-2xl mx-auto w-full"
-          style={{ borderTopLeftRadius: 50, borderTopRightRadius: 50 }}
-        >
-          <TextField
-            control={control}
-            label="Correo académico"
-            name="usuario"
-            placeholder="email@upds.net.bo"
-            placeholderTextColor={"#ccc"}
-            rules={{ required: "El usuario es requerido" }}
-          />
-          <TextField
-            control={control}
-            label="Documento de Identidad"
-            name="contraseña"
-            placeholder="********"
-            placeholderTextColor={"#ccc"}
-            rules={{ required: "La contraseña es requerida" }}
-            secureTextEntry
-          />
-
-          <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center">
-              <Checkbox
-                value={recordar}
-                className="mr-1"
-                onValueChange={() => setRecordar(!recordar)}
-                color={COLORS.light.background}
-              />
-
-              <Texto className="text-black dark:text-white">Recordarme</Texto>
+        <KeyboardAvoidingScrollView
+          stickyFooter={
+            <View className="px-8 py-2 bg-white">
+              <Button
+                classNameBtn=" rounded-xl bg-primario p-3"
+                onPress={handleSubmit(onSubmit)}
+                disabled={signIn.isLoading}
+                showLoader
+              >
+                <Texto className="text-center text-xl text-white ">
+                  INICIAR SESION
+                </Texto>
+              </Button>
             </View>
+          }
+          style={{ flex: 1 }}
+          containerStyle={{ flex: 1 }}
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <View className="flex-end m-3 flex-row items-center justify-between">
+            <View />
 
             <TouchableOpacity
-              className="p-2"
-              onPress={() => forgetPasswordMessage()}
+              onPress={skipAuthConfirmation}
+              className="p-4 pr-0"
             >
-              <Texto className="text-black dark:text-white">
-                Olvidaste tus credenciales?
-              </Texto>
+              <Texto className="text-white opacity-80">Omitir por ahora</Texto>
             </TouchableOpacity>
           </View>
 
-          <Button
-            classNameBtn="mt-5 rounded-xl bg-primario py-3  h-13"
-            onPress={handleSubmit(onSubmit)}
-            disabled={isLoading}
-            showLoader
-          >
-            <Texto className="text-center text-xl text-white ">
-              INICIAR SESION
+          <View className="flex-column items-center">
+            <Image
+              source={require(`~/assets/images/app/logo-dark.png`)}
+              style={{ width: 80, height: 80 }}
+            />
+
+            <Texto className="text-xl text-white lg:text-3xl" weight="Bold">
+              Inicia sesion con tu cuenta
             </Texto>
-          </Button>
+          </View>
 
-          <Button
-            classNameBtn="mt-5 rounded-xl bg-primario py-3  h-13"
-            onPress={test}
+          <View
+            className="bg-white dark:bg-secondary-dark mt-5 flex-1 px-8 pt-8 max-w-2xl mx-auto w-full"
+            style={{ borderTopLeftRadius: 50, borderTopRightRadius: 50 }}
           >
-            <Texto className="text-center text-xl text-white ">TEST</Texto>
-          </Button>
+            <TextField
+              control={control}
+              label="Correo académico"
+              name="usuario"
+              placeholder="email@upds.net.bo"
+              placeholderTextColor={"#ccc"}
+              rules={{ required: "El usuario es requerido" }}
+              autoComplete="email"
+            />
+            <TextField
+              control={control}
+              label="Documento de Identidad"
+              name="contraseña"
+              placeholder="********"
+              placeholderTextColor={"#ccc"}
+              rules={{ required: "La contraseña es requerida" }}
+              secureTextEntry
+            />
 
-          {/* <Button
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center">
+                <Checkbox
+                  value={rememberCredentials || false}
+                  className="mr-1"
+                  onValueChange={() =>
+                    setRememberCredentials(!rememberCredentials)
+                  }
+                  color={COLORS.light.background}
+                  disabled={isLoadingRememberCredentials}
+                />
+
+                <Texto className="text-black dark:text-white">Recordarme</Texto>
+              </View>
+
+              <TouchableOpacity
+                className="p-2"
+                onPress={() => forgetPasswordMessage()}
+              >
+                <Texto className="text-black dark:text-white">
+                  Olvidaste tus credenciales?
+                </Texto>
+              </TouchableOpacity>
+            </View>
+
+            {/* <Button
               onPress={() => {
                 openURL("app-settings://notification/com.upds.tarija.com");
               }}
             >
               <Texto>HOILA</Texto>
             </Button> */}
-        </View>
+          </View>
+        </KeyboardAvoidingScrollView>
       </SafeAreaView>
     </>
   );

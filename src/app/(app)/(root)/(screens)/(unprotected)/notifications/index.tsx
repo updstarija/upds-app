@@ -1,168 +1,98 @@
-import { View, TouchableOpacity, RefreshControl } from "react-native";
+import { View, RefreshControl, useWindowDimensions } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { useRouter } from "expo-router";
-import { Feather, FontAwesome5 } from "@expo/vector-icons";
-import clsx from "clsx";
-import { useNotification, useThemeColor } from "@/hooks";
-import { Button, Spinner } from "@/components";
-import { CustomBottomSheetModal, Texto } from "@/ui";
-import { formatFecha } from "@/helpers";
-import { INotificacion } from "@/types";
-import { useState } from "react";
+import { router } from "expo-router";
+import { Texto } from "@/ui";
+import { INotification } from "@/types";
+import { useNotifications } from "@/hooks/useNotifications";
+import { Image } from "expo-image";
+import NotificationItem from "@/components/notification/NotificationItem";
+import NotificationSkeleton from "@/components/notification/NotificationSkeleton";
 
 const Notificacion = () => {
-  const router = useRouter();
-  const isDark = useThemeColor() === "dark";
+  const { height } = useWindowDimensions();
 
-  const {
-    data,
-    isLoading,
-    getNotifications,
-    marcarComoLeido,
-    marcarComoNoLeido,
-    deleteNotificacion,
-  } = useNotification();
-  const [refreshing, setRefreshing] = useState(false);
+  const { notificationsQuery, markAsUnreadMutation } = useNotifications({
+    params: { limitResults: 5 },
+    query: ["notificationsQuery"],
+  });
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setRefreshing(false);
-  };
+  const notifications =
+    notificationsQuery.data?.pages
+      .flatMap((x) => x.data)
+      .filter((y) => y.type !== "deleted") ?? [];
 
-  const navigation = async (item: INotificacion) => {
-    await marcarComoLeido(item.id);
+  const navigateNotification = async (item: INotification) => {
+    await markAsUnreadMutation.mutateAsync(item.id);
 
     if (item.to) {
-      const data = item.to.split("|");
-      router.push({
-        pathname: `/(app)/(root)/(screens)/(unprotected)/(home)/announcements/[id]`,
-        params: {
-          id: data[1],
-        },
-      });
+      router.push(item.to as any);
     }
-  };
-
-  const NotificacionItem = (item: INotificacion) => {
-    return (
-      <View
-        className={clsx([
-          "px-2 py-1",
-          {
-            "bg-white dark:bg-[#0a1f4a]": item.type == "read",
-            "bg-[#c4cee1] dark:bg-transparent": item.type != "read",
-          },
-        ])}
-      >
-        <View className="flex-row justify-between items-center ">
-          <TouchableOpacity
-            onPress={() => navigation(item)}
-            className="flex-1 mr-4"
-          >
-            <Texto
-              className="text-black dark:text-white text-lg"
-              weight="Bold"
-              numberOfLines={1}
-            >
-              {item.titulo}
-            </Texto>
-            <Texto
-              numberOfLines={2}
-              className="text-black dark:text-white my-1"
-            >
-              {item.mensaje}
-            </Texto>
-            <Texto className="text-gray-400 text-xs" weight="Bold">
-              hace {formatFecha(item.fecha + "")}
-            </Texto>
-          </TouchableOpacity>
-
-          <CustomBottomSheetModal
-            content={
-              <View className="p-2  items-center justify-center">
-                <FontAwesome5
-                  name="ellipsis-h"
-                  color={isDark ? "#FFF" : "#000"}
-                  size={20}
-                />
-              </View>
-            }
-          >
-            <View className="mb-3">
-              <Texto
-                className="text-center text-xl dark:text-white mb-2"
-                weight="Bold"
-              >
-                {item.titulo}
-              </Texto>
-
-              <Texto className=" dark:text-white" numberOfLines={10}>
-                {item.mensaje}
-              </Texto>
-            </View>
-
-            <View className="">
-              <Button
-                onPress={() => deleteNotificacion(item.id)}
-                classNameBtn="bg-primario p-4 rounded-xl flex-row justify-between items-center"
-              >
-                <Texto className="text-white ">Eliminar Notificacion</Texto>
-                <Feather name="delete" color={"#fff"} size={20} />
-              </Button>
-
-              <Button
-                onPress={() =>
-                  item.type == "read"
-                    ? marcarComoNoLeido(item.id)
-                    : marcarComoLeido(item.id)
-                }
-                classNameBtn="bg-primario p-4 rounded-xl flex-row justify-between items-center mt-1"
-              >
-                <Texto className="text-white">
-                  {item.type == "read"
-                    ? "Marcar como no leido"
-                    : "Marcar como leido"}
-                </Texto>
-                <Feather
-                  name={item.type == "read" ? "eye-off" : "eye"}
-                  color={"#fff"}
-                  size={20}
-                />
-              </Button>
-            </View>
-          </CustomBottomSheetModal>
-        </View>
-      </View>
-    );
   };
 
   return (
     <View className="bg-white dark:bg-primario-dark flex-1">
       <FlashList
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          <RefreshControl
+            refreshing={
+              !notificationsQuery.isInitialLoading &&
+              notificationsQuery.isRefetching
+            }
+            onRefresh={() => notificationsQuery.refetch()}
+          />
         }
-        data={data}
-        renderItem={({ item }) => <NotificacionItem {...item} />}
+        contentContainerStyle={{
+          padding: 10,
+        }}
+        ListFooterComponentStyle={{
+          marginTop: notifications.length > 0 ? 8 : undefined,
+        }}
+        data={notifications}
+        renderItem={({ item }) => (
+          <NotificationItem
+            notification={item}
+            navigateNotification={navigateNotification}
+          />
+        )}
         estimatedItemSize={100}
-        onEndReachedThreshold={0.1}
-        onEndReached={getNotifications}
+        onEndReachedThreshold={0.8}
+        onEndReached={() => notificationsQuery.fetchNextPage()}
+        ListEmptyComponent={
+          <>
+            {!notificationsQuery.isLoading && (
+              <View
+                className=" items-center justify-center flex-1"
+                style={{ height: height - 150 }}
+              >
+                <Image
+                  style={{
+                    width: 200,
+                    height: 200,
+                  }}
+                  source={require("~/assets/images/icons/empty-data.png")}
+                />
+                <Texto className="text-center">No hay notificaciones</Texto>
+              </View>
+            )}
+          </>
+        }
         ListFooterComponent={
-          isLoading ? (
-            <Spinner
-              showText
-              text="Cargando notificaciones"
-              classNameContainer="p-4 items-center"
-              size={25}
-            />
+          notificationsQuery.isFetchingNextPage ||
+          notificationsQuery.isLoading ? (
+            <View className="flex-col gap-2">
+              {Array(notifications.length > 2 ? 1 : 8)
+                .fill(0)
+                .map((x, i) => (
+                  <View className="" key={`skeleton-announcement-${i}`}>
+                    <NotificationSkeleton />
+                  </View>
+                ))}
+            </View>
           ) : (
             <View />
           )
         }
-        ItemSeparatorComponent={() => (
-          <View className="border-[0.5px] border-secondary-dark" />
-        )}
+        ItemSeparatorComponent={() => <View className="mb-2" />}
       />
     </View>
   );

@@ -197,6 +197,7 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> =
             {...props}
             disappearsOnIndex={-1}
             appearsOnIndex={2}
+            opacity={2}
           />
         ),
         []

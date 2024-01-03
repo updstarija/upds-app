@@ -1,7 +1,6 @@
-import { View, TextInputProps, Text } from "react-native";
+import { View, TextInputProps, Text, TextInput } from "react-native";
 import { Controller, Control, RegisterOptions } from "react-hook-form";
 import { Texto } from "@/ui";
-import { TextInput } from "react-native-gesture-handler";
 
 interface Props extends TextInputProps {
   control: Control<any>;
@@ -30,13 +29,13 @@ export const TextField: React.FC<Props> = ({
             <TextInput
               {...props}
               value={field.value}
-              /* className={`rounded-2xl border bg-gray-100 p-4 text-gray-700 dark:bg-primario-dark dark:text-white ${
+              className={`rounded-2xl border bg-gray-100 p-4 text-gray-700 dark:bg-primario-dark dark:text-white ${
                 error
                   ? "border-red-300"
                   : "border-gray-100 dark:border-[#0e285b]"
-              }`} */
+              }`}
               onChangeText={field.onChange}
-              style={{
+              /*   style={{
                 marginTop: 8,
                 marginBottom: 10,
                 borderRadius: 10,
@@ -44,7 +43,7 @@ export const TextField: React.FC<Props> = ({
                 lineHeight: 20,
                 padding: 8,
                 backgroundColor: "rgba(151, 151, 151, 0.25)",
-              }}
+              }} */
             />
             {error && <Text className="text-red-400">{error?.message}</Text>}
           </>

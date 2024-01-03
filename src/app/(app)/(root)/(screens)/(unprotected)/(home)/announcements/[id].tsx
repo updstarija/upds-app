@@ -27,6 +27,7 @@ import { formatDateForDisplay } from "@/helpers/formatDateForDisplay";
 import { StatusBar } from "expo-status-bar";
 import RenderHTML from "react-native-render-html";
 import AnnouncementDetailSkeleton from "@/components/announcement/AnnouncementDetailSkeleton";
+import { extractPlainText } from "@/helpers/extractPlainText";
 
 const actionsFloatButton: IActionProps[] = [
   {
@@ -95,22 +96,6 @@ export const NoticeDetail = () => {
         // console.log('Error al incrementar like:', error);
       });
   };
-
-  const isLoading = announcementQuery.isLoading;
-
-  if (announcementQuery.isError) return <Texto>ERROR</Texto>;
-
-  const {
-    title,
-    description,
-    category,
-    images,
-    date,
-    like,
-    moreInfoUrl,
-    priority,
-    superpriority,
-  } = announcementQuery.data ?? defaultAnnouncement;
 
   const render = () => {
     return (
@@ -312,7 +297,7 @@ export const NoticeDetail = () => {
 🗓️ *${announcementQuery.data.date.toLocaleDateString("es-ES")}*
 📚 *${announcementQuery.data.category}*
 
-${announcementQuery.data.description}
+${extractPlainText(announcementQuery.data.description)}
 
 Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                 `,
@@ -321,7 +306,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
 
       await Share.open(shareOptions);
     } catch (error) {
-      //console.log('Error al compartir la imagen:', error);
+      console.log("Error al compartir la imagen:", error);
     }
   };
 
@@ -331,6 +316,22 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
       openBrowserAsync(announcementQuery.data?.moreInfoUrl || "");
     },
   };
+
+  const isLoading = announcementQuery.isLoading;
+
+  const {
+    title,
+    description,
+    category,
+    images,
+    date,
+    like,
+    moreInfoUrl,
+    priority,
+    superpriority,
+  } = announcementQuery.data ?? defaultAnnouncement;
+
+  if (announcementQuery.isError) return <Texto>ERROR</Texto>;
 
   if (isLoading) return <AnnouncementDetailSkeleton />;
 

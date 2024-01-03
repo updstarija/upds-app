@@ -31,7 +31,7 @@ export const CarreraProvider: React.FC<Props> = ({ children }) => {
   const [valueCarrera, setValueCarrera] = useState<number>(-1);
   const [boleta, setBoleta] = useState<number>(-1);
 
-  const carreras = user.usuario.carreras;
+  const carreras = user.carreras;
 
   useEffect(() => {
     console.log("render");
@@ -40,9 +40,9 @@ export const CarreraProvider: React.FC<Props> = ({ children }) => {
       (carreras.length &&
         !carreras.map((carr) => carr.id).includes(valueCarrera))
     ) {
-      setValueCarrera(user.usuario.carreras[0].id);
+      setValueCarrera(user.carreras[0].id);
     }
-  }, [user.usuario.carreras]);
+  }, [user.carreras]);
 
   return (
     <CarreraContext.Provider

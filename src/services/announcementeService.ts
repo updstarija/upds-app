@@ -18,23 +18,22 @@ type QueryContext = QueryFunctionContext<(string | GetAllDataProps)[], any>;
 
 export const getAllData = async (context: QueryContext) => {
   try {
-    const Filter = firestore.Filter
+    const Filter = firestore.Filter;
     const { pageParam = undefined, queryKey } = context;
     const [, , args] = queryKey;
     const { category, limitResults, q } = args as GetAllDataProps;
 
     let query = db
       .collection(DB_ANNOUNCEMENT_KEY)
-      .orderBy("priority", "desc").orderBy("date", "desc")
+      .orderBy("priority", "desc")
+      .orderBy("date", "desc");
     // .where("date", "<=", new Date())
 
-
     if (category) {
-      query = query.where(Filter("category", "==", category))
+      query = query.where(Filter("category", "==", category));
     }
 
     //query = query.where("date", "<=", new Date())
-
 
     if (pageParam) {
       query = query.startAfter(pageParam);
@@ -43,8 +42,6 @@ export const getAllData = async (context: QueryContext) => {
     if (limitResults) {
       query = query.limit(limitResults || 1);
     }
-
-
 
     const snapshot = await query.get();
 
@@ -71,46 +68,6 @@ export const getAllData = async (context: QueryContext) => {
   }
 };
 
-/* export const getAllData = async ({
-  category,
-  limitResults,
-  q,
-}: GetAllDataProps) => {
-  try {
-    let query = db
-      .collection(DB_ANNOUNCEMENT_KEY)
-      .where("date", "<=", new Date())
-      .orderBy("date", "desc");
-
-    if (category) {
-      query = query.where("category", "==", category);
-    }
-
-    if (limitResults) {
-      console.log(limitResults);
-      query = query.limit(limitResults || 1);
-    }
-
-    const snapshot = await query.get();
-
-    const data: IAnnouncement[] = snapshot.docs.map((doc) => {
-      const dataDoc = doc.data() as IAnnouncement;
-
-      return {
-        ...dataDoc,
-        //@ts-ignore
-        date: new Date(dataDoc.date.toDate()),
-        id: doc.id,
-      };
-    });
-
-    return data;
-  } catch (e: any) {
-    console.log(e);
-    throw new Error(e);
-  }
-};
- */
 export const getData = async (id: string): Promise<IAnnouncement> => {
   try {
     const snapshot = await db.collection(DB_ANNOUNCEMENT_KEY).doc(id).get();
@@ -127,20 +84,37 @@ export const getData = async (id: string): Promise<IAnnouncement> => {
   }
 };
 
-export const getTopPriority = async () => {
-  const snapshot = await db
-    .collection(DB_ANNOUNCEMENT_KEY)
-    .orderBy("date", "desc")
-    .where("superpriority", "==", true)
-    .limit(5)
-    .get();
+type GetTopPriorityProps = {
+  type?: "superpriority" | "priority";
+  limitResults?: number;
+};
 
-  const data: INotificacionNotice[] = snapshot.docs.map((doc) => ({
-    ...(doc.data() as INotificacionNotice),
-    id: doc.id,
-  }));
+export const getTopPriority = async ({
+  type = "priority",
+  limitResults = 5,
+}: GetTopPriorityProps) => {
+  try {
+    const Filter = firestore.Filter;
 
-  return data;
+    let query = db.collection(DB_ANNOUNCEMENT_KEY).orderBy("date", "desc");
+
+    query = query.where(Filter(type, "==", true));
+
+    query = query.limit(limitResults);
+
+    const snapshot = await query.get();
+
+    const data: IAnnouncement[] = snapshot.docs.map((doc) => ({
+      ...(doc.data() as IAnnouncement),
+      id: doc.id,
+    }));
+
+    return data;
+  } catch (e: any) {
+    console.log(e);
+
+    throw new Error(e);
+  }
 };
 
 export default {

@@ -19,6 +19,7 @@ import { ThemeProvider } from "@/context/ThemeContext";
 import { Texto } from "@/ui";
 import { AntDesign } from "@expo/vector-icons";
 import { ProyeccionesProvider } from "@/context/ProyeccionesContext";
+import { PopupWindowProvider } from "@/context/PopupWindowContext";
 
 const queryClient = new QueryClient();
 
@@ -62,9 +63,11 @@ function RootLayoutNav() {
     <ThemeProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <Stack>
-            <Stack.Screen name="(app)" options={{ headerShown: false }} />
-          </Stack>
+          <PopupWindowProvider>
+            <Stack>
+              <Stack.Screen name="(app)" options={{ headerShown: false }} />
+            </Stack>
+          </PopupWindowProvider>
         </AuthProvider>
         <Toast config={toastConfig} />
       </QueryClientProvider>

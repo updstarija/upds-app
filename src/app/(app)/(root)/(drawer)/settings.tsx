@@ -10,6 +10,7 @@ import { FlashList } from "@shopify/flash-list";
 import { Menu, menuAjustes } from "@/data";
 import { useAuthContext, useThemeColor } from "@/hooks";
 import { Texto } from "@/ui";
+import ProtectedAuthLink from "@/components/ProtectedAuthLink";
 
 const Settings = () => {
   return (
@@ -40,13 +41,8 @@ const EnlaceMenu: React.FC<Menu> = ({ icon, text, link, to, auth }) => {
   const { status } = useAuthContext();
   return (
     <>
-      {/* @ts-ignore */}
-      <Link
-        //@ts-ignore
-        href={auth && status !== "authenticated" ? "/auth/login" : to}
-        asChild
-      >
-        <TouchableOpacity
+      <ProtectedAuthLink auth={auth || false} isLink={link} to={to}>
+        <View
           className={`flex-row bg-white dark:bg-secondary-dark  p-5 items-center rounded-lg border-[#ccc] border dark:border-[0px] ${
             isIos ? "shadow-lg" : ""
           }`}
@@ -79,8 +75,8 @@ const EnlaceMenu: React.FC<Menu> = ({ icon, text, link, to, auth }) => {
           <Texto className="ml-3 text-black dark:text-white" weight="Bold">
             {text}
           </Texto>
-        </TouchableOpacity>
-      </Link>
+        </View>
+      </ProtectedAuthLink>
     </>
   );
 };

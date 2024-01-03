@@ -6,21 +6,22 @@ import { keysStorage } from "@/data/storage/keys";
 import { Texto } from "@/ui";
 
 const AppLayout = () => {
-  const { signOut, refreshLogin } = useAuth();
-  const { welcomeScreen } = useAuthContext();
+  const { signOut, refreshSession } = useAuth();
+  const { welcomeScreen, status } = useAuthContext();
 
   const [[isLoadingToken, token], setToken] = useStorageState(
     keysStorage.JWT_TOKEN
   );
 
   useEffect(() => {
-    if (!token) signOut();
-    else {
-      refreshLogin();
+    if (!isLoadingToken) {
+      if (!token) signOut();
     }
-  }, [token]);
+  }, [token, isLoadingToken]);
 
-  if (isLoadingToken) return <Texto>CARGANDO TOKEN</Texto>;
+  console.log(status);
+  if (isLoadingToken || status === "pending")
+    return <Texto>CARGANDO TOKEN</Texto>;
 
   return <Slot />;
 };

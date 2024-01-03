@@ -1,13 +1,16 @@
-import { View } from "react-native";
+import { Alert, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ScrollView } from "react-native-gesture-handler";
-import { requestPermissionsAsync } from "expo-notifications";
+import { PermissionStatus, requestPermissionsAsync } from "expo-notifications";
 import Checkbox from "expo-checkbox";
 import { COLORS } from "~/constants";
 import { Texto } from "@/ui";
 import { FontAwesome } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks";
 import messagin from "@react-native-firebase/messaging";
+import { startActivityAsync, ActivityAction } from "expo-intent-launcher";
+import { FirebaseNotification } from "~/constants/Firebase";
+import { openSettings } from "expo-linking";
 
 const Notifications = () => {
   const isDark = useThemeColor() === "dark";
@@ -17,16 +20,48 @@ const Notifications = () => {
   const verificarNotificaciones = async () => {
     const { status } = await requestPermissionsAsync();
     if (status === "granted") setActiveNotifications(true);
+    else setActiveNotifications(false);
   };
 
   const toggleNotifications = async (x: boolean) => {
-    /*  if (x) {
-             const result = await messagin().registerDeviceForRemoteMessages()
-             //console.log(result)
-             return
-         }
-         const result = await messagin().unregisterDeviceForRemoteMessages()
-         //console.log(result) */
+    if (x) {
+      const { status } = await requestPermissionsAsync();
+      if (status === "denied") {
+        Alert.alert(
+          "Alerta",
+          "Activa las notificacions desde los ajustes de tu dispositivo",
+          [
+            {
+              text: "Ok",
+              onPress: async () => {
+                await openSettings();
+                await verificarNotificaciones();
+              },
+            },
+          ]
+        );
+      }
+      await messagin().requestPermission();
+      await messagin().subscribeToTopic(
+        FirebaseNotification.NOTIFICATION_TOPIC
+      );
+      setActiveNotifications(x);
+      return;
+    }
+
+    Alert.alert(
+      "Alerta",
+      "Desactiva las notificacions desde los ajustes de tu dispositivo",
+      [
+        {
+          text: "Ok",
+          onPress: async () => {
+            await openSettings();
+            await verificarNotificaciones();
+          },
+        },
+      ]
+    );
   };
   useEffect(() => {
     verificarNotificaciones();
@@ -80,8 +115,8 @@ const Notifications = () => {
           value={activeNotifications}
           className="mr-1"
           onValueChange={(x) => {
-            // toggleNotifications(x)
-            setActiveNotifications(x);
+            toggleNotifications(x);
+            //setActiveNotifications(x);
           }}
           color={COLORS.light.background}
         />

@@ -17,13 +17,17 @@ import { COLORS } from "~/constants";
 import { useAuthContext, useChat, useThemeColor } from "@/hooks";
 import { Button, Spinner, TextField } from "@/components";
 import { CustomModal, Texto } from "@/ui";
+import { keysStorage } from "@/data/storage/keys";
+import { TextInput } from "react-native-gesture-handler";
 
 const ChatScreen = () => {
   {
-    const isDarkMode = useThemeColor() === "dark";
-    const { status, user } = useAuthContext();
+    const isDark = useThemeColor() === "dark";
+
+    const { status, user, setNameGuestUser } = useAuthContext();
+
     const [chatId, setChatId] = useState<null | string>(
-      user?.usuario?.documentoIdentidad
+      user.documentoIdentidad
     );
 
     const getTokenDevice = async () => {
@@ -58,12 +62,12 @@ const ChatScreen = () => {
           {...props}
           wrapperStyle={{
             right: {
-              backgroundColor: isDarkMode
+              backgroundColor: isDark
                 ? COLORS.dark.secondary
                 : COLORS.light.background,
             },
             left: {
-              backgroundColor: isDarkMode ? "#3b70ff" : "#cccccc49",
+              backgroundColor: isDark ? "#3b70ff" : "#cccccc49",
             },
           }}
           textStyle={{
@@ -71,7 +75,7 @@ const ChatScreen = () => {
               color: "#fff",
             },
             left: {
-              color: isDarkMode ? "#FFF" : "#000",
+              color: isDark ? "#FFF" : "#000",
             },
           }}
         />
@@ -87,11 +91,11 @@ const ChatScreen = () => {
           renderComposer={(x) => (
             <Composer
               {...x}
-              textInputStyle={{ color: isDarkMode ? "#FFF" : "#000" }}
+              textInputStyle={{ color: isDark ? "#FFF" : "#000" }}
             />
           )}
           containerStyle={{
-            backgroundColor: isDarkMode ? COLORS.dark.secondary : "#fff",
+            backgroundColor: isDark ? COLORS.dark.secondary : "#fff",
             marginLeft: 15,
             marginRight: 15,
             marginBottom: 5,
@@ -109,7 +113,7 @@ const ChatScreen = () => {
             <MaterialCommunityIcons
               name="send-circle"
               size={35}
-              color={isDarkMode ? "#FFF" : COLORS.light.background}
+              color={isDark ? "#FFF" : COLORS.light.background}
               style={{ padding: 5 }}
             />
           </View>
@@ -120,14 +124,21 @@ const ChatScreen = () => {
     useEffect(() => {
       (async () => {
         if (status === "authenticated") {
-          setChatId(user.usuario.documentoIdentidad);
+          setChatId(user.documentoIdentidad);
         } else {
-          const tokenStorage = await AsyncStorage.getItem("device-token");
+          const tokenStorage = await AsyncStorage.getItem(
+            keysStorage.DEVICE_TOKEN
+          );
+
+          // console.log(tokenStorage);
 
           if (tokenStorage) {
-            const nombreUsuario = await AsyncStorage.getItem("user-no-auth");
+            const nameGuestUser = await AsyncStorage.getItem(
+              keysStorage.GUEST_USER_NAME
+            );
             //!FIX: SET NOMBRE USUARIO
-            // setNombreUsuarioNoAuth(nombreUsuario)
+            //  console.log(nameGuestUser);
+            setNameGuestUser(nameGuestUser || "GUEST_USER");
             setChatId(tokenStorage);
           } else {
             setVisibleModal(true);
@@ -156,15 +167,18 @@ const ChatScreen = () => {
     }, [chatId]) */
 
     const setChatIdDevice = async () => {
-      const tokenDevice = await getTokenDevice();
-      await AsyncStorage.setItem("device-token", tokenDevice);
-      setChatId(tokenDevice);
+      const deviceToken = await getTokenDevice();
+      await AsyncStorage.setItem(keysStorage.DEVICE_TOKEN, deviceToken);
+      setChatId(deviceToken);
     };
 
     const onSubmit = async (data: any) => {
-      await AsyncStorage.setItem("user-no-auth", data.nombreCompleto);
-      //!FIX: SET NMBRE USERS
-      //setNombreUsuarioNoAuth(data.nombreCompleto);
+      console.log(22222222);
+      await AsyncStorage.setItem(
+        keysStorage.GUEST_USER_NAME,
+        data.nombreCompleto
+      );
+      setNameGuestUser(data.nombreCompleto);
       setChatIdDevice();
       setVisibleModal(false);
     };
@@ -212,7 +226,7 @@ const ChatScreen = () => {
               name="nombreCompleto"
               rules={{ required: "El nombre es obligatorio" }}
             />
-
+            {/*  <TextInput /> */}
             <View className="flex-row items-center justify-between">
               <Button
                 classNameBtn="mt-5 rounded-xl bg-white border p-3"
@@ -222,7 +236,6 @@ const ChatScreen = () => {
               >
                 <Texto className="text-center  text-black ">Cancelar</Texto>
               </Button>
-
               <Button
                 classNameBtn="mt-5 rounded-xl bg-primario p-3"
                 onPress={handleSubmit(onSubmit)}

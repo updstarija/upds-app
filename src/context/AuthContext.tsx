@@ -1,10 +1,11 @@
-import { createContext, useRef, useState } from "react";
-import { IResponseLogin } from "@/types";
+import { createContext, useEffect, useRef, useState } from "react";
+import { IResponseLogin, IUser } from "@/types";
 import { AuthContextType, LoginStatus } from "@/types/context/auth";
 import { initialStateAuthContext } from "@/data/context/auth";
 import { keysStorage } from "@/data/storage/keys";
 import { useStorageState } from "@/hooks/useStorageState";
 import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const AuthContext = createContext<AuthContextType>(
   {} as AuthContextType
@@ -34,33 +35,30 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   );
 
   const [status, setStatus] = useState<LoginStatus>("pending");
-  const [user, setuser] = useState<IResponseLogin["data"]>(
-    initialStateAuthContext
-  );
+  const [user, setUser] = useState<IUser>(initialStateAuthContext);
 
   const verificarScreenBienvenida = async () => {
     //if (await yaPasoLaBienvenida()) setMostrarBtnBackLogin(false);
   };
 
-  const login = async (user: IResponseLogin["data"]) => {
-    setuser(user);
+  const setNameGuestUser = (nombre: string) => {
+    setStatus("guest");
+    setUser({
+      ...user,
+      nombre,
+    });
+  };
+
+  const login = async (data: IResponseLogin["data"]) => {
+    setUser(data.usuario);
+    setToken(data.token);
     setStatus("authenticated");
   };
 
   const logout = async () => {
     setStatus("no-authenticated");
-    setuser(initialStateAuthContext);
+    setUser(initialStateAuthContext);
     setToken(null);
-  };
-
-  const setNombreUsuarioNoAuth = (nombre: string) => {
-    setuser({
-      ...user,
-      usuario: {
-        ...user.usuario,
-        nombre,
-      },
-    });
   };
 
   const completeWelcome = () => {
@@ -89,6 +87,7 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           clearCallback,
           setCallback,
         },
+        setNameGuestUser,
       }}
     >
       {children}

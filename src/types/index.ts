@@ -11,3 +11,4 @@ export * from "./responses";
 export * from "./storage.d";
 export * from "./typeNotice.d";
 export * from "./video";
+export * from "./notification";

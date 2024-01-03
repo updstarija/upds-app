@@ -1,240 +1,206 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 import {
-    View,
-    StyleSheet,
-    TouchableOpacity,
-    Platform,
-    UIManager,
-    Dimensions,
-} from 'react-native';
-import RenderHTML from 'react-native-render-html';
-import { LayoutScreen } from '@/layout/LayoutScreen';
-import { COLORS } from '~/constants';
-import { Spinner } from '@/components';
-import { useFaq, useThemeColor } from '@/hooks';
-import { FlashList } from '@shopify/flash-list';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { IFaq } from '@/types';
-import { FontAwesome } from '@expo/vector-icons';
-import { categorias, categoriasFaq } from '@/data';
-import { Texto } from '@/ui';
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Platform,
+  UIManager,
+  Dimensions,
+  useWindowDimensions,
+} from "react-native";
+import RenderHTML from "react-native-render-html";
+import { LayoutScreen } from "@/layout/LayoutScreen";
+import { COLORS } from "~/constants";
+import { Spinner } from "@/components";
+import { useFaq, useThemeColor } from "@/hooks";
+import { FlashList } from "@shopify/flash-list";
+import DropDownPicker from "react-native-dropdown-picker";
+import { IFaq } from "@/types";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { categorias, categoriasFaq } from "@/data";
+import { Texto } from "@/ui";
+import FaqItem from "@/components/faq/FaqItem";
+import { useFaqs } from "@/hooks/useFaqs";
+import CustomDropdown from "@/ui/CustomDropDown";
+import { Image } from "expo-image";
+import FaqSkeleton from "@/components/faq/FaqSkeleton";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
-
-if (Platform.OS === 'android') {
-    if (UIManager.setLayoutAnimationEnabledExperimental) {
-        UIManager.setLayoutAnimationEnabledExperimental(true);
-    }
-}
-
-const MacCard: React.FC<{ faq: IFaq }> = ({
-    faq
-}) => {
-    const isDark = useThemeColor() === "dark"
-    const [openCollapsed, setOpenCollapsed] = useState(false)
-
-    const width = Dimensions.get("window").width
-
-    const { categoria, descripcion, titulo } = faq
-    return (
-        <View style={styles.cardContainer}>
-            <View style={styles.windowContainer} className='bg-white dark:bg-secondary-dark border'>
-
-                <View className='bg-primario flex-row justify-between h-8 items-center p-2'>
-                    <Texto className='text-white text-sm' weight='Bold'>{categoria}</Texto>
-                    <View className='flex-row'>
-                        <View style={styles.titleBarButton} />
-                        <View style={styles.titleBarButton} />
-                        <View style={styles.titleBarButton} />
-                    </View>
-                </View>
-                <TouchableOpacity style={styles.content} onPress={() => setOpenCollapsed(!openCollapsed)}>
-                    <View className='flex flex-row justify-between items-center'>
-                        <Texto className='text-black dark:text-white text-lg mb-2 flex-1 mr-2' weight='Bold'>{titulo}</Texto>
-                        <FontAwesome
-                            name={!openCollapsed ? 'chevron-down' : 'chevron-up'}
-                            size={20}
-                            color="#fff"
-                        />
-                    </View>
-                    {/*  <Texto style={styles.cardText} className='text-black dark:text-white'>{detail}</Texto> */}
-                    {openCollapsed && <RenderHTML baseStyle={{ color: isDark ? "#FFF" : "#000" }} contentWidth={width} source={{ html: descripcion }} />}
-                </TouchableOpacity>
-            </View>
-        </View>
-    );
-};
-``
 const Faq = () => {
-    const { isLoading, getFaqs, getFaqsV2, data: dataV2, setLastDocument, setData: setDataV2 } = useFaq()
-    const isDark = useThemeColor() === "dark"
-    const [data, setData] = useState<IFaq[]>([])
+  const flatListRef = useRef<FlashList<IFaq>>(null);
+  const { height } = useWindowDimensions();
+  const [category, setCategory] = useState("");
 
-    const [openCategoria, setOpenCategoria] = useState(false);
-    const [valueCategoria, setvalueCategoria] = useState("")
+  const { faqsQuery } = useFaqs({
+    params: {
+      limitResults: 4,
+      category,
+    },
+    query: ["faqsQuery"],
+  });
 
+  const faqs = faqsQuery.data?.pages.flatMap((x) => x.data) ?? [];
+  const isLoading = faqsQuery.isLoading;
 
+  const scroll = useSharedValue(0);
 
+  const stylesAnimated = useAnimatedStyle(() => {
+    return {
+      opacity: 1,
+      right: 30,
+      bottom: withSpring(
+        interpolate(scroll.value, [100, 500], [-100, 30], Extrapolation.CLAMP)
+      ),
+    };
+  });
 
-    useEffect(() => {
-        getFaqsV2(valueCategoria)
-    }, [valueCategoria]);
-
-    const renderContent = () => {
-
-        return (
-            <FlashList
-                ListEmptyComponent={<Texto className="text-center dark:text-white">{!isLoading && 'No se han encontrado comunicados'}</Texto>}
-                ListHeaderComponentStyle={{ marginTop: 5 }}
-                onEndReachedThreshold={0.1}
-                //  onEndReached={getNoticias}
-                onEndReached={() => {
-                    if (!isLoading) getFaqsV2(valueCategoria)
-                }}
-                keyExtractor={(item) => item.id}
-                ListFooterComponent={isLoading ? <Spinner showText text="Cargando comunicados" classNameContainer="p-4 items-center" size={25} /> : <View />}
-                showsVerticalScrollIndicator={false}
-                data={dataV2}
-                estimatedItemSize={600}
-
-                renderItem={({ item }) => (
-                    <MacCard faq={item} />
-                )} />
-        )
-        /* return <View style={styles.container}>
-            {data.map((item, index) => (
-                <TouchableOpacity key={item.titulo}>
-                    <MacCard key={index} title={item.titulo} detail={item.descripcion} />
-                </TouchableOpacity>
-            ))}
-        </View> */
-    }
-
-    const SelectCategorias = () => {
-        return <DropDownPicker
-            open={openCategoria}
-            value={valueCategoria}
-            searchable
-            searchPlaceholder="Busca una categoria"
-            searchTextInputStyle={{ color: isDark ? "#fff" : "#000" }}
-            //@ts-ignore
-            items={categoriasFaq}
-            onSelectItem={(x) => {
-                if (x.value != valueCategoria) {
-                    setLastDocument(undefined)
-                    setDataV2([])
-                }
-            }}
-            setOpen={setOpenCategoria}
-            setValue={setvalueCategoria}
-            placeholder="Filtrar por categoria"
-            zIndex={1}
-            ArrowDownIconComponent={() => (
-                <FontAwesome
-                    size={18}
-                    color={isDark ? "#fff" : "#000"}
-                    style={{ paddingHorizontal: 5 }}
-                    name="angle-down"
-                />
-            )}
-            ArrowUpIconComponent={() => (
-                <FontAwesome
-                    size={18}
-                    color={isDark ? "#fff" : "#000"}
-                    style={{ paddingHorizontal: 5 }}
-                    name="angle-up"
-                />
-            )}
-            TickIconComponent={() => (
-                <FontAwesome
-                    size={18}
-                    color={isDark ? "#fff" : "#000"}
-                    style={{ paddingHorizontal: 5 }}
-                    name="check"
-                />
-            )}
-            containerStyle={{ paddingVertical: 5 }}
-            textStyle={{ color: isDark ? "#fff" : "#000", fontSize: 13 }}
-            style={
-                [isDark
-                    ? { backgroundColor: COLORS.dark.secondary, }
-                    : { backgroundColor: "#fff", }]
+  return (
+    <LayoutScreen title="Preguntas Frecuentes">
+      <View className="flex-1">
+        <Animated.View
+          style={[
+            stylesAnimated,
+            {
+              position: "absolute",
+              zIndex: 30,
+            },
+          ]}
+        >
+          <TouchableOpacity
+            onPress={() =>
+              flatListRef.current?.scrollToOffset({
+                offset: 0,
+                animated: true,
+              })
             }
-            dropDownContainerStyle={
-                [isDark && { backgroundColor: COLORS.dark.secondary }]
-            }
+            className="bg-primario w-16 h-16 rounded-full items-center justify-center"
+          >
+            <AntDesign name="up" size={20} color={"#FFF"} />
+          </TouchableOpacity>
+        </Animated.View>
+
+        <FlashList
+          ref={flatListRef}
+          onScroll={(x) => {
+            scroll.value = x.nativeEvent.contentOffset.y;
+          }}
+          contentContainerStyle={{
+            paddingHorizontal: 5,
+          }}
+          ListHeaderComponentStyle={{ marginTop: 5 }}
+          ListEmptyComponent={
+            <>
+              {!isLoading && (
+                <View
+                  className=" items-center justify-center flex-1"
+                  style={{ height: height - 150 }}
+                >
+                  <Image
+                    style={{
+                      width: 200,
+                      height: 200,
+                    }}
+                    source={require("~/assets/images/icons/empty-data.png")}
+                  />
+                  <Texto className="text-center">
+                    No se han encontrado resultados
+                  </Texto>
+                </View>
+              )}
+            </>
+          }
+          ListHeaderComponent={
+            <>
+              <CustomDropdown
+                data={categoriasFaq}
+                labelField={"label"}
+                valueField={"value"}
+                search
+                mode="modal"
+                value={category}
+                onChange={(e) => setCategory(e.value)}
+              />
+            </>
+          }
+          ListFooterComponent={
+            faqsQuery.isFetchingNextPage || faqsQuery.isLoading ? (
+              <View className="flex-col gap-2">
+                {Array(faqs.length > 3 ? 1 : 4)
+                  .fill(0)
+                  .map((x, i) => (
+                    <View className="" key={`skeleton-faq-${i}`}>
+                      <FaqSkeleton />
+                    </View>
+                  ))}
+              </View>
+            ) : (
+              <View />
+            )
+          }
+          data={faqs}
+          keyExtractor={(item) => item.id}
+          onEndReachedThreshold={0.1}
+          onEndReached={faqsQuery.fetchNextPage}
+          showsVerticalScrollIndicator={false}
+          estimatedItemSize={200}
+          renderItem={({ item }) => <FaqItem faq={item} />}
         />
-    }
-
-    /*     const getNoticias = () => {
-            getFaqs(valueCategoria).then((x) => {
-                setData(x)
-            })
-        }
-    
-        useEffect(() => {
-            getNoticias()
-        }, [valueCategoria]); */
-
-
-
-    return (
-        <LayoutScreen title="Preguntas Frecuentes">
-            <View className="flex-1 mx-1">
-
-                <SelectCategorias />
-
-                {renderContent()}
-            </View>
-
-        </LayoutScreen >
-    );
+      </View>
+    </LayoutScreen>
+  );
 };
 
-export default Faq
+export default Faq;
 const styles = StyleSheet.create({
-    titleFaq: {
-        color: COLORS.light.background,
-        fontSize: 20,
-        fontWeight: 'bold',
-    },
-    container: {
-        flex: 1,
-
-    },
-    cardContainer: {
-        marginVertical: 10,
-    },
-    windowContainer: {
-        borderRadius: 10,
-        overflow: 'hidden',
-        elevation: 5,
-    },
-    titleBar: {
-        flexDirection: 'row',
-        height: 30,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
-        paddingHorizontal: 10,
-    },
-    titleBarButton: {
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        backgroundColor: 'white',
-        marginLeft: 5,
-    },
-    content: {
-        padding: 20,
-    },
-    cardTitle: {
-        marginBottom: 10,
-    },
-    cardTextContainer: {
-        maxHeight: 80,
-    },
-    cardText: {
-        fontSize: 12,
-    },
+  titleFaq: {
+    color: COLORS.light.background,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  container: {
+    flex: 1,
+  },
+  cardContainer: {
+    marginVertical: 10,
+  },
+  windowContainer: {
+    borderRadius: 10,
+    overflow: "hidden",
+    elevation: 5,
+  },
+  titleBar: {
+    flexDirection: "row",
+    height: 30,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    paddingHorizontal: 10,
+  },
+  titleBarButton: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: "white",
+    marginLeft: 5,
+  },
+  content: {
+    padding: 20,
+  },
+  cardTitle: {
+    marginBottom: 10,
+  },
+  cardTextContainer: {
+    maxHeight: 80,
+  },
+  cardText: {
+    fontSize: 12,
+  },
 });
 
 // import React, { useState,Component } from 'react';

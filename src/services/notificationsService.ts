@@ -1,16 +1,17 @@
 import firestore, {
   FirebaseFirestoreTypes,
 } from "@react-native-firebase/firestore";
-import { INotificacionNotice } from "@/types";
+import { INotification } from "@/types";
 import { IAnnouncement } from "@/types/announcement";
 import { QueryFunctionContext } from "@tanstack/react-query";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { keysStorage } from "@/data/storage/keys";
 
 const db = firestore();
 
-const DB_ANNOUNCEMENT_KEY = "NOTIFICATIONS";
+const DB_NOTIFICATION_KEY = "NOTIFICATIONS";
 
 type GetAllDataProps = {
-  category?: string;
   limitResults?: number;
   q?: string;
 };
@@ -21,16 +22,9 @@ export const getAllData = async (context: QueryContext) => {
   try {
     const { pageParam = undefined, queryKey } = context;
     const [, , args] = queryKey;
-    const { category, limitResults, q } = args as GetAllDataProps;
+    const { limitResults, q } = args as GetAllDataProps;
 
-    let query = db
-      .collection(DB_ANNOUNCEMENT_KEY)
-      .where("date", "<=", new Date())
-      .orderBy("date", "desc");
-
-    if (category) {
-      query = query.where("category", "==", category);
-    }
+    let query = db.collection(DB_NOTIFICATION_KEY).orderBy("date", "desc");
 
     if (pageParam) {
       query = query.startAfter(pageParam);
@@ -42,16 +36,26 @@ export const getAllData = async (context: QueryContext) => {
 
     const snapshot = await query.get();
 
-    const data: IAnnouncement[] = snapshot.docs.map((doc) => {
-      const dataDoc = doc.data() as IAnnouncement;
+    const dataPromises = snapshot.docs.map(
+      async (doc): Promise<INotification> => {
+        const dataDoc = doc.data() as INotification;
+        const deleteNotifications = await deletedNotificationsStorage();
+        const readNotifications = await readNotificationsStorage();
 
-      return {
-        ...dataDoc,
-        //@ts-ignore
-        date: new Date(dataDoc.date.toDate()),
-        id: doc.id,
-      };
-    });
+        const isRead = readNotifications.includes(doc.id);
+        const isDeleted = deleteNotifications.includes(doc.id);
+
+        return {
+          ...dataDoc,
+          //@ts-ignore
+          date: new Date(dataDoc.date.toDate()),
+          id: doc.id,
+          type: isDeleted ? "deleted" : isRead ? "read" : "unread",
+        };
+      }
+    );
+
+    const data: INotification[] = await Promise.all(dataPromises);
 
     const lastDoc = snapshot.docs[snapshot.docs.length - 1];
 
@@ -65,80 +69,26 @@ export const getAllData = async (context: QueryContext) => {
   }
 };
 
-/* export const getAllData = async ({
-  category,
-  limitResults,
-  q,
-}: GetAllDataProps) => {
-  try {
-    let query = db
-      .collection(DB_ANNOUNCEMENT_KEY)
-      .where("date", "<=", new Date())
-      .orderBy("date", "desc");
+const readNotificationsStorage = async () => {
+  const notifications = await AsyncStorage.getItem(
+    keysStorage.READ_NOTIFICATIONS
+  );
 
-    if (category) {
-      query = query.where("category", "==", category);
-    }
+  if (!notifications) return [];
 
-    if (limitResults) {
-      console.log(limitResults);
-      query = query.limit(limitResults || 1);
-    }
-
-    const snapshot = await query.get();
-
-    const data: IAnnouncement[] = snapshot.docs.map((doc) => {
-      const dataDoc = doc.data() as IAnnouncement;
-
-      return {
-        ...dataDoc,
-        //@ts-ignore
-        date: new Date(dataDoc.date.toDate()),
-        id: doc.id,
-      };
-    });
-
-    return data;
-  } catch (e: any) {
-    console.log(e);
-    throw new Error(e);
-  }
-};
- */
-export const getData = async (id: string): Promise<IAnnouncement> => {
-  try {
-    const snapshot = await db.collection(DB_ANNOUNCEMENT_KEY).doc(id).get();
-    const data = snapshot.data() as IAnnouncement;
-    return {
-      ...data,
-      //@ts-ignore
-      date: new Date(data.date.toDate()),
-      id: snapshot.id,
-    };
-  } catch (e: any) {
-    console.log(e);
-    throw new Error(e);
-  }
+  return JSON.parse(notifications) as string[];
 };
 
-export const getTopPriority = async () => {
-  const snapshot = await db
-    .collection(DB_ANNOUNCEMENT_KEY)
-    .orderBy("date", "desc")
-    .where("superpriority", "==", true)
-    .limit(5)
-    .get();
+const deletedNotificationsStorage = async () => {
+  const notifications = await AsyncStorage.getItem(
+    keysStorage.DELETED_NOTIFICATIONS
+  );
 
-  const data: INotificacionNotice[] = snapshot.docs.map((doc) => ({
-    ...(doc.data() as INotificacionNotice),
-    id: doc.id,
-  }));
+  if (!notifications) return [];
 
-  return data;
+  return JSON.parse(notifications) as string[];
 };
 
 export default {
   getAllData,
-  getData,
-  getTopPriority,
 };

@@ -13,7 +13,7 @@ const Layout = () => {
       />
 
       <Stack.Screen
-        options={configScreen.Stack("Comunicado")}
+        options={{ headerShown: false }}
         name="announcements/[id]"
       />
 

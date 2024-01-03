@@ -4,7 +4,38 @@ import { Stack } from "expo-router";
 const UnprotectedLayout = () => {
   return (
     <Stack>
-      <Stack.Screen name="(home)" options={{ headerShown: false }} />
+      <Stack.Screen
+        options={configScreen.Stack("Comunicados")}
+        name="(home)/announcements/index"
+      />
+
+      <Stack.Screen
+        options={{ headerShown: false }}
+        name="(home)/announcements/[id]"
+      />
+
+      <Stack.Screen
+        name="(home)/social-networks/index"
+        options={configScreen.Stack("Redes Sociales")}
+      />
+
+      <Stack.Screen
+        name="(home)/upds/index"
+        options={configScreen.Stack("Upds Tarija")}
+      />
+
+      <Stack.Screen
+        name="(home)/upds-responde/index"
+        options={configScreen.Stack("UPDS Responde")}
+      />
+
+      <Stack.Screen
+        name="(home)/vocational-test/index"
+        options={configScreen.Stack("Test Vocacional")}
+      />
+
+      {/* FIN HOME */}
+      {/* <Stack.Screen name="(home)" options={{ headerShown: false }} /> */}
 
       <Stack.Screen
         name="academic-calendar/index"
@@ -14,6 +45,10 @@ const UnprotectedLayout = () => {
       <Stack.Screen
         name="carrer/index"
         options={configScreen.Stack("Carreras")}
+      />
+      <Stack.Screen
+        name="carrer/[id]"
+        options={configScreen.Stack("Carrera")}
       />
 
       <Stack.Screen
@@ -93,7 +128,7 @@ const UnprotectedLayout = () => {
 
       <Stack.Screen
         name="(student)/services/index"
-        options={configScreen.Stack("Servicios")}
+        options={configScreen.Stack("Registro y Pagos")}
       />
     </Stack>
   );

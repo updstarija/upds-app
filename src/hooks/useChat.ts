@@ -1,48 +1,59 @@
-import { useEffect, useState } from 'react';
-import { cargarMensajes, sendMessage } from '@/services';
-import { useAuthContext } from './useAuthContext';
+import { useEffect, useState } from "react";
+import { cargarMensajes, sendMessage } from "@/services";
+import { useAuthContext } from "./useAuthContext";
+import { nombreCompleto } from "@/helpers";
 
 export interface MensajeParsed {
-    _id: string
-    text: string
-    createdAt: Date,
-    user: {
-        _id: number,
-        avatar: string
-    },
+  _id: string;
+  text: string;
+  createdAt: Date;
+  user: {
+    _id: number;
+    avatar: string;
+  };
 }
 
 export const useChat = ({ CHAT_ID }: { CHAT_ID: string | null }) => {
-    const [data, setData] = useState<MensajeParsed[]>([])
-    const [isLoading, setisLoading] = useState(false)
+  const [data, setData] = useState<MensajeParsed[]>([]);
+  const [isLoading, setisLoading] = useState(false);
 
-    const { userAuth, status } = useAuthContext()
+  const { user, status } = useAuthContext();
 
-    const getMensages = async () => {
-        setisLoading(true)
-        // const CHAT_ID = userAuth.usuario.documentoIdentidad
-        if (CHAT_ID) await cargarMensajes(CHAT_ID, status === "autenticado" ? userAuth.usuario.nombre + " " + userAuth.usuario.apellidoPaterno + " " + userAuth.usuario.apellidoMaterno : userAuth.usuario.nombre, setData)
-        setisLoading(false)
+  const getMensages = async () => {
+    //  setisLoading(true);
+    // const CHAT_ID = userAuth.usuario.documentoIdentidad
 
+    if (CHAT_ID) {
+      if (status === "authenticated") {
+        await cargarMensajes(CHAT_ID, nombreCompleto(user), setData);
+      } else if (status === "guest") {
+        await cargarMensajes(CHAT_ID, user.nombre, setData);
+      }
     }
+    // setisLoading(false);
+  };
 
-    const enviarMensage = async (mensage: string) => {
-        // const CHAT_ID = userAuth.usuario.documentoIdentidad
-        //console.log(CHAT_ID, "CHAT ID ON SEND")
-        if (CHAT_ID) {
-            // console.log("ENVIANDO")
-            await sendMessage(CHAT_ID, mensage, status === "autenticado" ? userAuth.usuario.nombre + " " + userAuth.usuario.apellidoPaterno + " " + userAuth.usuario.apellidoMaterno : userAuth.usuario.nombre);
-        }
+  const enviarMensage = async (mensage: string) => {
+    // const CHAT_ID = userAuth.usuario.documentoIdentidad
+    //console.log(CHAT_ID, "CHAT ID ON SEND")
+    if (CHAT_ID) {
+      // console.log("ENVIANDO")
+      if (status === "authenticated") {
+        await sendMessage(CHAT_ID, mensage, nombreCompleto(user));
+      } else if (status === "guest") {
+        await sendMessage(CHAT_ID, mensage, user.nombre);
+      }
     }
+  };
 
-    /*   useEffect(() => {
+  /*   useEffect(() => {
         getMensages()
       }, []) */
-    return {
-        data,
-        isLoading,
-        setData,
-        getMensages,
-        enviarMensage
-    }
-}
+  return {
+    data,
+    isLoading,
+    setData,
+    getMensages,
+    enviarMensage,
+  };
+};

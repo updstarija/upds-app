@@ -6,7 +6,10 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-type QueryType = "announcementsQuery" | "announcementQuery";
+type QueryType =
+  | "announcementsQuery"
+  | "announcementsPriorityQuery"
+  | "announcementQuery";
 
 type HookProps = {
   id?: string;
@@ -14,6 +17,7 @@ type HookProps = {
     category?: string;
     limitResults?: number;
     q?: string;
+    type?: "superpriority" | "priority";
   };
   query?: QueryType[];
 };
@@ -38,6 +42,18 @@ export const useAnnouncements = ({ id, params, query }: HookProps) => {
     }
   );
 
+  const announcementsPriorityQuery = useQuery(
+    ["announcements", "priority", params.type],
+    () =>
+      announcementeService.getTopPriority({
+        type: params.type,
+        limitResults: params.limitResults,
+      }),
+    {
+      enabled: query?.includes("announcementsPriorityQuery"),
+    }
+  );
+
   const announcementQuery = useQuery(
     ["announcements", id || ""],
     () => announcementeService.getData(id || ""),
@@ -55,6 +71,7 @@ export const useAnnouncements = ({ id, params, query }: HookProps) => {
   return {
     announcementsQuery,
     announcementQuery,
+    announcementsPriorityQuery,
     //  announcementQuery,
   };
 };

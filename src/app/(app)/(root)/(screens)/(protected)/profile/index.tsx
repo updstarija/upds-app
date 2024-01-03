@@ -12,7 +12,6 @@ const Perfil = () => {
   const isDarkMode = useThemeColor() === "dark";
 
   const { user } = useAuthContext();
-  const { usuario } = user;
 
   return (
     <View className=" flex-1 bg-primario dark:bg-secondary-dark">
@@ -24,8 +23,8 @@ const Perfil = () => {
             </View>
 
             <View className="ml-4">
-              <Texto className="text-white">{nombreCompleto(usuario)}</Texto>
-              <Texto className="text-white">{usuario.email}</Texto>
+              <Texto className="text-white">{nombreCompleto(user)}</Texto>
+              <Texto className="text-white">{user.email}</Texto>
             </View>
           </View>
         </View>
@@ -58,7 +57,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{nombreCompleto(usuario)}</Texto>
+              <Texto>{nombreCompleto(user)}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -77,7 +76,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.documentoIdentidad}</Texto>
+              <Texto>{user.documentoIdentidad}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -96,7 +95,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{formatCumpleanios(usuario.fechaNacimiento)}</Texto>
+              <Texto>{formatCumpleanios(user.fechaNacimiento)}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -115,7 +114,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.nacionalidad || "N/D"}</Texto>
+              <Texto>{user.nacionalidad || "N/D"}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -134,7 +133,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.sexo}</Texto>
+              <Texto>{user.sexo}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -153,7 +152,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.direccion}</Texto>
+              <Texto>{user.direccion}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -172,7 +171,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.tipoSangre}</Texto>
+              <Texto>{user.tipoSangre}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -191,7 +190,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.estadoCivil}</Texto>
+              <Texto>{user.estadoCivil}</Texto>
             </View>
           </View>
 
@@ -223,7 +222,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.emailOffice365}</Texto>
+              <Texto>{user.emailOffice365}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -242,7 +241,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.email}</Texto>
+              <Texto>{user.email}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -261,7 +260,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.celular}</Texto>
+              <Texto>{user.celular}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -280,7 +279,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.telefonoReferencia}</Texto>
+              <Texto>{user.telefonoReferencia}</Texto>
             </View>
           </View>
 
@@ -312,7 +311,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.sede}</Texto>
+              <Texto>{user.sede}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -331,7 +330,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{formatCumpleanios(usuario.fechaRegistro)}</Texto>
+              <Texto>{formatCumpleanios(user.fechaRegistro)}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -350,7 +349,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.colegio}</Texto>
+              <Texto>{user.colegio}</Texto>
             </View>
 
             <View className="mt-4 flex-row justify-between items-center">
@@ -369,7 +368,7 @@ const Perfil = () => {
                 </Texto>
               </View>
 
-              <Texto>{usuario.anioEgresoBachiller}</Texto>
+              <Texto>{user.anioEgresoBachiller}</Texto>
             </View>
           </View>
         </View>

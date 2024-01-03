@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   View,
   Pressable,
   useWindowDimensions,
   Button,
   RefreshControl,
+  TouchableOpacity,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { FlashList } from "@shopify/flash-list";
-import { FontAwesome } from "@expo/vector-icons";
+import { AntDesign, FontAwesome } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { COLORS } from "~/constants";
 import { LayoutScreen } from "@/layout/LayoutScreen";
@@ -21,14 +22,18 @@ import { AnnouncementCard } from "@/components/announcement/AnnouncementCard";
 import AnnouncementSkeleton from "@/components/announcement/AnnouncementSkeleton";
 import CustomDropdown from "@/ui/CustomDropDown";
 import { Image } from "expo-image";
+import Animated, {
+  Extrapolation,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
+import { IAnnouncement } from "@/types";
 
 const Comunicados = () => {
   const { width, height } = useWindowDimensions();
-  const isDarkMode = useThemeColor() === "dark";
   const [category, setCategory] = useState("");
-
-  const [openCategoria, setOpenCategoria] = useState(false);
-  const [valueCategoria, setvalueCategoria] = useState("");
 
   const { announcementsQuery } = useAnnouncements({
     params: {
@@ -38,67 +43,54 @@ const Comunicados = () => {
     query: ["announcementsQuery"],
   });
 
-  const SelectCategorias = () => {
-    return (
-      <DropDownPicker
-        open={openCategoria}
-        value={valueCategoria}
-        searchable
-        searchPlaceholder="Busca una categoria"
-        searchTextInputStyle={{ color: isDarkMode ? "#fff" : "#000" }}
-        items={categorias}
-        setOpen={setOpenCategoria}
-        setValue={setvalueCategoria}
-        placeholder="Filtrar por categoria"
-        zIndex={1}
-        ArrowDownIconComponent={() => (
-          <FontAwesome
-            size={18}
-            color={isDarkMode ? "#fff" : "#000"}
-            style={{ paddingHorizontal: 5 }}
-            name="angle-down"
-          />
-        )}
-        ArrowUpIconComponent={() => (
-          <FontAwesome
-            size={18}
-            color={isDarkMode ? "#fff" : "#000"}
-            style={{ paddingHorizontal: 5 }}
-            name="angle-up"
-          />
-        )}
-        TickIconComponent={() => (
-          <FontAwesome
-            size={18}
-            color={isDarkMode ? "#fff" : "#000"}
-            style={{ paddingHorizontal: 5 }}
-            name="check"
-          />
-        )}
-        containerStyle={{ paddingVertical: 5 }}
-        textStyle={{ color: isDarkMode ? "#fff" : "#000", fontSize: 13 }}
-        style={[
-          isDarkMode
-            ? { backgroundColor: COLORS.dark.secondary }
-            : { backgroundColor: "#fff" },
-        ]}
-        dropDownContainerStyle={[
-          isDarkMode && { backgroundColor: COLORS.dark.secondary },
-        ]}
-      />
-    );
-  };
-
   const announcements =
     announcementsQuery.data?.pages?.flatMap((page) => page.data) ?? [];
+
+  const flatListRef = useRef<FlashList<IAnnouncement>>(null);
+
+  const scroll = useSharedValue(0);
+
+  const stylesAnimated = useAnimatedStyle(() => {
+    return {
+      opacity: 1,
+      right: 30,
+      bottom: withSpring(
+        interpolate(scroll.value, [100, 500], [-100, 30], Extrapolation.CLAMP)
+      ),
+    };
+  });
 
   return (
     <LayoutScreen title="Comunicados">
       <View className="flex-1">
-        {/*     <SelectCategorias /> */}
+        <Animated.View
+          style={[
+            stylesAnimated,
+            {
+              position: "absolute",
+              zIndex: 30,
+            },
+          ]}
+        >
+          <TouchableOpacity
+            onPress={() =>
+              flatListRef.current?.scrollToOffset({
+                offset: 0,
+                animated: true,
+              })
+            }
+            className="bg-primario w-16 h-16 rounded-full items-center justify-center"
+          >
+            <AntDesign name="up" size={20} color={"#FFF"} />
+          </TouchableOpacity>
+        </Animated.View>
 
         <FlashList
           //data={[]}
+          ref={flatListRef}
+          onScroll={(x) => {
+            scroll.value = x.nativeEvent.contentOffset.y;
+          }}
           refreshControl={
             <RefreshControl
               refreshing={announcementsQuery.isRefetching}
@@ -153,7 +145,7 @@ const Comunicados = () => {
             announcementsQuery.isFetchingNextPage ||
             announcementsQuery.isLoading ? (
               <View className="flex-col gap-2">
-                {Array(3)
+                {Array(announcements.length > 2 ? 1 : 3)
                   .fill(0)
                   .map((x, i) => (
                     <View className="" key={`skeleton-announcement-${i}`}>
