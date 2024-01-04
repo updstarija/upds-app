@@ -104,7 +104,6 @@ const Comunicados = () => {
                 labelField={"label"}
                 valueField={"value"}
                 search
-                mode="modal"
                 value={category}
                 onChange={(e) => setCategory(e.value)}
               />
@@ -145,7 +144,7 @@ const Comunicados = () => {
             announcementsQuery.isFetchingNextPage ||
             announcementsQuery.isLoading ? (
               <View className="flex-col gap-2">
-                {Array(announcements.length > 2 ? 1 : 3)
+                {Array(announcements?.length > 2 ? 1 : 3)
                   .fill(0)
                   .map((x, i) => (
                     <View className="" key={`skeleton-announcement-${i}`}>

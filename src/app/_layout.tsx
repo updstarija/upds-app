@@ -1,25 +1,14 @@
 import { useEffect } from "react";
-import { Platform, useColorScheme, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import messaging from "@react-native-firebase/messaging";
 import Toast from "react-native-toast-message";
-import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { TooltipProps, TourGuideProvider, IStep } from "rn-tourguide";
-import CONSTANS from "expo-constants";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { AuthProvider, CarreraProvider } from "@/context";
-import { configStack } from "@/helpers";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { AuthProvider } from "@/context";
 import { toastConfig } from "@/config";
 import { ThemeProvider } from "@/context/ThemeContext";
-import { Texto } from "@/ui";
-import { AntDesign } from "@expo/vector-icons";
-import { ProyeccionesProvider } from "@/context/ProyeccionesContext";
 import { PopupWindowProvider } from "@/context/PopupWindowContext";
+import messaging from "@react-native-firebase/messaging";
 
 const queryClient = new QueryClient();
 
@@ -27,8 +16,9 @@ export { ErrorBoundary } from "expo-router";
 
 SplashScreen.preventAutoHideAsync();
 
+//BACKGROUND NOTIFICATION
 messaging().setBackgroundMessageHandler(async (msg) => {
-  console.log("notificacion on background", msg.data);
+  console.log("NOTIFICATION ON BACKGROUND", msg.data);
 });
 
 export default function RootLayout() {

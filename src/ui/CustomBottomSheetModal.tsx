@@ -266,6 +266,7 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> =
             {!withoutScrollView ? (
               <BottomSheetScrollView style={{ padding: 0 }}>
                 <View
+                  className="mb-2"
                   style={{
                     marginHorizontal: spacing || spacing === 0 ? spacing : 15,
                   }}

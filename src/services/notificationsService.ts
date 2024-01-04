@@ -24,7 +24,9 @@ export const getAllData = async (context: QueryContext) => {
     const [, , args] = queryKey;
     const { limitResults, q } = args as GetAllDataProps;
 
-    let query = db.collection(DB_NOTIFICATION_KEY).orderBy("date", "desc");
+    let query = db.collection(DB_NOTIFICATION_KEY)
+      .where("date", "<=", new Date())
+      .orderBy("date", "desc");
 
     if (pageParam) {
       query = query.startAfter(pageParam);

@@ -123,7 +123,6 @@ const Faq = () => {
                 labelField={"label"}
                 valueField={"value"}
                 search
-                mode="modal"
                 value={category}
                 onChange={(e) => setCategory(e.value)}
               />

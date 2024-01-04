@@ -1,9 +1,10 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, FlatList } from "react-native";
 import { DetallePlanSemestre } from "@/views/historico-materias";
 import { useCarreraContext, useSemestres } from "@/hooks";
 import { useState } from "react";
 import Spinner from "@/components/Spinner";
 import { SelectCarrera } from "@/views/SelectCarrera";
+import { Spacer } from "@/components";
 
 const MallaCurricular = () => {
   const { valueCarrera } = useCarreraContext();
@@ -25,21 +26,28 @@ const MallaCurricular = () => {
 
   return (
     <View className="bg-white flex-1 dark:bg-primario-dark ">
-      <View className="my-4 z-10">
-        <SelectCarrera />
-      </View>
+      <FlatList
+        data={null}
+        renderItem={() => null}
+        ListHeaderComponent={
+          <>
+            <Spacer />
+            <SelectCarrera />
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {semestresQuery.data.map((semestre) => (
-          <View key={semestre.id} className="mb-[1px]">
-            <DetallePlanSemestre
-              semestre={semestre}
-              active={semestre.id === semestreOpen}
-              onChangeSemestre={onChangeSemestre}
-            />
-          </View>
-        ))}
-      </ScrollView>
+            <Spacer />
+
+            {semestresQuery.data.map((semestre) => (
+              <View key={semestre.id} className="mb-[1px]">
+                <DetallePlanSemestre
+                  semestre={semestre}
+                  active={semestre.id === semestreOpen}
+                  onChangeSemestre={onChangeSemestre}
+                />
+              </View>
+            ))}
+          </>
+        }
+      />
 
       {/* <View className="mt-10">
                 {semestresQuery.data.map(semestre => (

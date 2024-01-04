@@ -1,12 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-  Redirect,
-  Slot,
-  router,
-  useNavigation,
-  useRootNavigationState,
-  useSegments,
-} from "expo-router";
+import { useEffect, useState } from "react";
+import { Slot, router, useRootNavigationState } from "expo-router";
 import { useAuth, useAuthContext } from "@/hooks";
 import { useStorageState } from "@/hooks/useStorageState";
 import { keysStorage } from "@/data/storage/keys";
@@ -22,12 +15,12 @@ import { FirebaseNotification } from "~/constants/Firebase";
 const AppLayout = () => {
   const { signOut } = useAuth();
   const { status } = useAuthContext();
+  const navigationState = useRootNavigationState();
+
   const isIos = Platform.OS === "ios";
 
   const [initialNotification, setInitialNotification] =
     useState<FirebaseMessagingTypes.RemoteMessage | null>(null);
-
-  const navigationState = useRootNavigationState();
 
   const requestPermissionIos = async () => {
     const result = await messaging().requestPermission({ announcement: true });
@@ -59,12 +52,14 @@ const AppLayout = () => {
     keysStorage.JWT_TOKEN
   );
 
+  //CHECK IF THERE IS TOKEN: LOG OUT IF NOT
   useEffect(() => {
     if (!isLoadingToken) {
       if (!token) signOut();
     }
   }, [token, isLoadingToken]);
 
+  // REQUEST NOTIFICATION PERMISSIONS
   useEffect(() => {
     const identi = async () => {
       if (isIos) {
@@ -116,6 +111,7 @@ const AppLayout = () => {
     identi();
   }, []);
 
+  // NOTIFICATION TOAST
   useEffect(() => {
     messaging().onMessage(async (msg) => {
       Toast.show({
@@ -127,8 +123,30 @@ const AppLayout = () => {
     });
   }, []);
 
+  // ON OPENED APP NOTIFICATION
+  useEffect(() => {
+    messaging().onNotificationOpenedApp(async (data) => {
+      if (data && data?.data && data?.data.to && data.data.to !== "") {
+        router.push(data.data.to as any);
+      }
+    });
+  }, []);
+
+  //INITIAL NOTIFICATION
+  useEffect(() => {
+    messaging()
+      .getInitialNotification()
+      .then((msg) => {
+        if (msg?.data && msg?.data.to) {
+          setInitialNotification(msg);
+        }
+      });
+  }, []);
+
+  // CHECK IF AN INITIAL NOTIFICATION EXISTS AND REDIRECT IF THERE IS A ROUTING SPECIFIED
   useEffect(() => {
     if (!navigationState?.key) return;
+    if (isLoadingToken || status === "pending") return;
 
     if (
       initialNotification &&
@@ -136,46 +154,10 @@ const AppLayout = () => {
       initialNotification?.data.to &&
       initialNotification.data.to !== ""
     ) {
-      console.log(initialNotification.data, "INITIAL NOTIFICATION");
+      console.log("INITIAL NOTIFICATION", initialNotification.data);
       router.push(initialNotification.data.to as any);
     }
-  }, [initialNotification, navigationState?.key]);
-
-  useEffect(() => {
-    messaging().onNotificationOpenedApp(async (remoteMessage) => {
-      console.log(remoteMessage);
-      /* if (data && data?.to && data.to.length > 0) {
-        const datos = data.to.split("|"); //[0] ruta [1] id
-        if (datos[0] === "comunicados") {
-          Alert.alert("redirect to noticias");
-          router.push({
-            pathname: `/(home)/comunicados/[id]`,
-            params: {
-              id: datos[1],
-            },
-          });
-        } else if (datos[0] == "chat") {
-          Alert.alert("redirect to chat");
-          router.push("/chat");
-        }
-      } */
-    });
-
-    messaging()
-      .getInitialNotification()
-      .then((msg) => {
-        if (msg?.data && msg?.data.to) {
-          setInitialNotification(msg);
-          /*  setTimeout(() => {
-             router.push("/(home)/comunicados");
-           }, 3000); */
-          //@ts-ignore
-
-          /* console.log(msg, "GET INITIAL NOTIFICATION AND REDIRECTO TO " + `/(home)${msg.data.to}`)
-          router.push(`/(home)${msg.data.to}`) */
-        }
-      });
-  }, []);
+  }, [initialNotification, navigationState?.key, isLoadingToken, status]);
 
   if (isLoadingToken || status === "pending")
     return (

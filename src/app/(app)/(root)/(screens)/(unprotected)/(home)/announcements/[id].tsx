@@ -28,6 +28,8 @@ import { StatusBar } from "expo-status-bar";
 import RenderHTML from "react-native-render-html";
 import AnnouncementDetailSkeleton from "@/components/announcement/AnnouncementDetailSkeleton";
 import { extractPlainText } from "@/helpers/extractPlainText";
+import { useImageDimensions } from "@react-native-community/hooks";
+import PaginationDot from "react-native-animated-pagination-dot";
 
 const actionsFloatButton: IActionProps[] = [
   {
@@ -52,15 +54,16 @@ const defaultAnnouncement = {
   moreInfoUrl: "",
   priority: "",
   superpriority: "",
+  isLiked: false,
 };
 
 export const NoticeDetail = () => {
   const params = useLocalSearchParams<any>();
 
-  if (!params.id) return <Redirect href={"/(home)"} />;
+  if (!params.id) return <Redirect href={"/(app)/(root)/(drawer)/(tabs)/"} />;
   const { id } = params;
 
-  const { announcementQuery } = useAnnouncements({
+  const { announcementQuery, announcementUpdateMutation } = useAnnouncements({
     id,
     params: {},
   });
@@ -68,15 +71,14 @@ export const NoticeDetail = () => {
   const isDark = useThemeColor() === "dark";
   const { width } = useWindowDimensions();
 
-  const [islike, setIsLike] = useState(false);
-  const [likes, setLikes] = useState(0);
+  const [activeIndexImage, setActiveIndexImage] = useState(0);
 
   const checkIfLiked = async (): Promise<boolean> => {
     const liked = await AsyncStorage.getItem(`liked_noticia_${id}`);
     return liked === "true";
   };
 
-  const likeNotice = async () => {
+  /* const likeNotice = async () => {
     setIsLike(!islike);
     const liked = await checkIfLiked();
     const increment = liked ? -1 : 1;
@@ -95,200 +97,20 @@ export const NoticeDetail = () => {
       .catch((error) => {
         // console.log('Error al incrementar like:', error);
       });
+  }; */
+
+  const likeAnnouncement = async () => {
+    if (!announcementQuery.data) return;
+
+    const { like = 0, isLiked, id } = announcementQuery.data;
+
+    await announcementUpdateMutation.mutateAsync({
+      id: announcementQuery.data.id,
+      like: isLiked ? like - 1 : like + 1,
+    });
   };
 
-  const render = () => {
-    return (
-      <View className="flex-1">
-        <View className="">
-          {announcementQuery.isLoading ? (
-            <CustomSkeleton width={width} height={width} />
-          ) : (
-            <>
-              {!!images.length ? (
-                <View className="h-[400]">
-                  <Image
-                    style={{
-                      maxWidth: width,
-                      width: "auto",
-                    }}
-                    className="h-full w-full" //h56
-                    source={images[0].url}
-                  />
-                </View>
-              ) : (
-                <Carousel
-                  style={{
-                    maxWidth: 500,
-                  }}
-                  loop
-                  autoPlay
-                  width={width}
-                  height={400}
-                  data={images}
-                  autoPlayInterval={3000}
-                  scrollAnimationDuration={1000}
-                  //  onSnapToItem={(index) => setActiveIndex(index)}
-                  renderItem={({ item }) => {
-                    return (
-                      <>
-                        <Image
-                          style={{
-                            maxWidth: width,
-                            width: "auto",
-                          }}
-                          className="h-full w-full" //h56
-                          source={item.url}
-                          contentFit="contain"
-                          contentPosition={"top"}
-                        />
-                      </>
-                    );
-                  }}
-                />
-              )}
-            </>
-          )}
-
-          <Spacer height={20} />
-
-          <View className="mb-10 flex-1">
-            <View className="flex-row justify-evenly">
-              <View className="flex-row items-center">
-                <TouchableOpacity
-                  onPress={() => likeNotice()}
-                  disabled={isLoading}
-                >
-                  {islike ? (
-                    <AntDesign
-                      name="like1"
-                      size={25}
-                      color={isDark ? "#FFF" : COLORS.light.background}
-                    />
-                  ) : (
-                    <AntDesign
-                      name="like2"
-                      size={25}
-                      color={isDark ? "#FFF" : "#000"}
-                    />
-                  )}
-                </TouchableOpacity>
-
-                {isLoading ? (
-                  <View className="ml-2">
-                    <CustomSkeleton width={20} height={20} />
-                  </View>
-                ) : (
-                  <Texto
-                    className="ml-1 text-black dark:text-white"
-                    weight="Bold"
-                  >
-                    {likes}
-                  </Texto>
-                )}
-              </View>
-
-              <View className="flex-row items-center">
-                <AntDesign
-                  name="calendar"
-                  size={20}
-                  color={isDark ? "#FFF" : "#000"}
-                />
-                {isLoading ? (
-                  <View className="ml-2">
-                    <CustomSkeleton width={100} height={20} />
-                  </View>
-                ) : (
-                  <Texto
-                    className="ml-1  text-black dark:text-white"
-                    weight="Bold"
-                  >
-                    {formatDateForDisplay(date)}
-                  </Texto>
-                )}
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <View
-          className={`flex-1 bg-white dark:bg-secondary-dark border border-gray-100 dark:border-primario shadow-sm shadow-primario `}
-          style={{
-            borderTopLeftRadius: 50,
-            borderTopRightRadius: 50,
-            elevation: 40,
-            borderBottomWidth: 0,
-          }}
-        >
-          <View className="bg-primario w-80 rounded-xl p-1 mt-[-20px] relative mx-auto">
-            {isLoading ? (
-              <View className="p-2">
-                <CustomSkeleton
-                  width={"100%"}
-                  height={20}
-                  colors={["#243E89", "#2F489C", "#3752AD"]}
-                />
-              </View>
-            ) : (
-              <Texto
-                className={`text-${
-                  title.length > 30 ? "xl" : "xl"
-                } uppercase text-white text-center`}
-                weight="Bold"
-              >
-                {title}
-              </Texto>
-            )}
-
-            {isLoading && priority && (
-              <>
-                <View
-                  style={{
-                    position: "absolute",
-                    top: -5,
-                    right: -5,
-                    zIndex: 1,
-                  }}
-                >
-                  <FontAwesome
-                    name={"star"}
-                    color={isDark ? "#FFF" : "#3498db"}
-                    size={20}
-                  />
-                </View>
-              </>
-            )}
-          </View>
-
-          <View className="p-4">
-            <IconLabel
-              iconName={"view-dashboard"}
-              textButton={category}
-              loader={
-                isLoading ? (
-                  <CustomSkeleton width={100} height={20} />
-                ) : undefined
-              }
-            />
-
-            <Spacer height={20} />
-            {isLoading ? (
-              <CustomSkeleton width={"100%"} height={50} />
-            ) : (
-              <RenderHTML
-                baseStyle={{ color: isDark ? "#FFF" : "#000" }}
-                contentWidth={width}
-                source={{ html: description }}
-                ignoredDomTags={["iframe"]}
-              />
-            )}
-          </View>
-        </View>
-      </View>
-    );
-  };
-
-  const compartirNoticia = async () => {
+  const shareAnnouncement = async () => {
     if (!announcementQuery.data) return;
     const ImageBase64 = announcementQuery.data.images[0].url;
     try {
@@ -311,9 +133,10 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
   };
 
   const actionsEvents: { [key: string]: Function } = {
-    share: compartirNoticia,
+    share: shareAnnouncement,
     "more-info": () => {
-      openBrowserAsync(announcementQuery.data?.moreInfoUrl || "");
+      if (announcementQuery.data?.moreInfoUrl)
+        openBrowserAsync(announcementQuery.data.moreInfoUrl);
     },
   };
 
@@ -325,20 +148,24 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
     category,
     images,
     date,
-    like,
+    like = 0,
     moreInfoUrl,
     priority,
     superpriority,
+    isLiked,
   } = announcementQuery.data ?? defaultAnnouncement;
+  const source = { uri: images[0]?.url || "" };
+
+  const { dimensions, loading, error } = useImageDimensions(source);
 
   if (announcementQuery.isError) return <Texto>ERROR</Texto>;
+  if (isLoading || loading || error || !dimensions)
+    return <AnnouncementDetailSkeleton />;
 
-  if (isLoading) return <AnnouncementDetailSkeleton />;
+  const { width: WIDTH_IMAGE, height } = dimensions;
 
   return (
     <>
-      {/* <StatusBar hidden /> */}
-
       <View className="flex-1 bg-white dark:bg-secondary-dark">
         <ScrollView
           style={{ flex: 1 }}
@@ -346,7 +173,205 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
           contentContainerStyle={{ flexGrow: 1 }}
         >
           <View className="bg-white dark:bg-primario-dark flex-1">
-            <View className="flex-1">{render()}</View>
+            <View className="flex-1">
+              <View>
+                {announcementQuery.isLoading ? (
+                  <CustomSkeleton width={width} height={width} />
+                ) : (
+                  <View>
+                    {images.length == 1 ? (
+                      <View
+                        style={{
+                          height: height * (width / WIDTH_IMAGE),
+                        }}
+                      >
+                        <Image
+                          style={{
+                            maxWidth: width,
+                            width: "auto",
+                          }}
+                          className="h-full w-full" //h56
+                          source={images[0].url}
+                        />
+                      </View>
+                    ) : (
+                      <Carousel
+                        style={{
+                          maxWidth: width,
+                        }}
+                        loop
+                        autoPlay
+                        width={width}
+                        height={height * (width / WIDTH_IMAGE)}
+                        data={images}
+                        autoPlayInterval={3000}
+                        scrollAnimationDuration={1000}
+                        onSnapToItem={(index) => setActiveIndexImage(index)}
+                        renderItem={({ item }) => {
+                          return (
+                            <>
+                              <Image
+                                style={{
+                                  maxWidth: width,
+                                  width: "auto",
+                                }}
+                                className="h-full w-full" //h56
+                                source={item.url}
+                                contentFit="contain"
+                                contentPosition={"top"}
+                              />
+                            </>
+                          );
+                        }}
+                      />
+                    )}
+
+                    <View className="absolute bottom-2 right-0 left-0 items-center justify-center">
+                      <PaginationDot
+                        activeDotColor={COLORS.light.background}
+                        inactiveDotColor="#ccc"
+                        curPage={activeIndexImage}
+                        maxPage={images.length}
+                      />
+                    </View>
+                  </View>
+                )}
+
+                <Spacer height={20} />
+
+                <View className="mb-10 flex-1">
+                  <View className="flex-row justify-evenly">
+                    <View className="flex-row items-center">
+                      <TouchableOpacity
+                        onPress={likeAnnouncement}
+                        disabled={announcementUpdateMutation.isLoading}
+                      >
+                        {isLiked ? (
+                          <AntDesign
+                            name="like1"
+                            size={25}
+                            color={isDark ? "#FFF" : COLORS.light.background}
+                          />
+                        ) : (
+                          <AntDesign
+                            name="like2"
+                            size={25}
+                            color={isDark ? "#FFF" : "#000"}
+                          />
+                        )}
+                      </TouchableOpacity>
+
+                      {isLoading ? (
+                        <View className="ml-2">
+                          <CustomSkeleton width={20} height={20} />
+                        </View>
+                      ) : (
+                        <Texto
+                          className="ml-1 text-black dark:text-white"
+                          weight="Bold"
+                        >
+                          {like}
+                        </Texto>
+                      )}
+                    </View>
+
+                    <View className="flex-row items-center">
+                      <AntDesign
+                        name="calendar"
+                        size={20}
+                        color={isDark ? "#FFF" : "#000"}
+                      />
+                      {isLoading ? (
+                        <View className="ml-2">
+                          <CustomSkeleton width={100} height={20} />
+                        </View>
+                      ) : (
+                        <Texto
+                          className="ml-1  text-black dark:text-white"
+                          weight="Bold"
+                        >
+                          {formatDateForDisplay(date)}
+                        </Texto>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              <View
+                className={`flex-1 bg-white dark:bg-secondary-dark border border-gray-100 dark:border-primario shadow-sm shadow-primario `}
+                style={{
+                  borderTopLeftRadius: 50,
+                  borderTopRightRadius: 50,
+                  elevation: 40,
+                  borderBottomWidth: 0,
+                }}
+              >
+                <View className="bg-primario w-80 rounded-xl p-1 mt-[-20px] relative mx-auto">
+                  {isLoading ? (
+                    <View className="p-2">
+                      <CustomSkeleton
+                        width={"100%"}
+                        height={20}
+                        colors={["#243E89", "#2F489C", "#3752AD"]}
+                      />
+                    </View>
+                  ) : (
+                    <Texto
+                      className={`text-${
+                        title.length > 30 ? "xl" : "xl"
+                      } uppercase text-white text-center`}
+                      weight="Bold"
+                    >
+                      {title}
+                    </Texto>
+                  )}
+
+                  {isLoading && priority && (
+                    <>
+                      <View
+                        style={{
+                          position: "absolute",
+                          top: -5,
+                          right: -5,
+                          zIndex: 1,
+                        }}
+                      >
+                        <FontAwesome
+                          name={"star"}
+                          color={isDark ? "#FFF" : "#3498db"}
+                          size={20}
+                        />
+                      </View>
+                    </>
+                  )}
+                </View>
+
+                <View className="p-4">
+                  <IconLabel
+                    iconName={"view-dashboard"}
+                    textButton={category}
+                    loader={
+                      isLoading ? (
+                        <CustomSkeleton width={100} height={20} />
+                      ) : undefined
+                    }
+                  />
+
+                  <Spacer height={20} />
+                  {isLoading ? (
+                    <CustomSkeleton width={"100%"} height={50} />
+                  ) : (
+                    <RenderHTML
+                      baseStyle={{ color: isDark ? "#FFF" : "#000" }}
+                      contentWidth={width}
+                      source={{ html: description }}
+                      ignoredDomTags={["iframe"]}
+                    />
+                  )}
+                </View>
+              </View>
+            </View>
           </View>
         </ScrollView>
 

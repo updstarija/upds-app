@@ -13,4 +13,5 @@ export interface IAnnouncement {
   images: TUploadFile[];
   filename: string;
   state: boolean;
+  isLiked: boolean
 }

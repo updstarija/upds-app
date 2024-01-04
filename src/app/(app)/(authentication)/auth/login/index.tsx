@@ -53,7 +53,7 @@ const Login = () => {
     const user = await signIn.mutateAsync(data);
     console.log(user, "DESDE FRONT");
     if (user) {
-      navigateScreen();
+      navigateScreen(true);
     }
   };
 
