@@ -128,7 +128,7 @@ const AppLayout = () => {
   }, []);
 
   useEffect(() => {
-    if (!navigationState.key) return;
+    if (!navigationState?.key) return;
 
     if (
       initialNotification &&
@@ -139,7 +139,7 @@ const AppLayout = () => {
       console.log(initialNotification.data, "INITIAL NOTIFICATION");
       router.push(initialNotification.data.to as any);
     }
-  }, [initialNotification, navigationState.key]);
+  }, [initialNotification, navigationState?.key]);
 
   useEffect(() => {
     messaging().onNotificationOpenedApp(async (remoteMessage) => {

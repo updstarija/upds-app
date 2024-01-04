@@ -1,4 +1,5 @@
 import { updsApi } from "@/api";
+import axios, { CancelToken } from "axios";
 import { IFormLogin, IResponseLogin } from "@/types";
 
 const fakeResponse: any = {
@@ -44,33 +45,56 @@ const fakeResponse: any = {
 
 const login = async (data: IFormLogin): Promise<IResponseLogin> => {
   try {
+    const source = axios.CancelToken.source();
+
+    const timeoutId = setTimeout(() => {
+      source.cancel(
+        "La solicitud fue cancelada debido a una alta demanda en el servidor"
+      );
+    }, 30000);
     /*  //TODO: FIX LOGIN
      await sleep(4000);
  
      return fakeResponse; */
 
-    const response = await updsApi.post<IResponseLogin>("/auth/login", data);
+    const response = await updsApi.post<IResponseLogin>("/auth/login", data, {
+      cancelToken: source.token,
+    });
+
+    clearTimeout(timeoutId);
     return response.data;
   } catch (e: any) {
     console.log(e);
     throw new Error(e);
   }
 };
+
 const getProfile = async (): Promise<IResponseLogin> => {
   try {
-    console.log("GETTING PROFILE");
-    /*  await sleep(4000);
-     throw new Error();
-     return fakeResponse; */
+    console.log("GET PROFILE");
+    const source = axios.CancelToken.source();
 
-    const response = await updsApi<IResponseLogin>("/auth/perfil");
+    const timeoutId = setTimeout(() => {
+      source.cancel(
+        "La solicitud fue cancelada debido a una alta demanda en el servidor"
+      );
+    }, 30000);
+
+    const response = await updsApi<IResponseLogin>("/auth/perfil", {
+      cancelToken: source.token,
+    });
+
+    clearTimeout(timeoutId);
     return response.data;
-  } catch (e: any) {
-    console.log(e);
-    throw new Error(e);
+  } catch (error) {
+    if (axios.isCancel(error)) {
+      throw new Error(error.message); // Lanzar una excepción con el mensaje de cancelación
+    } else {
+      console.log(error);
+      throw new Error("Hubo un error al obtener el perfil"); // Mensaje de error predeterminado
+    }
   }
 };
-
 export default {
   login,
   getProfile,

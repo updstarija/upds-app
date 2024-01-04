@@ -1,11 +1,10 @@
-import { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useRef, useState } from "react";
 import { IResponseLogin, IUser } from "@/types";
 import { AuthContextType, LoginStatus } from "@/types/context/auth";
 import { initialStateAuthContext } from "@/data/context/auth";
 import { keysStorage } from "@/data/storage/keys";
 import { useStorageState } from "@/hooks/useStorageState";
 import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const AuthContext = createContext<AuthContextType>(
   {} as AuthContextType
@@ -21,7 +20,6 @@ export type CallBackUrlType = {
 };
 
 export const AuthProvider: React.FC<Props> = ({ children }) => {
-  //  const [mostrarBtnBackLogin, setMostrarBtnBackLogin] = useState(true);
   const modalAuthRef = useRef<CustomBottomSheetRef>(null);
   const [callbackUrl, setCallbackUrl] = useState<CallBackUrlType | null>(null);
 
@@ -37,10 +35,6 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [status, setStatus] = useState<LoginStatus>("pending");
   const [user, setUser] = useState<IUser>(initialStateAuthContext);
 
-  const verificarScreenBienvenida = async () => {
-    //if (await yaPasoLaBienvenida()) setMostrarBtnBackLogin(false);
-  };
-
   const setNameGuestUser = (nombre: string) => {
     setStatus("guest");
     setUser({
@@ -55,10 +49,10 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     setStatus("authenticated");
   };
 
-  const logout = async () => {
-    setStatus("no-authenticated");
-    setUser(initialStateAuthContext);
+  const logout = () => {
     setToken(null);
+    setUser(initialStateAuthContext);
+    setStatus("no-authenticated");
   };
 
   const completeWelcome = () => {

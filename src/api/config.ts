@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { keysStorage } from "@/data/storage/keys";
@@ -14,7 +14,7 @@ updsApi.interceptors.request.use(
   async (config) => {
     const getToken = async () => {
       const token = await AsyncStorage.getItem(keysStorage.JWT_TOKEN);
-      return token
+      return token;
     };
 
     const token = await getToken();
@@ -41,10 +41,25 @@ updsApi.interceptors.request.use(
 
 updsApi.interceptors.response.use(
   (config) => config,
-  (error) => {
-    console.log("ERROR EN RESPONSE", error);
+  (error: AxiosError<any>) => {
+    console.log("ERROR EN RESPONSE", error.code);
 
-    if (error.response.status === 401) {
+    if (error.code === "ERR_CANCELED") {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2: error.message,
+      });
+    } else if (error.code === "ERR_NETWORK") {
+      Toast.show({
+        type: "error",
+        text1: "Error",
+        text2:
+          "No tienes conexión a internet, conéctate e intentalo nuevamente.",
+      });
+    }
+
+    if (error?.response?.status === 401) {
       Toast.show({
         type: "error",
         text1: "Error",
@@ -52,7 +67,7 @@ updsApi.interceptors.response.use(
       });
 
       AsyncStorage.removeItem(keysStorage.JWT_TOKEN);
-    } else if (error.response.status === 500) {
+    } else if (error?.response?.status === 500) {
       Toast.show({
         type: "error",
         text1: "Error",

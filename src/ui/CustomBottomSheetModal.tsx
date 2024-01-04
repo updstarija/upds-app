@@ -159,6 +159,7 @@ interface Props extends BottomSheetModalProps {
   touchableProps?: TouchableOpacityProps;
   withoutScrollView?: boolean;
   ref?: Ref<CustomBottomSheetRef>;
+  spacing?: number;
 }
 
 const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> =
@@ -171,6 +172,7 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> =
         withoutScrollView = false,
         snapPointsProp = [],
         onCloseModal,
+        spacing,
         ...props
       },
       ref
@@ -263,7 +265,13 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> =
           >
             {!withoutScrollView ? (
               <BottomSheetScrollView style={{ padding: 0 }}>
-                <View className="mb-2 mx-4">{children}</View>
+                <View
+                  style={{
+                    marginHorizontal: spacing || spacing === 0 ? spacing : 15,
+                  }}
+                >
+                  {children}
+                </View>
               </BottomSheetScrollView>
             ) : (
               <>{children}</>

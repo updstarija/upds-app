@@ -6,6 +6,7 @@ import { useAuthContext } from "@/hooks";
 import { Texto } from "@/ui";
 import ModalAuthCaution from "@/views/ModalAuthCaution";
 import { StatusBar } from "expo-status-bar";
+import { CarreraProvider } from "@/context";
 
 const RootLayout = () => {
   const { welcomeScreen } = useAuthContext();
@@ -23,27 +24,29 @@ const RootLayout = () => {
       <StatusBar style="light" />
 
       <ProyeccionesProvider>
-        <BottomSheetModalProvider>
-          <TourGuideProvider>
-            <Stack>
-              <Stack.Screen
-                name="(drawer)"
-                options={{
-                  headerShown: false,
-                }}
-              />
+        <CarreraProvider>
+          <BottomSheetModalProvider>
+            <TourGuideProvider>
+              <Stack>
+                <Stack.Screen
+                  name="(drawer)"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
 
-              <Stack.Screen
-                name="(screens)"
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </Stack>
+                <Stack.Screen
+                  name="(screens)"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+              </Stack>
 
-            <ModalAuthCaution />
-          </TourGuideProvider>
-        </BottomSheetModalProvider>
+              <ModalAuthCaution />
+            </TourGuideProvider>
+          </BottomSheetModalProvider>
+        </CarreraProvider>
       </ProyeccionesProvider>
     </>
   );

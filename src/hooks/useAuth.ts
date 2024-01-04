@@ -3,6 +3,7 @@ import { IFormLogin } from "@/types";
 import { useAuthContext } from "./useAuthContext";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import authService from "@/services/authService";
+import { AxiosError } from "axios";
 
 export const useAuth = () => {
   const { logout, token, login } = useAuthContext();
@@ -20,13 +21,23 @@ export const useAuth = () => {
           text2: "Has iniciado sesion correctamente :)",
         });
       },
-      onError: () => {
+      onError: (error: AxiosError) => {
+        //console.log(error, "DESDE USE QUERY");
         logout();
-        Toast.show({
-          type: "error",
-          text1: "Algo salio mal",
-          text2: "Usuario o contrasena incorrectos :(",
-        });
+        if (error && error.message && error.message.includes("CanceledError")) {
+          Toast.show({
+            type: "error",
+            text1: "Algo salio mal",
+            text2:
+              "La solicitud fue cancelada debido a una alta demanda con el servidor",
+          });
+        } else if ([401, 403].includes(error.status || 0)) {
+          Toast.show({
+            type: "error",
+            text1: "Algo salio mal",
+            text2: error.message || "Usuario o contrasena incorrectos :(",
+          });
+        }
       },
     }
   );
@@ -38,6 +49,7 @@ export const useAuth = () => {
     onError: () => {
       logout();
     },
+    retry: false,
     refetchInterval: 100000,
     enabled: !!token,
   });

@@ -58,7 +58,7 @@ const CustomDropdown: React.FC<Props> = ({
               ? { backgroundColor: "#0D1F46" }
               : {
                   backgroundColor: "#FFF",
-                  borderColor: PALLETE_COLORS.primary[700],
+                  borderColor: "#000",
                   borderWidth: 0.5,
                 },
           ]}
@@ -70,7 +70,7 @@ const CustomDropdown: React.FC<Props> = ({
           ]}
           selectedTextStyle={[
             styles.selectedTextStyle,
-            isDark ? { color: "#FFF" } : { color: PALLETE_COLORS.primary[600] },
+            isDark ? { color: "#FFF" } : { color: "#000" },
           ]}
           /*           itemContainerStyle={{
             backgroundColor: "#0D1F46",

@@ -8,6 +8,7 @@ import { IStep, TooltipProps, TourGuideProvider } from "rn-tourguide";
 
 import CONSTANS from "expo-constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { AutocompleteDropdownContextProvider } from "react-native-autocomplete-dropdown";
 interface ITourStep extends IStep {
   tourKey: string;
 }
@@ -82,32 +83,37 @@ const UnprotectedLayout = () => {
   };
 
   return (
-    <TourGuideProvider
-      preventOutsideInteraction
-      borderRadius={16}
-      // {...{ borderRadius: 16 }}
-      backdropColor="#000000b3"
-      //backdropColor="rgba(0,0,0,0.4)"
+    <AutocompleteDropdownContextProvider>
+      <TourGuideProvider
+        preventOutsideInteraction
+        borderRadius={16}
+        // {...{ borderRadius: 16 }}
+        backdropColor="#000000b3"
+        //backdropColor="rgba(0,0,0,0.4)"
 
-      verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
-      tooltipComponent={(props) => tooltipComponentTour(props as TourProps)}
-    >
-      <CarreraProvider>
-        <Stack>
-          <Stack.Screen
-            name="historical-academic/index"
-            options={configScreen.Stack("Historico Registro")}
-          />
+        verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
+        tooltipComponent={(props) => tooltipComponentTour(props as TourProps)}
+      >
+        <CarreraProvider>
+          <Stack>
+            <Stack.Screen
+              name="historical-academic/index"
+              options={configScreen.Stack("Historico Registro")}
+            />
 
-          <Stack.Screen name="profile" options={configScreen.Stack("Perfil")} />
+            <Stack.Screen
+              name="profile"
+              options={configScreen.Stack("Perfil")}
+            />
 
-          <Stack.Screen
-            name="projections"
-            options={configScreen.Stack("Proyecciones")}
-          />
-        </Stack>
-      </CarreraProvider>
-    </TourGuideProvider>
+            <Stack.Screen
+              name="projections"
+              options={configScreen.Stack("Proyecciones")}
+            />
+          </Stack>
+        </CarreraProvider>
+      </TourGuideProvider>
+    </AutocompleteDropdownContextProvider>
   );
 };
 
