@@ -21,10 +21,10 @@ export const useAuth = () => {
           text2: "Has iniciado sesion correctamente :)",
         });
       },
-      onError: (error: AxiosError) => {
+      onError: (error: any) => {
         //console.log(error, "DESDE USE QUERY");
         logout();
-        console.log(JSON.stringify(error), "ERRORRRRR")
+        console.log(error.response.status, "ERRORRRRR")
         if (error && error.message && error.message.includes("CanceledError")) {
           Toast.show({
             type: "error",
@@ -32,12 +32,12 @@ export const useAuth = () => {
             text2:
               "La solicitud fue cancelada debido a una alta demanda con el servidor",
           });
-        } else if ([401, 403].includes(error?.response?.status || 0)) {
+        } else if ([400, 401, 403].includes(error?.response?.status || 0)) {
           console.log("XDD")
           Toast.show({
             type: "error",
             text1: "Algo salio mal",
-            text2: error.message || "Usuario o contrasena incorrectos :(",
+            text2: error.response.data.msg || "Usuario o contrasena incorrectos :(",
           });
         }
       },
@@ -53,7 +53,7 @@ export const useAuth = () => {
     },
     retry: false,
 
-    refetchInterval: (token ? 100000 : false),
+    refetchInterval: (token ? 1000000 : false),
     enabled: !!token,
   });
 

@@ -1,5 +1,4 @@
-import { TouchableOpacity, ActivityIndicator } from 'react-native';
-
+import { TouchableOpacity, ActivityIndicator } from "react-native";
 
 interface Props {
   classNameBtn?: string;
@@ -17,15 +16,19 @@ export const Button: React.FC<Props> = ({
 }) => {
   return (
     <TouchableOpacity
-      className={classNameBtn + ` ${disabled ? 'opacity-70' : ''}`}
+      className={classNameBtn + ` ${disabled ? "opacity-70" : ""}`}
       onPress={() => onPress()}
       disabled={disabled}
-      activeOpacity={0.6}>
+      activeOpacity={0.6}
+    >
       {/*  <Texto className={`${classNameLabel} text-center text-xl`}>
         {children}
       </Texto> */}
-      {disabled && showLoader ?
-        <ActivityIndicator color={"#fff"} size={20} /> : <>{children}</>}
+      {disabled && showLoader ? (
+        <ActivityIndicator color={"#fff"} size={20} />
+      ) : (
+        <>{children}</>
+      )}
     </TouchableOpacity>
   );
 };

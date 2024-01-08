@@ -26,7 +26,7 @@ updsApi.interceptors.request.use(
   },
   //     if (token) config.headers["Authorization"] = `Bearer ${token}`
   (error) => {
-    console.log("ERROR EN REQUEST", error.response);
+    console.log("ERROR EN REQUEST", error.response.status);
     Toast.show({
       type: "error",
       text1: "Error",
@@ -42,7 +42,7 @@ updsApi.interceptors.request.use(
 updsApi.interceptors.response.use(
   (config) => config,
   (error: AxiosError<any>) => {
-    console.log("ERROR EN RESPONSE", error.code);
+    console.log("ERROR EN RESPONSE", error.response?.status);
 
     if (error.code === "ERR_CANCELED") {
       Toast.show({

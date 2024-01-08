@@ -152,47 +152,54 @@ const Login = () => {
       <SafeAreaView className="flex-1 bg-primario dark:bg-primario-dark">
         <KeyboardAvoidingScrollView
           stickyFooter={
-            <View className="px-8 py-2 bg-white">
+            <View className="px-8 py-2 bg-white dark:bg-secondary-dark">
               <Button
-                classNameBtn=" rounded-xl bg-primario p-3"
+                classNameBtn=" rounded-xl bg-primario p-3 h-14"
                 onPress={handleSubmit(onSubmit)}
                 disabled={signIn.isLoading}
                 showLoader
               >
                 <Texto className="text-center text-xl text-white ">
-                  INICIAR SESION
+                  INICIAR SESIÓN
                 </Texto>
               </Button>
             </View>
           }
           style={{ flex: 1 }}
-          containerStyle={{ flex: 1 }}
-          contentContainerStyle={{ flex: 1 }}
+          containerStyle={{
+            flex: 1,
+            backgroundColor: isDarkMode ? COLORS.dark.secondary : "#fff",
+          }}
+          //contentContainerStyle={{ flex: 1 }}
         >
-          <View className="flex-end m-3 flex-row items-center justify-between">
-            <View />
+          <View className="bg-primario pb-16">
+            <View className="flex-end m-3 flex-row items-center justify-between">
+              <View />
 
-            <TouchableOpacity
-              onPress={skipAuthConfirmation}
-              className="p-4 pr-0"
-            >
-              <Texto className="text-white opacity-80">Omitir por ahora</Texto>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                onPress={skipAuthConfirmation}
+                className="p-4 pr-0"
+              >
+                <Texto className="text-white opacity-80">
+                  Omitir por ahora
+                </Texto>
+              </TouchableOpacity>
+            </View>
 
-          <View className="flex-column items-center">
-            <Image
-              source={require(`~/assets/images/app/logo-dark.png`)}
-              style={{ width: 80, height: 80 }}
-            />
+            <View className="flex-column items-center">
+              <Image
+                source={require(`~/assets/images/app/logo-dark.png`)}
+                style={{ width: 80, height: 80 }}
+              />
 
-            <Texto className="text-xl text-white lg:text-3xl" weight="Bold">
-              Inicia sesion con tu cuenta
-            </Texto>
+              <Texto className="text-xl text-white lg:text-3xl" weight="Bold">
+                Inicia sesion con tu cuenta
+              </Texto>
+            </View>
           </View>
 
           <View
-            className="bg-white dark:bg-secondary-dark mt-5 flex-1 px-8 pt-8 max-w-2xl mx-auto w-full"
+            className="bg-white dark:bg-secondary-dark -mt-10 flex-1 px-8 pt-8 max-w-2xl mx-auto w-full"
             style={{ borderTopLeftRadius: 50, borderTopRightRadius: 50 }}
           >
             <TextField

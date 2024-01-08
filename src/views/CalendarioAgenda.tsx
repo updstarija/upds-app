@@ -250,7 +250,6 @@ const CalendarioAgenda = () => {
         renderEmptyDate={renderEmptyDate}
         rowHasChanged={rowHasChanged}
         showClosingKnob
-        horizontal
         //  selected={"2024-01-01"}
         /*  pastScrollRange={12 - (12 - new Date().getMonth())}
         futureScrollRange={12 - new Date().getMonth() - 1} */
@@ -269,14 +268,14 @@ const CalendarioAgenda = () => {
                 </Texto>
               </View>
 
-              {!academicCalendarsQuery.isFetching &&
+              {/*  {!academicCalendarsQuery.isFetching &&
                 !Object.keys(fechas).some((y) => {
                   console.log({
                     y,
                     formattedDate,
                   });
                   return y == formattedDate;
-                }) && <Texto>SIN EVENTOS</Texto>}
+                }) && <Texto>SIN EVENTOS</Texto>} */}
             </>
           );
         }}

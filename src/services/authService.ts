@@ -45,25 +45,22 @@ const fakeResponse: any = {
 };
 
 const login = async (data: IFormLogin): Promise<IResponseLogin> => {
-  try {
-    const source = axios.CancelToken.source();
 
-    const timeoutId = setTimeout(() => {
-      source.cancel(
-        "La solicitud fue cancelada debido a una alta demanda en el servidor"
-      );
-    }, 30000);
+  const source = axios.CancelToken.source();
 
-    const response = await updsApi.post<IResponseLogin>("/auth/login", data, {
-      cancelToken: source.token,
-    });
+  const timeoutId = setTimeout(() => {
+    source.cancel(
+      "La solicitud fue cancelada debido a una alta demanda en el servidor"
+    );
+  }, 30000);
 
-    clearTimeout(timeoutId);
-    return response.data;
-  } catch (e: any) {
-    console.log(e.response.status, "CATCH ERROR");
-    throw new Error(e);
-  }
+  const response = await updsApi.post<IResponseLogin>("/auth/login", data, {
+    cancelToken: source.token,
+  });
+
+  clearTimeout(timeoutId);
+  return response.data;
+
 };
 
 const getProfile = async (): Promise<IResponseLogin> => {
