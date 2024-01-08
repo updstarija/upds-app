@@ -8,6 +8,7 @@ import { useThemeColor } from "@/hooks";
 import ModalPriorityNotices from "@/views/ModalPriorityNotices";
 
 const av = new Animated.Value(0);
+
 av.addListener(() => {
   return;
 });
@@ -27,6 +28,7 @@ export default function Layout() {
 
       <LayoutHome>
         <MaterialTopTabs
+          initialRouteName="index"
           screenListeners={{
             focus: () => {
               Animated.timing(av, {
@@ -47,6 +49,7 @@ export default function Layout() {
               ? "#FFF"
               : COLORS.light.background,
           }}
+          shouldRasterizeIOS
         >
           <MaterialTopTabs.Screen
             name="index"

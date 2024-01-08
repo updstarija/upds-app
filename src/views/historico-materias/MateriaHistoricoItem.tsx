@@ -55,7 +55,9 @@ const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
     return (
       <>
         <MaterialCommunityIcons.Button
-          onPress={() => router.push(`/evaluacion/${materia.grupo}`)}
+          onPress={() =>
+            router.push(`/web/evaluacion-docente/${materia.grupo}`)
+          }
           name="clipboard-check"
           size={30}
           color="#fff"
@@ -64,7 +66,7 @@ const MateriaHistoricoItem: React.FC<Props> = memo(({ materia, tutorial }) => {
         />
 
         <MaterialCommunityIcons.Button
-          onPress={() => router.push(`/moodle/${materia.moodle}`)}
+          onPress={() => router.push(`/web/moodle/${materia.moodle}`)}
           name="school"
           size={30}
           color="#fff"

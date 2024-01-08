@@ -48,7 +48,7 @@ const Servicios = () => {
               className="text-xl  text-primario dark:text-white text-center"
               weight="Bold"
             >
-              Registra tu materia
+              REGISTRA TU MATERIA
             </Texto>
           </View>
         </Pressable>
@@ -66,10 +66,10 @@ const Servicios = () => {
           <FontAwesome name="dollar" size={100} color="#FFF" />
         </TouchableOpacity>
         <Texto
-          className="text-xl text-primario dark:text-white text-center"
+          className="text-xl text-primario dark:text-white text-center max-w-xs"
           weight="Bold"
         >
-          Realiza tus pagos de manera rápida y sencilla
+          REALIZA TUS PAGOS DE MANERA RÁPIDA Y SENCILLA
         </Texto>
       </View>
     </View>

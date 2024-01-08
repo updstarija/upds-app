@@ -21,7 +21,7 @@ const FaqItem: React.FC<{ faq: IFaq }> = ({ faq }) => {
     <View style={styles.cardContainer}>
       <View
         style={styles.windowContainer}
-        className="bg-white dark:bg-secondary-dark "
+        className="bg-white dark:bg-secondary-dark"
       >
         <View className="bg-primario flex-row justify-between h-8 items-center p-2">
           <Texto className="text-white text-sm" weight="Bold">
@@ -76,6 +76,15 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     marginVertical: 10,
+
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 7.68,
+    elevation: 10,
   },
   windowContainer: {
     borderRadius: 10,

@@ -45,6 +45,14 @@ const styles = StyleSheet.create({
   },
   cardContainer: {
     marginVertical: 10,
+    shadowColor: "#000000",
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 7.68,
+    elevation: 10,
   },
   windowContainer: {
     borderRadius: 10,

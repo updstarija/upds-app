@@ -112,8 +112,17 @@ const UnprotectedLayout = () => {
       />
 
       <Stack.Screen
+        name="web/evaluacion-docente/[id]"
+        options={configScreen.Stack("Evaluacion Docente")}
+      />
+
+      <Stack.Screen
         name="web/moodle/index"
         options={configScreen.Stack("Moodle")}
+      />
+      <Stack.Screen
+        name="web/moodle/[id]"
+        options={configScreen.Stack("Aula")}
       />
 
       <Stack.Screen

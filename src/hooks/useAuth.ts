@@ -24,6 +24,7 @@ export const useAuth = () => {
       onError: (error: AxiosError) => {
         //console.log(error, "DESDE USE QUERY");
         logout();
+        console.log(JSON.stringify(error), "ERRORRRRR")
         if (error && error.message && error.message.includes("CanceledError")) {
           Toast.show({
             type: "error",
@@ -31,7 +32,8 @@ export const useAuth = () => {
             text2:
               "La solicitud fue cancelada debido a una alta demanda con el servidor",
           });
-        } else if ([401, 403].includes(error.status || 0)) {
+        } else if ([401, 403].includes(error?.response?.status || 0)) {
+          console.log("XDD")
           Toast.show({
             type: "error",
             text1: "Algo salio mal",
@@ -50,9 +52,12 @@ export const useAuth = () => {
       logout();
     },
     retry: false,
-    refetchInterval: 100000,
+
+    refetchInterval: (token ? 100000 : false),
     enabled: !!token,
   });
+
+
 
   const signOut = () => {
     logout();

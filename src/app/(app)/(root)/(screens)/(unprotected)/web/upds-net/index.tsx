@@ -26,27 +26,6 @@ const Updsnet = () => {
   }, [canGoBack]);
 
   const injectedJavascript = `
- /*  document.addEventListener('DOMContentLoaded', () => {
-    const modalBanner = document.querySelector('#modal-id-banner > div > div > div.modal-header > button') 
-    modalBanner.click()
-    
-    const buttonRegisterPage = document.querySelector('a[data-url="https://portal.upds.edu.bo/updsnet/5.8//home/registromateria"]') 
-    buttonRegisterPage.click()
-    
-    const buttonRegisterMateria = document.getElementById('btn-float-register') 
-    buttonRegisterMateria.click()
-    
-    
-    const contentRegisterMateria = document.querySelector('#modal-register-materia > div') 
-    contentRegisterMateria.style.margin = '0'
-    
-    const btnCloseModal = document.querySelector('#modal-register-materia > div > div > div.panel-heading > button')
-    btnCloseModal?.remove()
-    
-    const modalRegisterMateria2 = document.querySelector('#modal-register-materia > div > div')   
-    modalRegisterMateria2.style.minHeight = '100vh'
-  }) */
-
   const selectors = {
     BANNER: "#modal-id-banner > div > div > div.modal-header > button",
     LINK_REGISTER:
@@ -57,6 +36,7 @@ const Updsnet = () => {
     BTN_CLOSE_MODAL:
       "#modal-register-materia > div > div > div.panel-heading > button",
   };
+  
   const sleep = (ms = 1000) => {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
@@ -162,6 +142,9 @@ const Updsnet = () => {
             source={{ uri: "https://portal.upds.edu.bo/updsnet/5.8/" }}
             onMessage={(x) => {
               console.log(x);
+            }}
+            onError={(x) => {
+              console.log(x, "ERROR");
             }}
             onNavigationStateChange={(x) => setCanGoBack(x.canGoBack)}
             injectedJavaScript={injectedJavascript}

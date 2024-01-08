@@ -1,6 +1,7 @@
 import { updsApi } from "@/api";
 import axios, { CancelToken } from "axios";
 import { IFormLogin, IResponseLogin } from "@/types";
+import Toast from "react-native-toast-message";
 
 const fakeResponse: any = {
   data: {
@@ -52,10 +53,6 @@ const login = async (data: IFormLogin): Promise<IResponseLogin> => {
         "La solicitud fue cancelada debido a una alta demanda en el servidor"
       );
     }, 30000);
-    /*  //TODO: FIX LOGIN
-     await sleep(4000);
- 
-     return fakeResponse; */
 
     const response = await updsApi.post<IResponseLogin>("/auth/login", data, {
       cancelToken: source.token,
@@ -64,7 +61,7 @@ const login = async (data: IFormLogin): Promise<IResponseLogin> => {
     clearTimeout(timeoutId);
     return response.data;
   } catch (e: any) {
-    console.log(e);
+    console.log(e.response.status, "CATCH ERROR");
     throw new Error(e);
   }
 };
@@ -75,14 +72,14 @@ const getProfile = async (): Promise<IResponseLogin> => {
     const source = axios.CancelToken.source();
 
     const timeoutId = setTimeout(() => {
-      source.cancel(
-        "La solicitud fue cancelada debido a una alta demanda en el servidor"
-      );
-    }, 30000);
+      Toast.show({
+        type: "warning",
+        text1: "Alerta",
+        text2: "Estamos presentando una alta demanda en el servidor. Se paciente"
+      })
+    }, 15000);
 
-    const response = await updsApi<IResponseLogin>("/auth/perfil", {
-      cancelToken: source.token,
-    });
+    const response = await updsApi<IResponseLogin>("/auth/perfil");
 
     clearTimeout(timeoutId);
     return response.data;

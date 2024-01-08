@@ -73,7 +73,7 @@ updsApi.interceptors.response.use(
         text1: "Error",
         text2:
           error?.response?.data?.msg ||
-          "Si el problema persiste contacta con soporte",
+          "Vuelve a intentarlo. Si el problema persiste contacta con soporte",
       });
     }
 

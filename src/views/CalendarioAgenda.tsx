@@ -121,15 +121,17 @@ const CalendarioAgenda = () => {
       return (
         <View className="w-16 items-center justify-center">
           <Texto
-            className={`text-black dark:text-gray-300 ${isSameDay(new Date(), date) ? "dark:text-[#6288f5]" : ""
-              } text-3xl`}
+            className={`text-black dark:text-gray-300 ${
+              isSameDay(new Date(), date) ? "dark:text-[#6288f5]" : ""
+            } text-3xl`}
             weight="Light"
           >
             {date.toLocaleDateString("es-Es", { day: "2-digit" })}
           </Texto>
           <Texto
-            className={`text-black dark:text-gray-300 ${isSameDay(new Date(), date) ? "dark:text-[#6288f5]" : ""
-              }`}
+            className={`text-black dark:text-gray-300 ${
+              isSameDay(new Date(), date) ? "dark:text-[#6288f5]" : ""
+            }`}
             weight="Light"
           >
             {dayNames[date.getDay()]}
@@ -228,11 +230,11 @@ const CalendarioAgenda = () => {
       <Agenda
         ListEmptyComponent={() => <Texto>GOLA</Texto>}
         items={fechas}
-        onMonthChange={(x) => {
+        /*  onMonthChange={(x) => {
           if (x.year !== selectedDate.getFullYear()) {
             setSelectedDate(new Date(x.dateString));
           }
-        }}
+        }} */
         displayLoadingIndicator={academicCalendarsQuery.isLoading}
         renderList={(p) => (
           <ReservationList
@@ -248,6 +250,7 @@ const CalendarioAgenda = () => {
         renderEmptyDate={renderEmptyDate}
         rowHasChanged={rowHasChanged}
         showClosingKnob
+        horizontal
         //  selected={"2024-01-01"}
         /*  pastScrollRange={12 - (12 - new Date().getMonth())}
         futureScrollRange={12 - new Date().getMonth() - 1} */
@@ -293,23 +296,23 @@ const CalendarioAgenda = () => {
         theme={
           isDarkMode
             ? {
-              calendarBackground: COLORS.dark.secondary,
-              dayTextColor: "#fff",
-              monthTextColor: "#fff",
-            }
+                calendarBackground: COLORS.dark.secondary,
+                dayTextColor: "#fff",
+                monthTextColor: "#fff",
+              }
             : {}
         }
         markedDates={markedDates}
-      /*   onMonthChange={(e) => {
+        /*   onMonthChange={(e) => {
         console.log(e);
       }} */
 
-      // monthFormat={'yyyy'}
-      // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-      // renderDay={this.renderDay}
+        // monthFormat={'yyyy'}
+        // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
+        // renderDay={this.renderDay}
 
-      // showOnlySelectedDayItems
-      // reservationsKeyExtractor={this.reservationsKeyExtractor}
+        // showOnlySelectedDayItems
+        // reservationsKeyExtractor={this.reservationsKeyExtractor}
       />
 
       <FloatingAction

@@ -58,7 +58,7 @@ const ModalPriorityNotices = () => {
               }}
               loop
               width={width > 1000 ? width : width - 40}
-              height={height - 200}
+              height={width > 1000 ? width : width - 40}
               autoPlay
               data={data}
               autoPlayInterval={data.length == 1 ? 999999 : 3000}

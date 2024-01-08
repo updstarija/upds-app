@@ -138,6 +138,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   BottomSheetBackdrop,
+  BottomSheetBackdropProps,
   BottomSheetModal,
   BottomSheetModalProps,
   BottomSheetScrollView,
@@ -193,17 +194,16 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> =
         bottomSheetModalRef.current?.present();
       }, []);
 
-      const renderBackdrop = useCallback(
-        (props: any) => (
+      const renderBackdrop = useCallback((props: BottomSheetBackdropProps) => {
+        return (
           <BottomSheetBackdrop
             {...props}
             disappearsOnIndex={-1}
             appearsOnIndex={2}
-            opacity={2}
+            opacity={1.3}
           />
-        ),
-        []
-      );
+        );
+      }, []);
 
       const handleChange = (index: number) => {
         if (index < 0) setIsOpen(false);
