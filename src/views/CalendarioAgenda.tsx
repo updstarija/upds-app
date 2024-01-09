@@ -147,7 +147,9 @@ const CalendarioAgenda = () => {
       <TouchableOpacity
         className={` p-4 mb-2 ${isFirst ? "mt-5" : ""}`}
         style={{ backgroundColor: reservation.color }}
-        onPress={() => Alert.alert(reservation.description)}
+        onPress={() =>
+          reservation.description ? Alert.alert(reservation.description) : null
+        }
       >
         <Texto className="text-white">{reservation.name}</Texto>
       </TouchableOpacity>
@@ -235,6 +237,7 @@ const CalendarioAgenda = () => {
             setSelectedDate(new Date(x.dateString));
           }
         }} */
+
         displayLoadingIndicator={academicCalendarsQuery.isLoading}
         renderList={(p) => (
           <ReservationList
@@ -244,41 +247,17 @@ const CalendarioAgenda = () => {
             }
           />
         )}
+        rowHasChanged={rowHasChanged}
         //renderList={(props) => <View {...props} className='flex-1  bg-red-300'><Texto>{JSON.stringify(props.items)}</Texto></View>}
         renderItem={renderItem}
         renderDay={renderDay}
         renderEmptyDate={renderEmptyDate}
-        rowHasChanged={rowHasChanged}
+        //rowHasChanged={rowHasChanged}
         showClosingKnob
         //  selected={"2024-01-01"}
-        /*  pastScrollRange={12 - (12 - new Date().getMonth())}
-        futureScrollRange={12 - new Date().getMonth() - 1} */
-        renderHeader={(x: Date) => {
-          const formattedDate = formatDateToYYYYMMDD(x);
 
-          return (
-            <>
-              <View className="mr-5">
-                <Texto>
-                  {new Date(x.toDateString())
-                    .toLocaleDateString("es-ES", {
-                      month: "long",
-                    })
-                    .toUpperCase()}
-                </Texto>
-              </View>
-
-              {/*  {!academicCalendarsQuery.isFetching &&
-                !Object.keys(fechas).some((y) => {
-                  console.log({
-                    y,
-                    formattedDate,
-                  });
-                  return y == formattedDate;
-                }) && <Texto>SIN EVENTOS</Texto>} */}
-            </>
-          );
-        }}
+        pastScrollRange={12 - (12 - new Date().getMonth())}
+        futureScrollRange={12 - new Date().getMonth() - 1}
         renderEmptyData={() => (
           <View className="bg-white dark:bg-primario-dark flex-1">
             <Texto className="text-center p-5 text-black dark:text-white">
@@ -310,7 +289,7 @@ const CalendarioAgenda = () => {
         // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
         // renderDay={this.renderDay}
 
-        // showOnlySelectedDayItems
+        showSixWeeks
         // reservationsKeyExtractor={this.reservationsKeyExtractor}
       />
 

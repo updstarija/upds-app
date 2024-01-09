@@ -6,9 +6,12 @@ import { SplashScreen, Stack } from "expo-router";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { AuthProvider } from "@/context";
 import { toastConfig } from "@/config";
-import { ThemeProvider } from "@/context/ThemeContext";
+import { Theme, ThemeProvider } from "@/context/ThemeContext";
 import { PopupWindowProvider } from "@/context/PopupWindowContext";
 import messaging from "@react-native-firebase/messaging";
+import { useStorageState } from "@/hooks/useStorageState";
+import { keysStorage } from "@/data/storage/keys";
+import { useColorScheme } from "nativewind";
 
 const queryClient = new QueryClient();
 
@@ -30,37 +33,42 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
+  const [[isLoadingTheme, theme]] = useStorageState<Theme>(keysStorage.THEME);
+  const { setColorScheme } = useColorScheme();
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
+    if (loaded && !isLoadingTheme) {
+      setColorScheme(theme || "system");
+
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [loaded, isLoadingTheme]);
 
-  if (!loaded) {
+  if (!loaded || isLoadingTheme) {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+    <ThemeProvider initialTheme={theme || "system"}>
+      <RootLayoutNav />
+    </ThemeProvider>
+  );
 }
 
 function RootLayoutNav() {
   return (
-    <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <PopupWindowProvider>
-            <Stack>
-              <Stack.Screen name="(app)" options={{ headerShown: false }} />
-            </Stack>
-          </PopupWindowProvider>
-        </AuthProvider>
-        <Toast config={toastConfig} />
-      </QueryClientProvider>
-    </ThemeProvider>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <PopupWindowProvider>
+          <Stack>
+            <Stack.Screen name="(app)" options={{ headerShown: false }} />
+          </Stack>
+        </PopupWindowProvider>
+      </AuthProvider>
+      <Toast config={toastConfig} />
+    </QueryClientProvider>
   );
 }

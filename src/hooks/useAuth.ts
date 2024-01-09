@@ -49,6 +49,7 @@ export const useAuth = () => {
       login(response.data);
     },
     onError: () => {
+      console.log("ERROR REFRESH LOGOUT")
       logout();
     },
     retry: false,

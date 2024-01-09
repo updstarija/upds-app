@@ -7,8 +7,9 @@ import { useColorScheme as useColorWind } from "nativewind";
 import { useThemeColor, useThemeContext } from "@/hooks";
 import { COLORS } from "~/constants";
 import { Texto } from "../ui";
+import { Theme } from "@/context/ThemeContext";
 
-const typeThemes = {
+const typeThemes: { [key: number]: string } = {
   0: "light",
   1: "dark",
   2: "system",
@@ -20,7 +21,7 @@ enum ThemeEnum {
   "system" = 2,
 }
 export const ThemeConfig = () => {
-  const { themeSelected, changeTheme } = useThemeContext();
+  const { theme, changeTheme } = useThemeContext();
 
   const { colorScheme } = useColorWind();
   const isDarkMode = colorScheme === "dark";
@@ -28,23 +29,27 @@ export const ThemeConfig = () => {
   const pagerViewRef = useRef<PagerView>(null);
 
   const onChangeTheme = async (id: number) => {
-    //@ts-ignore
-    changeTheme(typeThemes[id]);
-    //@ts-ignore
-    await AsyncStorage.setItem("tema", typeThemes[id]);
+    changeTheme(typeThemes[id] as Theme);
   };
 
   useEffect(() => {
-    pagerViewRef.current?.setPage(ThemeEnum[themeSelected]);
-  }, [themeSelected]);
+    if (!theme) return;
+
+    pagerViewRef.current?.setPageWithoutAnimation(ThemeEnum[theme]);
+  }, [theme]);
 
   return (
     <View className="border-primario border rounded-full">
       <PagerView
         ref={pagerViewRef}
-        initialPage={ThemeEnum[themeSelected]}
+        initialPage={ThemeEnum[theme]}
         className="h-10"
-        onPageSelected={(x) => onChangeTheme(x.nativeEvent.position)}
+        shouldRasterizeIOS
+        orientation={"horizontal"}
+        onPageSelected={(x) => {
+          //console.log(x.nativeEvent.position);
+          onChangeTheme(x.nativeEvent.position);
+        }}
       >
         <View key="1">
           <View className="flex-row items-center gap-2 justify-center mt-0.5">
@@ -62,6 +67,7 @@ export const ThemeConfig = () => {
             </View>
           </View>
         </View>
+
         <View key="2">
           <View className="flex-row items-center gap-2 justify-center mt-0.5">
             <Feather
@@ -77,6 +83,7 @@ export const ThemeConfig = () => {
             </View>
           </View>
         </View>
+
         <View key="3">
           <View className="flex-row items-center gap-2 justify-center mt-0.5">
             <Feather

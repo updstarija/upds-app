@@ -19,7 +19,7 @@ function useAsyncState<T>(
 export async function setStorageItemAsync(
   key: string,
   value: any | null,
-  options?: { isObject: boolean }
+  options?: { isObject?: boolean }
 ) {
   if (Platform.OS === "web") {
     try {
@@ -51,9 +51,9 @@ export async function setStorageItemAsync(
 
 export function useStorageState<T = string>(
   key: string,
-  options?: { isObject: boolean }
+  options?: { isObject?: boolean, initialValue: T }
 ): UseStateHook<T> {
-  const [state, setState] = useAsyncState<T>();
+  const [state, setState] = useAsyncState<T>([true, options?.initialValue || null]);
 
   // Get
   useEffect(() => {
