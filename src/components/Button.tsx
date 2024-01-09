@@ -1,4 +1,4 @@
-import { TouchableOpacity, ActivityIndicator } from "react-native";
+import { TouchableOpacity, ActivityIndicator, View } from "react-native";
 
 interface Props {
   classNameBtn?: string;
@@ -25,7 +25,9 @@ export const Button: React.FC<Props> = ({
         {children}
       </Texto> */}
       {disabled && showLoader ? (
-        <ActivityIndicator color={"#fff"} size={20} />
+        <View className="items-center justify-center">
+          <ActivityIndicator color={"#fff"} size={20} />
+        </View>
       ) : (
         <>{children}</>
       )}

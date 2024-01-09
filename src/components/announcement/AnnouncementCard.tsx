@@ -19,15 +19,16 @@ export const AnnouncementCard: React.FC<Props> = ({ announcement }) => {
 
   return (
     <View
+      className="border border-opacity-0 border-transparent rounded-xl"
       style={{
-        position: "relative",
-        shadowColor: "#000000",
+        shadowColor: "#000",
         shadowOffset: {
-          width: -2,
-          height: 2,
+          width: 0,
+          height: 12,
         },
-        shadowOpacity: 0.2,
-        shadowRadius: 7.62,
+        shadowOpacity: 0.58,
+        shadowRadius: 16.0,
+
         elevation: 6,
       }}
     >
@@ -101,11 +102,13 @@ export const AnnouncementCard: React.FC<Props> = ({ announcement }) => {
           </View>
         </View>
 
-        {announcement.priority && (
+        {(announcement.priority || announcement.superpriority) && (
           <>
             <View
               style={{
-                borderBottomColor: "#3498db",
+                borderBottomColor: announcement.superpriority
+                  ? "#f1e72c"
+                  : "#3498db",
                 //  borderRadius:1,
                 borderRightWidth: 40,
                 borderBottomWidth: 40,

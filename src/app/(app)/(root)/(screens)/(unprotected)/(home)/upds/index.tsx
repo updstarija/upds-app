@@ -32,24 +32,16 @@ const Ubicacion = () => {
         >
           NUESTRA UBICACIÓN
         </Texto>
-        {/*   <MapView provider={PROVIDER_GOOGLE}
-                    style={{ width: "100%", height: 500 }} /> */}
-        {/* <MapUpds /> */}
 
-        {/* TODO: MEJORAR MAPA */}
         <View className="h-96" renderToHardwareTextureAndroid>
           <WebView
             containerStyle={{ height: 1000 }}
             sharedCookiesEnabled
             style={{ height: 1000 }}
-            geolocationEnabled
-            scrollEnabled={false}
+            nestedScrollEnabled
             source={{
-              //uri: "https://www.bing.com/maps?osid=d5de3719-c97b-4576-a73a-f4cda7bd2180&cp=-21.536898~-64.742634&lvl=18.66&pi=0&v=2&sV=2&form=S00027",
-              //uri: "https://www.bing.com/maps?osid=fb4bcd15-432f-40ad-93f7-2d4b6585d7bf&cp=-21.535326~-64.741745&lvl=15&pi=0&v=2&sV=2&form=S00027",
-              uri: "https://www.openstreetmap.org/#map=19/-21.53687/-64.74195",
+              uri: "https://wonderful-conkies-235880.netlify.app/",
             }}
-            //source={{ uri: "https://portal.upds.edu.bo/ev-docente/#/ev-est/evaluacion/32255" }}
             javaScriptEnabled
           />
         </View>

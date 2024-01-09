@@ -45,48 +45,45 @@ const fakeResponse: any = {
 };
 
 const login = async (data: IFormLogin): Promise<IResponseLogin> => {
+  const timeoutId = setInterval(() => {
+    Toast.show({
+      type: "warning",
+      text1: "Alerta",
+      text2: "Estamos presentando una alta demanda en el servidor. Se paciente",
+    });
+  }, 15000);
 
-  const source = axios.CancelToken.source();
+  const response = await updsApi.post<IResponseLogin>("/auth/login", data);
 
-  const timeoutId = setTimeout(() => {
-    source.cancel(
-      "La solicitud fue cancelada debido a una alta demanda en el servidor"
-    );
-  }, 30000);
-
-  const response = await updsApi.post<IResponseLogin>("/auth/login", data, {
-    cancelToken: source.token,
-  });
-
-  clearTimeout(timeoutId);
+  clearInterval(timeoutId);
   return response.data;
-
 };
 
 const getProfile = async (): Promise<IResponseLogin> => {
+  let timeoutId;
+
   try {
     console.log("GET PROFILE");
-    const source = axios.CancelToken.source();
 
-    const timeoutId = setTimeout(() => {
+    timeoutId = setInterval(() => {
       Toast.show({
         type: "warning",
         text1: "Alerta",
-        text2: "Estamos presentando una alta demanda en el servidor. Se paciente"
-      })
+        text2:
+          "Estamos presentando una alta demanda en el servidor. Se paciente",
+      });
     }, 15000);
 
+    /*  const { data } = await axios("https://jsonplaceholder.typicode.com/todos");
+    console.log(data); */
     const response = await updsApi<IResponseLogin>("/auth/perfil");
+    console.log(response);
 
-    clearTimeout(timeoutId);
     return response.data;
   } catch (error) {
-    if (axios.isCancel(error)) {
-      throw new Error(error.message); // Lanzar una excepción con el mensaje de cancelación
-    } else {
-      console.log(error);
-      throw new Error("Hubo un error al obtener el perfil"); // Mensaje de error predeterminado
-    }
+    throw new Error("Hubo un error al obtener el perfil");
+  } finally {
+    clearInterval(timeoutId);
   }
 };
 export default {

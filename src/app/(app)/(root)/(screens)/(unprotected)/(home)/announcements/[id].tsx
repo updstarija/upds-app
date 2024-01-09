@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import firestore from "@react-native-firebase/firestore";
 import Share from "react-native-share";
 import { AntDesign, FontAwesome } from "@expo/vector-icons";
-import { Redirect, Stack, useLocalSearchParams } from "expo-router";
+import { Redirect, Stack, router, useLocalSearchParams } from "expo-router";
 import { openBrowserAsync } from "expo-web-browser";
 import { COLORS } from "~/constants";
 import { useNoticias, useThemeColor } from "@/hooks";
@@ -166,76 +166,90 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
 
   return (
     <>
-      <View className="flex-1 bg-white dark:bg-secondary-dark">
+      <View className="flex-1 bg-white dark:bg-secondary-dark ">
         <ScrollView
           style={{ flex: 1 }}
           scrollsToTop
           contentContainerStyle={{ flexGrow: 1 }}
         >
-          <View className="bg-white dark:bg-primario-dark flex-1">
+          <View className="bg-white dark:bg-primario-dark flex-1 relative">
+            <View
+              style={[
+                {
+                  position: "absolute",
+                  zIndex: 30,
+                  top: 35,
+                  left: 5,
+                },
+              ]}
+            >
+              <TouchableOpacity
+                onPress={() => router.back()}
+                className="bg-black/20 w-10 h-10 rounded-full items-center justify-center"
+              >
+                <AntDesign name="left" size={20} color={"#FFF"} />
+              </TouchableOpacity>
+            </View>
+
             <View className="flex-1">
               <View>
-                {announcementQuery.isLoading ? (
-                  <CustomSkeleton width={width} height={width} />
-                ) : (
-                  <View>
-                    {images.length == 1 ? (
-                      <View
-                        style={{
-                          height: height * (width / WIDTH_IMAGE),
-                        }}
-                      >
-                        <Image
-                          style={{
-                            maxWidth: width,
-                            width: "auto",
-                          }}
-                          className="h-full w-full" //h56
-                          source={images[0].url}
-                        />
-                      </View>
-                    ) : (
-                      <Carousel
+                <View>
+                  {images.length == 1 ? (
+                    <View
+                      style={{
+                        height: height * (width / WIDTH_IMAGE),
+                      }}
+                    >
+                      <Image
                         style={{
                           maxWidth: width,
+                          width: "auto",
                         }}
-                        loop
-                        autoPlay
-                        width={width}
-                        height={height * (width / WIDTH_IMAGE)}
-                        data={images}
-                        autoPlayInterval={3000}
-                        scrollAnimationDuration={1000}
-                        onSnapToItem={(index) => setActiveIndexImage(index)}
-                        renderItem={({ item }) => {
-                          return (
-                            <>
-                              <Image
-                                style={{
-                                  maxWidth: width,
-                                  width: "auto",
-                                }}
-                                className="h-full w-full" //h56
-                                source={item.url}
-                                contentFit="contain"
-                                contentPosition={"top"}
-                              />
-                            </>
-                          );
-                        }}
-                      />
-                    )}
-
-                    <View className="absolute bottom-2 right-0 left-0 items-center justify-center">
-                      <PaginationDot
-                        activeDotColor={COLORS.light.background}
-                        inactiveDotColor="#ccc"
-                        curPage={activeIndexImage}
-                        maxPage={images.length}
+                        className="h-full w-full" //h56
+                        source={images[0].url}
                       />
                     </View>
+                  ) : (
+                    <Carousel
+                      style={{
+                        maxWidth: width,
+                      }}
+                      loop
+                      autoPlay
+                      width={width}
+                      height={height * (width / WIDTH_IMAGE)}
+                      data={images}
+                      autoPlayInterval={3000}
+                      scrollAnimationDuration={1000}
+                      onSnapToItem={(index) => setActiveIndexImage(index)}
+                      renderItem={({ item }) => {
+                        return (
+                          <>
+                            <Image
+                              style={{
+                                maxWidth: width,
+                                width: "auto",
+                              }}
+                              className="h-full w-full" //h56
+                              source={item.url}
+                              contentFit="contain"
+                              contentPosition={"top"}
+                            />
+                          </>
+                        );
+                      }}
+                    />
+                  )}
+
+                  <View className="absolute bottom-2 right-0 left-0 items-center justify-center">
+                    <PaginationDot
+                      activeDotColor={COLORS.light.background}
+                      inactiveDotColor="#ccc"
+                      curPage={activeIndexImage}
+                      maxPage={images.length}
+                    />
                   </View>
-                )}
+                </View>
 
                 <Spacer height={20} />
 
@@ -308,43 +322,34 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                 }}
               >
                 <View className="bg-primario w-80 rounded-xl p-1 mt-[-20px] relative mx-auto">
-                  {isLoading ? (
-                    <View className="p-2">
-                      <CustomSkeleton
-                        width={"100%"}
-                        height={20}
-                        colors={["#243E89", "#2F489C", "#3752AD"]}
-                      />
-                    </View>
-                  ) : (
-                    <Texto
-                      className={`text-${
-                        title.length > 30 ? "xl" : "xl"
-                      } uppercase text-white text-center`}
-                      weight="Bold"
-                    >
-                      {title}
-                    </Texto>
-                  )}
+                  <Texto
+                    className={`text-${
+                      title.length > 30 ? "xl" : "xl"
+                    } uppercase text-white text-center`}
+                    weight="Bold"
+                  >
+                    {title}
+                  </Texto>
 
-                  {isLoading && priority && (
-                    <>
-                      <View
-                        style={{
-                          position: "absolute",
-                          top: -5,
-                          right: -5,
-                          zIndex: 1,
-                        }}
-                      >
-                        <FontAwesome
-                          name={"star"}
-                          color={isDark ? "#FFF" : "#3498db"}
-                          size={20}
-                        />
-                      </View>
-                    </>
-                  )}
+                  {priority ||
+                    (superpriority && (
+                      <>
+                        <View
+                          style={{
+                            position: "absolute",
+                            top: -5,
+                            right: -5,
+                            zIndex: 1,
+                          }}
+                        >
+                          <FontAwesome
+                            name={"star"}
+                            color={superpriority ? "#f1e72c" : "#3498db"}
+                            size={20}
+                          />
+                        </View>
+                      </>
+                    ))}
                 </View>
 
                 <View className="p-4">

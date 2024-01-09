@@ -74,7 +74,7 @@ const CarouselPriorityNotices = () => {
                       contentFit="cover"
                     />
 
-                    <View className="absolute bottom-0 left-0 bg-black/60 w-full p-3 ">
+                    <View className="absolute bottom-0 left-0 bg-black/60 w-full p-3 rounded-lg rounded-t-none">
                       <Texto
                         numberOfLines={2}
                         weight="Bold"

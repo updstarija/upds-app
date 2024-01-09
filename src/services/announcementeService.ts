@@ -27,9 +27,10 @@ export const getAllData = async (context: QueryContext) => {
 
     let query = db
       .collection(DB_ANNOUNCEMENT_KEY)
-      .where("date", "<=", new Date())
-      .orderBy("date", "desc")
+      //      .where("date", "<=", new Date())
+      .orderBy("superpriority", "desc")
       .orderBy("priority", "desc")
+      .orderBy("date", "desc");
 
     if (category) {
       query = query.where(Filter("category", "==", category));
@@ -50,7 +51,7 @@ export const getAllData = async (context: QueryContext) => {
     const dataPromises = snapshot.docs.map(async (doc) => {
       const dataDoc = doc.data() as IAnnouncement;
 
-      const likedAnnouncements = await getLikedAnnouncements()
+      const likedAnnouncements = await getLikedAnnouncements();
 
       const isLiked = likedAnnouncements.includes(doc.id);
 
@@ -65,7 +66,9 @@ export const getAllData = async (context: QueryContext) => {
 
     const lastDoc = snapshot.docs[snapshot.docs.length - 1];
 
-    const data = await Promise.all(dataPromises)
+    const data = (await Promise.all(dataPromises)).filter(
+      (anouncement) => anouncement.date <= new Date()
+    );
 
     return {
       data,
@@ -82,16 +85,16 @@ export const getData = async (id: string): Promise<IAnnouncement> => {
     const snapshot = await db.collection(DB_ANNOUNCEMENT_KEY).doc(id).get();
     const data = snapshot.data() as IAnnouncement;
 
-    const likedAnnouncements = await getLikedAnnouncements()
+    const likedAnnouncements = await getLikedAnnouncements();
 
     const isLiked = likedAnnouncements.includes(data.id);
-    console.log(likedAnnouncements)
+    console.log(likedAnnouncements);
     return {
       ...data,
       //@ts-ignore
       date: new Date(data.date.toDate()),
       id: snapshot.id,
-      isLiked
+      isLiked,
     };
   } catch (e: any) {
     console.log(e);
@@ -136,14 +139,9 @@ const updateData = async (data: Partial<IAnnouncement>) => {
   try {
     const docRef = firestore().collection(DB_ANNOUNCEMENT_KEY).doc(data.id);
 
-    await docRef
-      .update(data)
-
-  } catch (error) {
-
-  }
-}
-
+    await docRef.update(data);
+  } catch (error) {}
+};
 
 const getLikedAnnouncements = async () => {
   const announcements = await AsyncStorage.getItem(
@@ -159,5 +157,5 @@ export default {
   getAllData,
   getData,
   getTopPriority,
-  updateData
+  updateData,
 };

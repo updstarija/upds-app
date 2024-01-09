@@ -79,7 +79,7 @@ const Comunicados = () => {
                 animated: true,
               })
             }
-            className="bg-primario w-16 h-16 rounded-full items-center justify-center"
+            className="bg-primario w-12 h-12 rounded-full items-center justify-center"
           >
             <AntDesign name="up" size={20} color={"#FFF"} />
           </TouchableOpacity>
