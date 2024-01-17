@@ -4,8 +4,10 @@ import { openBrowserAsync } from "expo-web-browser";
 import { useThemeColor } from "@/hooks";
 import { CardCircle } from "@/components";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { Texto } from "@/ui";
+import { CustomBottomSheetModal, Texto } from "@/ui";
+import { Image } from "expo-image";
 
+import { openURL } from "expo-linking";
 const data = [
   {
     id: "1",
@@ -29,7 +31,7 @@ const data = [
 const Servicios = () => {
   const isDark = useThemeColor() === "dark";
   return (
-    <View className="items-center justify-center flex gap-20 flex-1">
+    <View className="items-center justify-center flex gap-20 flex-1 dark:bg-primario-dark">
       {/* <View style={styles.boxStyle}>
           <Text>Horario de atencion</Text>
         </View> */}
@@ -55,66 +57,68 @@ const Servicios = () => {
       </Link>
 
       <View style={styles.touchableStyle}>
-        <TouchableOpacity
-          className="bg-primario dark:bg-secondary-dark"
-          style={styles.buttonStyle}
-          onPress={async () => {
-            await openBrowserAsync("https://multipago.com/service/UPDS/first");
+        <CustomBottomSheetModal
+          contentProps={{
+            style: { alignItems: "center", justifyContent: "center" },
           }}
-          activeOpacity={1}
+          content={
+            <>
+              <View
+                className="bg-primario dark:bg-secondary-dark"
+                style={styles.buttonStyle}
+                /*   onPress={async () => {
+            await openBrowserAsync("https://multipago.com/service/UPDS/first");
+          }} */
+                // activeOpacity={1}
+              >
+                <FontAwesome name="dollar" size={100} color="#FFF" />
+              </View>
+              <Texto
+                className="text-xl text-primario dark:text-white text-center max-w-xs"
+                weight="Bold"
+              >
+                REALIZA TUS PAGOS DE MANERA RÁPIDA Y SENCILLAS
+              </Texto>
+            </>
+          }
         >
-          <FontAwesome name="dollar" size={100} color="#FFF" />
-        </TouchableOpacity>
-        <Texto
-          className="text-xl text-primario dark:text-white text-center max-w-xs"
-          weight="Bold"
-        >
-          REALIZA TUS PAGOS DE MANERA RÁPIDA Y SENCILLA
-        </Texto>
+          <View className="  ">
+            <Texto className="text-center text-xl my-4" weight="Bold">
+              Selecciona el método de pago
+            </Texto>
+            <View className="flex-row justify-evenly  gap-5 mb-5">
+              <TouchableOpacity
+                onPress={async () => {
+                  await openURL("https://wa.me/59177775677");
+                }}
+                activeOpacity={0.7}
+              >
+                <Image
+                  source={require("~/assets/images/icons/luka.jpg")}
+                  style={{ width: 100, height: 100 }}
+                  contentFit="contain"
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={async () => {
+                  await openBrowserAsync(
+                    "https://multipago.com/service/UPDS/first"
+                  );
+                }}
+                activeOpacity={0.7}
+              >
+                <Image
+                  source={require("~/assets/images/icons/multipago.png")}
+                  contentFit="contain"
+                  style={{ width: 100, height: 100 }}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </CustomBottomSheetModal>
       </View>
     </View>
-    /*  <View className="items-center justify-center flex gap-5 flex-1 dark:bg-primario-dark">
- 
-
-      {data.map((item) => (
-        <Link
-          key={item.id}
-          onPress={async (e) => {
-            if (item.link) {
-              e.preventDefault();
-              await openBrowserAsync(item.to);
-              return;
-            }
-          }}
-          //@ts-ignore
-          href={item.to}
-          asChild
-        >
-          <Pressable>
-            <CardCircle icon={item.icon} title={item.description} />
-          </Pressable>
-        </Link>
-      ))}
-
-      {/*  <>
-
-                <Link
-                    onPress={async (e) => {
-                        if (item.link) {
-                            e.preventDefault();
-                            await openBrowserAsync(item.to)
-                            return;
-                        }
-                    }}
-
-                    //@ts-ignore
-                    href={item.to} asChild>
-                    <Pressable >
-                        <CardCircle icon={"user"} title='TEST' />
-                    </Pressable>
-                </Link>
-            </> *
-    </View> */
   );
 };
 

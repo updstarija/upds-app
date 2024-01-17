@@ -136,8 +136,6 @@ const ChatScreen = () => {
             const nameGuestUser = await AsyncStorage.getItem(
               keysStorage.GUEST_USER_NAME
             );
-            //!FIX: SET NOMBRE USUARIO
-            //  console.log(nameGuestUser);
             setNameGuestUser(nameGuestUser || "GUEST_USER");
             setChatId(tokenStorage);
           } else {

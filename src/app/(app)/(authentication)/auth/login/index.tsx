@@ -172,7 +172,7 @@ const Login = () => {
           }}
           //contentContainerStyle={{ flex: 1 }}
         >
-          <View className="bg-primario pb-16">
+          <View className="bg-primario dark:bg-primario-dark pb-16">
             <View className="flex-end m-3 flex-row items-center justify-between">
               <View />
 

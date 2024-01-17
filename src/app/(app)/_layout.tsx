@@ -9,8 +9,18 @@ import messaging, {
 } from "@react-native-firebase/messaging";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
 import * as Notifications from "expo-notifications";
-import { PermissionsAndroid, Platform } from "react-native";
+import { PermissionsAndroid, Platform, View } from "react-native";
 import { FirebaseNotification } from "~/constants/Firebase";
+import * as Animatable from "react-native-animatable";
+
+const fadeIn = {
+  from: {
+    opacity: 0,
+  },
+  to: {
+    opacity: 1,
+  },
+};
 
 const AppLayout = () => {
   const { signOut } = useAuth();
@@ -92,12 +102,11 @@ const AppLayout = () => {
       // Alert.alert("EMPEZANDO A SUSCRIBIR !!!!")
 
       messaging()
-        //! FIX: CAMBIAR upds-test POR upds
-        //.subscribeToTopic('upds')
         .subscribeToTopic(FirebaseNotification.NOTIFICATION_TOPIC)
         .then((x) => {
-          //alert("SUSCRITO A UPDS-TEST NOTIFICATIONS");
-          console.log("SUSCRIBE TO UPDS-TEST TOPIC NOTIFICATIONS");
+          console.log(
+            `SUSCRIBE TO ${FirebaseNotification.NOTIFICATION_TOPIC} TOPIC NOTIFICATIONS`
+          );
           //Alert.alert("SUSCRITO")
         })
         .catch((e) => {
@@ -161,10 +170,22 @@ const AppLayout = () => {
 
   if (isLoadingToken || status === "pending")
     return (
-      <Texto>
-        CARGANDO TOKEN2 ISLOADING {isLoadingToken ? "SI" : "NO"} STATUS:{" "}
-        {status}
-      </Texto>
+      <View className="flex-1  items-center justify-center bg-white dark:bg-primario-dark">
+        <View>
+          <Animatable.Image
+            animation="pulse"
+            easing="ease-out"
+            duration={5000}
+            iterationCount="infinite"
+            source={require("~/assets/images/app/logo-light.png")}
+            resizeMode="contain"
+            style={{
+              width: 80,
+              height: 80,
+            }}
+          />
+        </View>
+      </View>
     );
 
   return <Slot />;

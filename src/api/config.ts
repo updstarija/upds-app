@@ -20,11 +20,11 @@ updsApi.interceptors.request.use(
     const token = await getToken();
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
+      //config.headers["Authorization"] = `Bearer FAKE_TOKEN`;
     }
 
     return config;
   },
-  //     if (token) config.headers["Authorization"] = `Bearer ${token}`
   (error) => {
     console.log("ERROR EN REQUEST", error.response.status);
     Toast.show({

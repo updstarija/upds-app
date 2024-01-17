@@ -2,7 +2,7 @@
   "expo": {
     "name": "UPDS Tarija",
     "slug": "upds-tarija",
-    "version": "1.1.3",
+    "version": "1.1.5",
     "orientation": "default",
     "notification": {
       "icon": "./assets/images/app/icon.png"
@@ -17,17 +17,17 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "buildNumber": "15",
+      "buildNumber": "18",
       "supportsTablet": true,
       "googleServicesFile": "./GoogleService-Info.plist",
-      "bundleIdentifier": "com.upds.tarija.com",
-     /*  "config": {
+      "bundleIdentifier": "com.upds.tarija.com"
+      /*  "config": {
         "googleMapsApiKey": "AIzaSyDDQOBRl4X5CmUX3tPIXldcnfI4-vHnMGM"
       } */
     },
     "android": {
-      "versionCode": 15,
-     /*  "config": {
+      "versionCode": 18,
+      /*  "config": {
         "googleMaps": {
           "apiKey": "AIzaSyDDQOBRl4X5CmUX3tPIXldcnfI4-vHnMGM"
         }

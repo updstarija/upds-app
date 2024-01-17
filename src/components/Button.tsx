@@ -25,7 +25,7 @@ export const Button: React.FC<Props> = ({
         {children}
       </Texto> */}
       {disabled && showLoader ? (
-        <View className="items-center justify-center">
+        <View className="items-center justify-center h-full">
           <ActivityIndicator color={"#fff"} size={20} />
         </View>
       ) : (

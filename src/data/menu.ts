@@ -83,7 +83,7 @@ export const menuHomeStudent: Menu[] = [
     icon: "table-view",
     to: "/projections/projection-stament",
     link: false,
-    auth: true,
+    auth: false,
   },
   /*   {
           text: 'TESTING',

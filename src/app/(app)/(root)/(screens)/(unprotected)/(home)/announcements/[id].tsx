@@ -30,7 +30,7 @@ import AnnouncementDetailSkeleton from "@/components/announcement/AnnouncementDe
 import { extractPlainText } from "@/helpers/extractPlainText";
 import { useImageDimensions } from "@react-native-community/hooks";
 import PaginationDot from "react-native-animated-pagination-dot";
-
+import { openURL, canOpenURL } from "expo-linking";
 const actionsFloatButton: IActionProps[] = [
   {
     text: "Compartir",
@@ -73,32 +73,6 @@ export const NoticeDetail = () => {
 
   const [activeIndexImage, setActiveIndexImage] = useState(0);
 
-  const checkIfLiked = async (): Promise<boolean> => {
-    const liked = await AsyncStorage.getItem(`liked_noticia_${id}`);
-    return liked === "true";
-  };
-
-  /* const likeNotice = async () => {
-    setIsLike(!islike);
-    const liked = await checkIfLiked();
-    const increment = liked ? -1 : 1;
-
-    const noticiaRef = firestore().collection("Noticia").doc(id);
-
-    noticiaRef
-      .update({
-        like: firestore.FieldValue.increment(increment),
-      })
-      .then(async () => {
-        await AsyncStorage.setItem(`liked_noticia_${id}`, (!liked).toString());
-        //console.log(likes)
-        setLikes(likes + increment);
-      })
-      .catch((error) => {
-        // console.log('Error al incrementar like:', error);
-      });
-  }; */
-
   const likeAnnouncement = async () => {
     if (!announcementQuery.data) return;
 
@@ -134,9 +108,12 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
 
   const actionsEvents: { [key: string]: Function } = {
     share: shareAnnouncement,
-    "more-info": () => {
-      if (announcementQuery.data?.moreInfoUrl)
-        openBrowserAsync(announcementQuery.data.moreInfoUrl);
+    "more-info": async () => {
+      if (moreInfoUrl) {
+        canOpenURL(moreInfoUrl.trim()).then(() => {
+          openURL(moreInfoUrl.trim()).then(() => {});
+        });
+      }
     },
   };
 
@@ -155,7 +132,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
     isLiked,
   } = announcementQuery.data ?? defaultAnnouncement;
   const source = { uri: images[0]?.url || "" };
-
+  console.log(moreInfoUrl);
   const { dimensions, loading, error } = useImageDimensions(source);
 
   if (announcementQuery.isError) return <Texto>ERROR</Texto>;
