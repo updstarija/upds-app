@@ -12,6 +12,7 @@ import * as Notifications from "expo-notifications";
 import { PermissionsAndroid, Platform, View } from "react-native";
 import { FirebaseNotification } from "~/constants/Firebase";
 import * as Animatable from "react-native-animatable";
+import LoaderSplash from "@/components/LoaderSplash";
 
 const fadeIn = {
   from: {
@@ -168,25 +169,8 @@ const AppLayout = () => {
     }
   }, [initialNotification, navigationState?.key, isLoadingToken, status]);
 
-  if (isLoadingToken || status === "pending")
-    return (
-      <View className="flex-1  items-center justify-center bg-white dark:bg-primario-dark">
-        <View>
-          <Animatable.Image
-            animation="pulse"
-            easing="ease-out"
-            duration={5000}
-            iterationCount="infinite"
-            source={require("~/assets/images/app/logo-light.png")}
-            resizeMode="contain"
-            style={{
-              width: 80,
-              height: 80,
-            }}
-          />
-        </View>
-      </View>
-    );
+  if (isLoadingToken || status === "pending" || !navigationState?.key)
+    return <LoaderSplash />;
 
   return <Slot />;
 };

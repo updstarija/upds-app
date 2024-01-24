@@ -83,7 +83,7 @@ export const menuHomeStudent: Menu[] = [
     icon: "table-view",
     to: "/projections/projection-stament",
     link: false,
-    auth: false,
+    auth: true,
   },
   /*   {
           text: 'TESTING',
@@ -150,12 +150,6 @@ export const menuAjustes: Menu[] = [
     icon: "info-circle",
     text: "Acerca de la aplicación",
     to: "config/about",
-    link: false,
-  },
-  {
-    icon: "info-circle",
-    text: "Developer",
-    to: "config/developer",
     link: false,
   },
 ];

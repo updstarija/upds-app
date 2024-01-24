@@ -3,12 +3,13 @@ import React from "react";
 import { Redirect, Stack } from "expo-router";
 import { useAuthContext } from "@/hooks";
 import { Texto } from "@/ui";
+import LoaderSplash from "@/components/LoaderSplash";
 
 const ExtraLayout = () => {
   const { status, welcomeScreen } = useAuthContext();
 
   if (status === "pending" || welcomeScreen.isLoading) {
-    return <Texto>VERIFING SESSION AND WELCOME SCREEN</Texto>;
+    return <LoaderSplash />;
   }
 
   if (status !== "authenticated" && welcomeScreen.value) {

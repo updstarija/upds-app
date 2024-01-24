@@ -7,12 +7,15 @@ import { Texto } from "@/ui";
 import ModalAuthCaution from "@/views/ModalAuthCaution";
 import { StatusBar } from "expo-status-bar";
 import { CarreraProvider } from "@/context";
+import { View } from "react-native";
+import * as Animatable from "react-native-animatable";
+import LoaderSplash from "@/components/LoaderSplash";
 
 const RootLayout = () => {
   const { welcomeScreen } = useAuthContext();
 
   if (welcomeScreen.isLoading) {
-    return <Texto>VERIFINGWELCOME SCREEN</Texto>;
+    return <LoaderSplash />;
   }
 
   if (!welcomeScreen.value) {

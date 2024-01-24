@@ -60,11 +60,13 @@ const Login = () => {
   const navigateScreen = (auth: boolean = false) => {
     if (auth && callBack.value?.auth) {
       router.replace(callBack.value?.auth as any);
+      callBack.clearCallback();
       return;
     }
 
     if (!auth && callBack.value?.prev) {
       router.replace(callBack.value?.prev as any);
+      callBack.clearCallback();
       return;
     }
 
