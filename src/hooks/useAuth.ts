@@ -8,7 +8,7 @@ import { updsApi } from "@/api";
 import { useEffect } from "react";
 
 export const useAuth = () => {
-  const { logout, token, login } = useAuthContext();
+  const { logout, token, login, status } = useAuthContext();
 
   const signIn = useMutation(
     ["auth", "session"],
@@ -47,19 +47,36 @@ export const useAuth = () => {
     }
   );
 
-  const refreshSession = useQuery(["auth", "session"], authService.getProfile, {
+  const refreshSession = useQuery(["auth", "session"], () => 1, {
     onSuccess: (response) => {
-      login(response.data);
+      //login(response.data);
     },
     onError: () => {
-      console.log("ERROR REFRESH LOGOUT");
-      logout();
+      // console.log("ERROR REFRESH LOGOUT");
+      // logout();
     },
     retry: false,
     refetchInterval: token ? 1000000 : false,
     enabled: !!token,
   });
 
+  const refreshSessionTestOffice = useQuery(
+    ["auth", "session", "officece"],
+    authService.getProfileTestOffice,
+    {
+      onSuccess: (response) => {
+        console.log("🚀 ~ useAuth ~ response:", response);
+        login(response.data);
+      },
+      onError: () => {
+        console.log("ERROR REFRESH LOGOUT");
+        logout();
+      },
+      retry: false,
+      refetchInterval: token ? 1000000 : false,
+      enabled: !!token,
+    }
+  );
   const signOut = () => {
     logout();
   };
@@ -81,5 +98,6 @@ export const useAuth = () => {
     signIn,
     refreshSession,
     signOut,
+    refreshSessionTestOffice,
   };
 };

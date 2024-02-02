@@ -67,6 +67,8 @@ const AppLayout = () => {
   useEffect(() => {
     if (!isLoadingToken) {
       if (!token) signOut();
+
+      console.log(token, "MI TOKEN");
     }
   }, [token, isLoadingToken]);
 

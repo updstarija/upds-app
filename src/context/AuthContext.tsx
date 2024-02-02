@@ -45,7 +45,10 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
   const login = async (data: IResponseLogin["data"]) => {
     setUser(data.usuario);
-    setToken(data.token);
+    if (data.token) {
+      setToken(data.token);
+    }
+
     setStatus("authenticated");
   };
 
@@ -62,6 +65,11 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   const clearCallback = () => setCallbackUrl(null);
   const setCallback = (urls: CallBackUrlType) => setCallbackUrl(urls);
 
+  /* console.log({
+    user,
+    status,
+    token,
+  }); */
   return (
     <AuthContext.Provider
       value={{
@@ -82,6 +90,9 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
           setCallback,
         },
         setNameGuestUser,
+        setToken: (token: string) => {
+          setToken(token);
+        },
       }}
     >
       {children}

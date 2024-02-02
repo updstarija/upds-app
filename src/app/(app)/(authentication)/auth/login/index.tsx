@@ -4,6 +4,7 @@ import {
   Image,
   Alert,
   BackHandler,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -19,6 +20,10 @@ import { useEffect } from "react";
 import { useStorageState } from "@/hooks/useStorageState";
 import { keysStorage } from "@/data/storage/keys";
 import { KeyboardAvoidingScrollView } from "react-native-keyboard-avoiding-scroll-view";
+import * as WebBrowser from "expo-web-browser";
+import { openURL } from "expo-linking";
+
+WebBrowser.maybeCompleteAuthSession();
 
 const Login = () => {
   const isDarkMode = useThemeColor() === "dark";
@@ -155,6 +160,27 @@ const Login = () => {
         <KeyboardAvoidingScrollView
           stickyFooter={
             <View className="px-8 py-2 bg-white dark:bg-secondary-dark">
+              <Button
+                classNameBtn=" rounded-xl bg-orange-500 p-3 h-14 mb-2"
+                onPress={async () => {
+                  const result = await WebBrowser.openAuthSessionAsync(
+                    "https://login-qa.upds.edu.bo/SAADS-WEB?returnUrlLogin=updstarija://auth/token",
+                    "updstarija://auth/token"
+                  );
+
+                  if (result.type == "success" && Platform.OS == "ios") {
+                    openURL(result.url);
+                  }
+
+                  console.log(result);
+                }}
+                //disabled={signIn.isLoading}
+                showLoader
+              >
+                <Texto className="text-center text-xl text-white ">
+                  OFFICE 365
+                </Texto>
+              </Button>
               <Button
                 classNameBtn=" rounded-xl bg-primario p-3 h-14"
                 onPress={handleSubmit(onSubmit)}
