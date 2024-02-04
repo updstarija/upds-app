@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Pressable,
   TouchableOpacity,
@@ -13,13 +13,13 @@ import { AntDesign } from "@expo/vector-icons";
 import { useNoticias } from "@/hooks";
 import { CustomModal, Texto } from "@/ui";
 import { COLORS } from "~/constants";
-import { usePopupWindowContext } from "@/hooks/usePopupWindowContext";
 import { useAnnouncements } from "@/hooks/useAnnouncements";
+import { usePopupWindowStore } from "@/store/usePopupWindow.store";
 
 const ModalPriorityNotices = () => {
-  const { open, toggle } = usePopupWindowContext();
+  const { isAlertsOpen, openAlerts } = usePopupWindowStore();
 
-  const { width, height } = useWindowDimensions();
+  const { width } = useWindowDimensions();
 
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -37,7 +37,7 @@ const ModalPriorityNotices = () => {
 
   return (
     <>
-      <CustomModal isVisible={open}>
+      <CustomModal isVisible={isAlertsOpen}>
         <View className="max-w-lg mx-auto w-full">
           <View className="">
             <Carousel
@@ -66,7 +66,10 @@ const ModalPriorityNotices = () => {
               onSnapToItem={(index) => setActiveIndex(index)}
               renderItem={({ index, item }) => (
                 <Link href={`/announcements/${item.id}`} asChild>
-                  <Pressable className="flex-1" onPress={() => toggle(false)}>
+                  <Pressable
+                    className="flex-1"
+                    onPress={() => openAlerts(false)}
+                  >
                     <View className="flex-1 relative">
                       <Image
                         source={item.images[0].url}
@@ -92,7 +95,7 @@ const ModalPriorityNotices = () => {
           <View className="absolute top-[-10] z-10 right-[-10] ">
             <TouchableOpacity
               onPress={() => {
-                toggle(false);
+                openAlerts(false);
               }}
             >
               <View className="rounded-full border-[0.5px] border-black/10 bg-black/40">

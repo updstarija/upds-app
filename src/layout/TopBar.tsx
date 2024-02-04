@@ -1,16 +1,15 @@
-import { Button, TouchableOpacity, View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import { DrawerToggleButton } from "@react-navigation/drawer";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { Link, router } from "expo-router";
-
+import { Link } from "expo-router";
 import { useAuthContext } from "@/hooks";
 import * as Animatable from "react-native-animatable";
 import { Texto } from "@/ui";
-import { usePopupWindowContext } from "@/hooks/usePopupWindowContext";
+import { usePopupWindowStore } from "@/store/usePopupWindow.store";
 
 export const TopBar = () => {
   const { status } = useAuthContext();
-  const { toggle } = usePopupWindowContext();
+  const { openAlerts } = usePopupWindowStore();
 
   return (
     <View className="bg-white dark:bg-primario-dark ">
@@ -21,7 +20,7 @@ export const TopBar = () => {
           </View>
 
           <View className="flex-row items-center">
-            <TouchableOpacity onPress={() => toggle()}>
+            <TouchableOpacity onPress={() => openAlerts()}>
               <MaterialIcons name="announcement" color={"#FFF"} size={23} />
             </TouchableOpacity>
 
