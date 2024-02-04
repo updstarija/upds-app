@@ -10,15 +10,12 @@ import { CarreraProvider } from "@/context";
 import { View } from "react-native";
 import * as Animatable from "react-native-animatable";
 import LoaderSplash from "@/components/LoaderSplash";
+import { useOnboardingStore } from "@/store/useOnboarding.store";
 
 const RootLayout = () => {
-  const { welcomeScreen } = useAuthContext();
+  const { isViewed } = useOnboardingStore();
 
-  if (welcomeScreen.isLoading) {
-    return <LoaderSplash />;
-  }
-
-  if (!welcomeScreen.value) {
+  if (!isViewed) {
     return <Redirect href={"/welcome"} />;
   }
 

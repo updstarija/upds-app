@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import Toast from "react-native-toast-message";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
+import { Slot, SplashScreen, Stack } from "expo-router";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { AuthProvider } from "@/context";
 import { toastConfig } from "@/config";
@@ -33,29 +33,21 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  const [[isLoadingTheme, theme]] = useStorageState<Theme>(keysStorage.THEME);
-  const { setColorScheme } = useColorScheme();
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded && !isLoadingTheme) {
-      setColorScheme(theme || "system");
-
+    if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, isLoadingTheme]);
+  }, [loaded]);
 
-  if (!loaded || isLoadingTheme) {
+  if (!loaded) {
     return null;
   }
 
-  return (
-    <ThemeProvider initialTheme={theme || "system"}>
-      <RootLayoutNav />
-    </ThemeProvider>
-  );
+  return <RootLayoutNav />;
 }
 
 function RootLayoutNav() {
@@ -63,9 +55,7 @@ function RootLayoutNav() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <PopupWindowProvider>
-          <Stack>
-            <Stack.Screen name="(app)" options={{ headerShown: false }} />
-          </Stack>
+          <Slot />
         </PopupWindowProvider>
       </AuthProvider>
       <Toast config={toastConfig} />
