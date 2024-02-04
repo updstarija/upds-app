@@ -5,8 +5,8 @@ import { Feather } from "@expo/vector-icons";
 import { useColorScheme as useColorWind } from "nativewind";
 import { COLORS } from "~/constants";
 import { Texto } from "../ui";
-import { Theme } from "@/context/ThemeContext";
 import { useTheme } from "@/hooks/useTheme";
+import { Theme } from "@/store/useTheme.store";
 
 const typeThemes: { [key: number]: string } = {
   0: "light",

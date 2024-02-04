@@ -1,9 +1,9 @@
 import { View } from "react-native";
-import { useThemeContext } from "@/hooks";
 import { Option } from "@/components";
+import { useTheme } from "@/hooks/useTheme";
 
 const Tema = () => {
-  const { theme, changeTheme } = useThemeContext();
+  const { theme, changeTheme } = useTheme();
 
   return (
     <View className="bg-white dark:bg-primario-dark flex-1">

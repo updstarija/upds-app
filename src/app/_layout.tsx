@@ -6,12 +6,8 @@ import { Slot, SplashScreen, Stack } from "expo-router";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { AuthProvider } from "@/context";
 import { toastConfig } from "@/config";
-import { Theme, ThemeProvider } from "@/context/ThemeContext";
 import { PopupWindowProvider } from "@/context/PopupWindowContext";
 import messaging from "@react-native-firebase/messaging";
-import { useStorageState } from "@/hooks/useStorageState";
-import { keysStorage } from "@/data/storage/keys";
-import { useColorScheme } from "nativewind";
 import { useTheme } from "@/hooks/useTheme";
 
 const queryClient = new QueryClient();
