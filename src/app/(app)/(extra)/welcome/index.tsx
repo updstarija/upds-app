@@ -16,6 +16,7 @@ import { StatusBar } from "expo-status-bar";
 import { useAuthContext, useThemeColor } from "@/hooks";
 import { COLORS } from "~/constants";
 import { Texto } from "@/ui";
+import { useOnboardingStore } from "@/store/useOnboarding.store";
 
 const sliders = [
   {
@@ -46,7 +47,7 @@ const sliders = [
 
 const Welcome = () => {
   const { width, height } = useWindowDimensions();
-  const { welcomeScreen } = useAuthContext();
+  const { markAsViewed } = useOnboardingStore();
 
   const [sliderActual, setCurrentSlideIndex] = useState(0);
   const isDarkMode = useThemeColor() === "dark";
@@ -76,7 +77,7 @@ const Welcome = () => {
   };
 
   const navigateToLogin = async () => {
-    welcomeScreen.completeWelcome();
+    markAsViewed();
   };
 
   const Footer = () => {

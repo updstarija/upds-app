@@ -1,13 +1,12 @@
-import { useEffect, useRef } from "react";
-import { View, Platform } from "react-native";
+import { useRef } from "react";
+import { View } from "react-native";
 import PagerView from "react-native-pager-view";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Feather } from "@expo/vector-icons";
 import { useColorScheme as useColorWind } from "nativewind";
-import { useThemeColor, useThemeContext } from "@/hooks";
 import { COLORS } from "~/constants";
 import { Texto } from "../ui";
 import { Theme } from "@/context/ThemeContext";
+import { useTheme } from "@/hooks/useTheme";
 
 const typeThemes: { [key: number]: string } = {
   0: "light",
@@ -20,8 +19,9 @@ enum ThemeEnum {
   "dark" = 1,
   "system" = 2,
 }
+
 export const ThemeConfig = () => {
-  const { theme, changeTheme } = useThemeContext();
+  const { theme, changeTheme } = useTheme();
 
   const { colorScheme } = useColorWind();
   const isDarkMode = colorScheme === "dark";
@@ -29,14 +29,15 @@ export const ThemeConfig = () => {
   const pagerViewRef = useRef<PagerView>(null);
 
   const onChangeTheme = async (id: number) => {
-    changeTheme(typeThemes[id] as Theme);
+    const theme = typeThemes[id] as Theme;
+    changeTheme(theme);
   };
 
-  useEffect(() => {
+  /*   useEffect(() => {
     if (!theme) return;
 
     pagerViewRef.current?.setPageWithoutAnimation(ThemeEnum[theme]);
-  }, [theme]);
+  }, [theme]); */
 
   return (
     <View className="border-primario border rounded-full">
@@ -44,10 +45,9 @@ export const ThemeConfig = () => {
         ref={pagerViewRef}
         initialPage={ThemeEnum[theme]}
         className="h-10"
-        shouldRasterizeIOS
         orientation={"horizontal"}
         onPageSelected={(x) => {
-          //console.log(x.nativeEvent.position);
+          console.log(x.nativeEvent.position);
           onChangeTheme(x.nativeEvent.position);
         }}
       >

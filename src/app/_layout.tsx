@@ -12,6 +12,7 @@ import messaging from "@react-native-firebase/messaging";
 import { useStorageState } from "@/hooks/useStorageState";
 import { keysStorage } from "@/data/storage/keys";
 import { useColorScheme } from "nativewind";
+import { useTheme } from "@/hooks/useTheme";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,12 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const { changeTheme, theme } = useTheme();
+
+  useEffect(() => {
+    changeTheme(theme);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
