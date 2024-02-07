@@ -2,6 +2,7 @@ import axios, { AxiosError } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { keysStorage } from "@/data/storage/keys";
+import { useAuthStore } from "@/store/useAuth.store";
 
 export const updsApi = axios.create({
   baseURL: "https://tarija.upds.edu.bo/ApiProyecciones/api",
@@ -17,7 +18,8 @@ updsApi.interceptors.request.use(
       return token;
     };
 
-    const token = await getToken();
+    const token = useAuthStore.getState().token;
+
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
       //config.headers["Authorization"] = `Bearer FAKE_TOKEN`;

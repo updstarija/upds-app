@@ -1,12 +1,8 @@
 import { View, useWindowDimensions } from "react-native";
-import { useCarreraContext, usePlanEstudio } from "@/hooks";
-import { Button, Spinner } from "@/components";
+import { Button } from "@/components";
 import { ISemestre } from "@/types";
 import { FontAwesome } from "@expo/vector-icons";
-import DetalleMateriaV2 from "./DetalleMateriaV2";
 import { Texto } from "@/ui";
-import { FlashList } from "@shopify/flash-list";
-import { FlatList } from "react-native-gesture-handler";
 import DetalleMateriaV3 from "./DetalleMateriaV3";
 
 interface Props {
@@ -94,14 +90,14 @@ const mock = [
     nombre: "AWD'",
     nota: 99,
   },
-]
+];
 export const DetallePlanSemestreV2: React.FC<Props> = ({
   semestre,
   active,
   onChangeSemestre,
 }) => {
   const { id, nombre } = semestre;
-  const { width, height } = useWindowDimensions()
+  const { width, height } = useWindowDimensions();
 
   const getDetalle = () => {
     return (
@@ -117,12 +113,8 @@ export const DetallePlanSemestreV2: React.FC<Props> = ({
           )}
         /> */}
 
-        {mock.map(x => (
-          <DetalleMateriaV3
-            materia={x}
-            key={x.id}
-            view="requisitos"
-          />
+        {mock.map((x) => (
+          <DetalleMateriaV3 materia={x} key={x.id} view="requisitos" />
         ))}
       </View>
     );

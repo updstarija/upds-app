@@ -1,7 +1,11 @@
+import { useAuthStore } from "@/store/useAuth.store";
 import { View } from "react-native";
 import * as Animatable from "react-native-animatable";
+import { Button } from "./Button";
+import { Texto } from "@/ui";
 
 const LoaderSplash = () => {
+  const { setLogout } = useAuthStore();
   return (
     <View className="flex-1  items-center justify-center bg-white dark:bg-primario-dark">
       <View>
@@ -17,6 +21,10 @@ const LoaderSplash = () => {
             height: 80,
           }}
         />
+
+        <Button onPress={() => setLogout()}>
+          <Texto>CLEAR SESSION</Texto>
+        </Button>
       </View>
     </View>
   );

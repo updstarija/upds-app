@@ -1,11 +1,10 @@
-import { View, Alert, TouchableOpacity } from "react-native";
+import { View } from "react-native";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AutocompleteDropdown,
   AutocompleteDropdownRef,
 } from "react-native-autocomplete-dropdown";
 import {
-  useCarreraContext,
   useMateriasProyeccion,
   useProyeccionesContext,
   useSearchMateria,
@@ -19,6 +18,7 @@ import SelectTurnos from "../SelectTurnos";
 import { ScrollView } from "react-native-gesture-handler";
 import { TourGuideZone } from "rn-tourguide";
 import { SwiperV2 } from "@/components";
+import { useCareerStore } from "@/store/useCareers";
 
 interface Props {
   tutorial?: {
@@ -33,7 +33,7 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
   const dropwdownController = useRef<AutocompleteDropdownRef | null>(null);
   const isDarkMode = useThemeColor() === "dark";
 
-  const { valueCarrera } = useCarreraContext();
+  const { selectedCareer } = useCareerStore();
   const { selectedTurns } = useProyeccionesContext();
 
   const { data, getData, isLoading } = useSearchMateria();
@@ -48,13 +48,13 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
   const onChangeText = (q: string) => {
     setInputText(q);
     if (q != "") {
-      console.log(valueCarrera);
-      getData(q, valueCarrera || -1);
+      console.log(selectedCareer);
+      getData(q, selectedCareer || -1);
     }
   };
 
   const { materiasProyeccionQuery } = useMateriasProyeccion({
-    carrera: valueCarrera || 0,
+    carrera: selectedCareer || 0,
     modulo: 0,
     semestre: 0,
     buscarMateria: Number(selectedItem?.id || -1),
@@ -215,7 +215,7 @@ export const Busqueda: React.FC<Props> = ({ tutorial }) => {
 
   useEffect(() => {
     if (inputText == materiaSearchTutorial) {
-      getData(inputText, valueCarrera || -1);
+      getData(inputText, selectedCareer || -1);
       dropwdownController.current?.open();
 
       setTimeout(() => {

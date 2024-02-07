@@ -1,28 +1,21 @@
 import Toast from "react-native-toast-message";
 import { IFormLogin } from "@/types";
+import { useAuthContext } from "./useAuthContext.DEPRECATED.file";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import authService from "@/services/authService";
+import axios, { AxiosError } from "axios";
 import { updsApi } from "@/api";
-import { useEffect, useRef } from "react";
-import { useAuthStore } from "@/store/useAuth.store";
-import { useCareerStore } from "@/store/useCareers";
-import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
+import { useEffect } from "react";
 
 export const useAuth = () => {
-  const { setLogout, token, setLogin, user, setToken, status } = useAuthStore();
-  const { setCareers, setSelectedCareer } = useCareerStore();
-
-  const authModalRef = useRef<CustomBottomSheetRef>(null);
+  const { logout, token, login, status } = useAuthContext();
 
   const signIn = useMutation(
     ["auth", "session"],
     (data: IFormLogin) => authService.login(data),
     {
       onSuccess: (response) => {
-        const careers = response.data.usuario.carreras;
-        setCareers(careers);
-        setSelectedCareer(careers[0]?.id);
-        setLogin(response.data);
+        login(response.data);
 
         Toast.show({
           type: "success",
@@ -32,7 +25,7 @@ export const useAuth = () => {
       },
       onError: (error: any) => {
         //console.log(error, "DESDE USE QUERY");
-        setLogout();
+        logout();
         console.log(error.response.status, "ERRORRRRR");
         if (error && error.message && error.message.includes("CanceledError")) {
           Toast.show({
@@ -56,15 +49,16 @@ export const useAuth = () => {
 
   const refreshSession = useQuery(["auth", "session"], authService.getProfile, {
     onSuccess: (response) => {
-      setLogin(response.data);
+      //login(response.data);
     },
     onError: () => {
-      setLogout();
+      // console.log("ERROR REFRESH LOGOUT");
+      // logout();
     },
     retry: false,
     refetchInterval: token ? 1000000 : false,
-    enabled: !!token,
-    //enabled: false,
+    //  enabled: !!token,
+    enabled: false,
   });
 
   const refreshSessionTestOffice = useQuery(
@@ -73,11 +67,11 @@ export const useAuth = () => {
     {
       onSuccess: (response) => {
         console.log("🚀 ~ useAuth ~ response:", response);
-        // login(response.data);
+        login(response.data);
       },
       onError: () => {
         console.log("ERROR REFRESH LOGOUT");
-        //  setLogout();
+        logout();
       },
       retry: false,
       refetchInterval: token ? 1000000 : false,
@@ -86,16 +80,18 @@ export const useAuth = () => {
       enabled: false,
     }
   );
-
   const signOut = () => {
-    setLogout();
+    logout();
   };
 
   useEffect(() => {
     updsApi.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response && error.response.status === 401) setLogout();
+        if (error.response && error.response.status === 401) {
+          console.log("LOGOUNT INTERCEPTROS");
+          logout();
+        }
         return Promise.reject(error);
       }
     );
@@ -106,10 +102,5 @@ export const useAuth = () => {
     refreshSession,
     signOut,
     refreshSessionTestOffice,
-    token,
-    status,
-    user,
-    setToken,
-    authModalRef,
   };
 };

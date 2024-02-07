@@ -1,7 +1,5 @@
 export * from "./useAuth";
-export * from "./useAuthContext";
 export * from "./useBoleta";
-export * from "./useCarreraContext";
 export * from "./useCarreras";
 export * from "./useChat";
 export * from "./useDetalleGrupoMateria";

@@ -2,13 +2,13 @@ import { TouchableOpacity, View } from "react-native";
 import { DrawerToggleButton } from "@react-navigation/drawer";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { useAuthContext } from "@/hooks";
+import { useAuth } from "@/hooks";
 import * as Animatable from "react-native-animatable";
 import { Texto } from "@/ui";
 import { usePopupWindowStore } from "@/store/usePopupWindow.store";
 
 export const TopBar = () => {
-  const { status } = useAuthContext();
+  const { status } = useAuth();
   const { openAlerts } = usePopupWindowStore();
 
   return (

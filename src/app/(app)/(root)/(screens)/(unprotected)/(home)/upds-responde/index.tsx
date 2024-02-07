@@ -8,23 +8,26 @@ import {
   Composer,
 } from "react-native-gifted-chat";
 import { useForm } from "react-hook-form";
-import Modal from "react-native-modal";
 import { firebase } from "@react-native-firebase/messaging";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome, MaterialCommunityIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { COLORS } from "~/constants";
-import { useAuthContext, useChat, useThemeColor } from "@/hooks";
+import { useAuth, useChat, useThemeColor } from "@/hooks";
 import { Button, Spinner, TextField } from "@/components";
 import { CustomModal, Texto } from "@/ui";
 import { keysStorage } from "@/data/storage/keys";
-import { TextInput } from "react-native-gesture-handler";
 
+//TODO ADD GUEST USER STORE
 const ChatScreen = () => {
   {
     const isDark = useThemeColor() === "dark";
 
-    const { status, user, setNameGuestUser } = useAuthContext();
+    const {
+      status,
+      user,
+      //setNameGuestUser
+    } = useAuth();
 
     const [chatId, setChatId] = useState<null | string>(
       user.documentoIdentidad
@@ -136,7 +139,7 @@ const ChatScreen = () => {
             const nameGuestUser = await AsyncStorage.getItem(
               keysStorage.GUEST_USER_NAME
             );
-            setNameGuestUser(nameGuestUser || "GUEST_USER");
+            // setNameGuestUser(nameGuestUser || "GUEST_USER");
             setChatId(tokenStorage);
           } else {
             setVisibleModal(true);
@@ -176,7 +179,7 @@ const ChatScreen = () => {
         keysStorage.GUEST_USER_NAME,
         data.nombreCompleto
       );
-      setNameGuestUser(data.nombreCompleto);
+      //     setNameGuestUser(data.nombreCompleto);
       setChatIdDevice();
       setVisibleModal(false);
     };

@@ -1,15 +1,16 @@
-import { View, Text, ScrollView, FlatList } from "react-native";
+import { View, Text, FlatList } from "react-native";
 import { DetallePlanSemestre } from "@/views/historico-materias";
-import { useCarreraContext, useSemestres } from "@/hooks";
+import { useSemestres } from "@/hooks";
 import { useState } from "react";
 import Spinner from "@/components/Spinner";
 import { SelectCarrera } from "@/views/SelectCarrera";
 import { Spacer } from "@/components";
+import { useCareerStore } from "@/store/useCareers";
 
 const MallaCurricular = () => {
-  const { valueCarrera } = useCarreraContext();
+  const { selectedCareer } = useCareerStore();
 
-  const { semestresQuery } = useSemestres({ carrera: valueCarrera });
+  const { semestresQuery } = useSemestres({ carrera: selectedCareer });
 
   const [semestreOpen, setSemestreOpen] = useState(-1);
 

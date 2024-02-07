@@ -1,9 +1,8 @@
-import { useState, useRef, useEffect } from "react";
-import { View, FlatList, Alert, TouchableOpacity } from "react-native";
+import { useState, useEffect } from "react";
+import { View, Alert, TouchableOpacity } from "react-native";
 import {
-  useAuthContext,
+  useAuth,
   useBoleta,
-  useCarreraContext,
   useCarreras,
   useModulos,
   useProyeccionesContext,
@@ -23,7 +22,6 @@ import { shareAsync } from "expo-sharing";
 import { templateBoletaV3 } from "@/data/";
 
 import {
-  TourGuideProvider,
   TourGuideZone,
   TourGuideZoneByPosition,
   useTourGuideController,
@@ -33,16 +31,10 @@ import { SelectCarrera } from "@/views/SelectCarrera";
 import { CustomModal, Texto } from "@/ui";
 import { BackHandler } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { AlertCard, Button, Spacer } from "@/components";
+import { Button, Spacer } from "@/components";
 import { verTutorial } from "@/helpers";
-import Accordion from "react-native-collapsible/Accordion";
-import Collapsible from "react-native-collapsible";
 import AlertsProyecciones from "@/views/proyecciones/AlertsProyecciones";
-
-interface Props {
-  tutorialEnCurso: boolean;
-  setTutorialEnCurso: React.Dispatch<React.SetStateAction<boolean>>;
-}
+import { useCareerStore } from "@/store/useCareers";
 
 const actionsFloatButton: IActionProps[] = [
   {
@@ -63,7 +55,7 @@ const actionsFloatButton: IActionProps[] = [
 ];
 
 const Boleta = () => {
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   const {
     tutorialBoletaReady,
     setTutorialBoletaReady,
@@ -77,7 +69,7 @@ const Boleta = () => {
 
   const [showAlerts, setShowAlerts] = useState(true);
 
-  const { valueCarrera, carreras } = useCarreraContext();
+  const { selectedCareer, careers } = useCareerStore();
 
   const [modalBoleta, setModalBoleta] = useState(false);
 
@@ -85,12 +77,12 @@ const Boleta = () => {
 
   const { carrerasQuery } = useCarreras();
   const { semestresQuery } = useSemestres({
-    carrera: valueCarrera,
+    carrera: selectedCareer,
     proyeccion: true,
   });
   const { modulosQuery } = useModulos();
   const { onNewBoleta, boletaQuery } = useBoleta({
-    carrera: valueCarrera,
+    carrera: selectedCareer,
   });
 
   const toggleShowAlert = () => {
@@ -161,9 +153,9 @@ const Boleta = () => {
         zone={2}
         text="Boleta de proyección de materias"
       >
-        {valueCarrera ? (
+        {selectedCareer ? (
           <DetalleBoleta
-            carrera={valueCarrera}
+            carrera={selectedCareer}
             tutorial={tutorialEnCurso.inCourse ? tutorialEnCurso : undefined}
           />
         ) : (
@@ -267,7 +259,7 @@ const Boleta = () => {
                 " " +
                 user.apellidoMaterno,
               user.documentoIdentidad,
-              carreras.find((x) => x.id === valueCarrera)?.nombre || ""
+              careers.find((x) => x.id === selectedCareer)?.nombre || ""
             )}
             ${templateBoletaV3.generateBody(
               modulosQuery.data?.data || [],
@@ -290,7 +282,7 @@ const Boleta = () => {
         ${templateBoletaV3.generateDatosHeader(
           user.nombre + " " + user.apellidoPaterno + " " + user.apellidoMaterno,
           user.documentoIdentidad,
-          carreras.find((x) => x.id === valueCarrera)?.nombre || ""
+          careers.find((x) => x.id === selectedCareer)?.nombre || ""
         )}
         ${templateBoletaV3.generateBody(
           modulosQuery.data?.data || [],

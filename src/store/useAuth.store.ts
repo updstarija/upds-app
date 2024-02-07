@@ -1,42 +1,64 @@
 import { StateCreator, create } from "zustand";
 import { persist } from "zustand/middleware";
 import mmkvMiddleware from "@/lib/storage/mmkv.middleware";
+import { IResponseLogin, IUser } from "@/types";
 
-export type TStatus = "authenticated" | "no-authenticated" | "pending" | null;
+export type LoginStatus =
+  | "authenticated"
+  | "no-authenticated"
+  | "guest"
+  | "pending"
+  | null;
 
 type Store = {
-  status: TStatus;
-  usuario: any;
+  status: LoginStatus;
+  user: IUser;
   token: string | null;
+
+  //
+  /*   callBack: {
+    value: string,
+clearCallback: () => void,
+setCallback: (url:string) => void,
+  } */
 };
 
+type LoginData = IResponseLogin["data"];
+
 type Actions = {
-  setUser: (usuario: any) => void;
-  setLogin: (data: any) => void;
+  setUser: (user: IUser) => void;
+  setLogin: (data: LoginData) => void;
   setLogout: () => void;
-  setStatus: (status: TStatus) => void;
+  setToken: (token: string) => void;
 };
 
 type AuthStore = Store & Actions;
 
 const initialState: Store = {
-  status: null,
+  status: "pending",
   token: null,
-  usuario: {} as any,
+  user: {} as any,
+
+  //
 };
 
 const storeData: StateCreator<Store & Actions> = (set) => ({
   ...initialState,
-  setUser: () => set((state) => ({})),
-  setLogin: () => set((state) => ({})),
-  setLogout: () => set((state) => ({})),
-  setStatus: () => set((state) => ({})),
+  setUser: (user) => set((state) => ({ ...state, user })),
+  setLogin: (data) =>
+    set((state) => ({
+      user: data.usuario,
+      token: data.token,
+      status: "authenticated",
+    })),
+  setLogout: () => set(() => ({ ...initialState, status: "no-authenticated" })),
+  setToken: (token) => set((state) => ({ ...state, token })),
 });
 
 export const useAuthStore = create<AuthStore>()(
   persist(storeData, {
     name: "authStore",
     storage: mmkvMiddleware,
-    partialize: ({ token, usuario }) => ({ token, usuario }),
+    partialize: ({ token, user }) => ({ token, user }),
   })
 );

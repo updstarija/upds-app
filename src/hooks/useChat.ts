@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cargarMensajes, sendMessage } from "@/services";
-import { useAuthContext } from "./useAuthContext";
 import { nombreCompleto } from "@/helpers";
+import { useAuth } from "./useAuth";
 
 export interface MensajeParsed {
   _id: string;
@@ -17,7 +17,7 @@ export const useChat = ({ CHAT_ID }: { CHAT_ID: string | null }) => {
   const [data, setData] = useState<MensajeParsed[]>([]);
   const [isLoading, setisLoading] = useState(false);
 
-  const { user, status } = useAuthContext();
+  const { user, status } = useAuth();
 
   const getMensages = async () => {
     //  setisLoading(true);

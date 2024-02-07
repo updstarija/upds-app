@@ -1,17 +1,18 @@
-import { View, Pressable } from "react-native";
-import { Link, router } from "expo-router";
-import { useAuthContext } from "@/hooks";
+import { View } from "react-native";
+import { router } from "expo-router";
 import { Spacer } from "@/components";
 import { CustomBottomSheetModal, Texto } from "@/ui";
 import { Image } from "expo-image";
+import { useAuth } from "@/hooks";
+import { usePopupWindowStore } from "@/store/usePopupWindow.store";
 
 const ModalAuthCaution = () => {
-  const { modalAuthRef } = useAuthContext();
+  const { authModalRef } = usePopupWindowStore();
 
   return (
     <CustomBottomSheetModal
       content={<></>}
-      ref={modalAuthRef}
+      ref={authModalRef}
       detached
       bottomInset={50}
       keyboardBehavior="fillParent"

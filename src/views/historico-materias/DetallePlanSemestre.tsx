@@ -1,10 +1,11 @@
-import { View } from 'react-native'
-import { useCarreraContext, usePlanEstudio } from '@/hooks';
-import { Button, Spinner } from '@/components';
-import { ISemestre } from '@/types';
-import { FontAwesome } from '@expo/vector-icons';
-import DetalleMateriaV2 from './DetalleMateriaV2';
-import { Texto } from '@/ui';
+import { View } from "react-native";
+import { usePlanEstudio } from "@/hooks";
+import { Button, Spinner } from "@/components";
+import { ISemestre } from "@/types";
+import { FontAwesome } from "@expo/vector-icons";
+import DetalleMateriaV2 from "./DetalleMateriaV2";
+import { Texto } from "@/ui";
+import { useCareerStore } from "@/store/useCareers";
 
 interface Props {
   semestre: ISemestre;
@@ -12,20 +13,24 @@ interface Props {
   onChangeSemestre: Function;
 }
 
-export const DetallePlanSemestre: React.FC<Props> = ({ semestre, active, onChangeSemestre }) => {
+export const DetallePlanSemestre: React.FC<Props> = ({
+  semestre,
+  active,
+  onChangeSemestre,
+}) => {
   const { id, nombre } = semestre;
 
-  const { valueCarrera } = useCarreraContext();
+  const { selectedCareer } = useCareerStore();
 
   const { planEstudioQuery: data } = usePlanEstudio({
-    carrera: valueCarrera || -1,
+    carrera: selectedCareer,
     semestre: id,
     enabled: active,
   });
 
   const getDetalle = () => {
     if (data.isLoading)
-      return <Spinner classNameContainer='p-4 bg-[#183064]' />
+      return <Spinner classNameContainer="p-4 bg-[#183064]" />;
 
     if (data.isError) return <Texto>HUBO UN ERROR AL CARGAR EL DETALLE</Texto>;
 
@@ -33,15 +38,15 @@ export const DetallePlanSemestre: React.FC<Props> = ({ semestre, active, onChang
 
     return (
       <View>
-        {data.data.data.map(plan => (
-          <DetalleMateriaV2 materia={plan} key={plan.id} view='requisitos' />
+        {data.data.data.map((plan) => (
+          <DetalleMateriaV2 materia={plan} key={plan.id} view="requisitos" />
         ))}
       </View>
     );
   };
 
   return (
-    <View className=''>
+    <View className="">
       <Button onPress={() => onChangeSemestre(semestre.id)}>
         <View className="flex-row justify-between bg-[#223B82] p-3 dark:bg-[#0D1F46]">
           <Texto className="uppercase text-white" weight="Bold">
@@ -49,7 +54,7 @@ export const DetallePlanSemestre: React.FC<Props> = ({ semestre, active, onChang
           </Texto>
 
           <FontAwesome
-            name={!active ? 'chevron-down' : 'chevron-right'}
+            name={!active ? "chevron-down" : "chevron-right"}
             size={20}
             color="#fff"
           />
@@ -57,10 +62,6 @@ export const DetallePlanSemestre: React.FC<Props> = ({ semestre, active, onChang
       </Button>
 
       {active && <View className="bg-[#183064]">{getDetalle()}</View>}
-
-
     </View>
   );
 };
-
-

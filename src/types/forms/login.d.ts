@@ -1,4 +1,5 @@
 export interface IFormLogin {
-    usuario: string
-    contraseña: string
+  usuario: string;
+  contraseña: string;
+  remember: boolean;
 }

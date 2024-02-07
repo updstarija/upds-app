@@ -1,6 +1,6 @@
 import { CarreraProvider } from "@/context";
 import configScreen from "@/helpers/configScreen";
-import { useAuthContext } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { Texto } from "@/ui";
 import { Redirect, Stack, useFocusEffect } from "expo-router";
 import { Platform, TouchableOpacity, View } from "react-native";
@@ -18,7 +18,7 @@ interface TourProps extends TooltipProps {
 }
 
 const UnprotectedLayout = () => {
-  const { status } = useAuthContext();
+  const { status } = useAuth();
   const isIos = Platform.OS === "ios";
 
   if (status !== "authenticated") {
@@ -94,24 +94,19 @@ const UnprotectedLayout = () => {
         verticalOffset={isIos ? -0.1 : CONSTANS.statusBarHeight}
         tooltipComponent={(props) => tooltipComponentTour(props as TourProps)}
       >
-        <CarreraProvider>
-          <Stack>
-            <Stack.Screen
-              name="historical-academic/index"
-              options={configScreen.Stack("Historico Registro")}
-            />
+        <Stack>
+          <Stack.Screen
+            name="historical-academic/index"
+            options={configScreen.Stack("Historico Registro")}
+          />
 
-            <Stack.Screen
-              name="profile"
-              options={configScreen.Stack("Perfil")}
-            />
+          <Stack.Screen name="profile" options={configScreen.Stack("Perfil")} />
 
-            <Stack.Screen
-              name="projections"
-              options={configScreen.Stack("Proyecciones")}
-            />
-          </Stack>
-        </CarreraProvider>
+          <Stack.Screen
+            name="projections"
+            options={configScreen.Stack("Proyecciones")}
+          />
+        </Stack>
       </TourGuideProvider>
     </AutocompleteDropdownContextProvider>
   );

@@ -2,10 +2,10 @@ import { useState } from "react";
 import { View, Alert, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { AntDesign } from "@expo/vector-icons";
-import { useCarreraContext, useMateriaRequisito, useThemeColor } from "@/hooks";
-import { Spinner } from "@/components";
+import { useMateriaRequisito, useThemeColor } from "@/hooks";
 import { MateriaProyeccion, MateriaRequisito } from "@/types";
 import { CustomSkeleton, Texto } from "@/ui";
+import { useCareerStore } from "@/store/useCareers";
 
 interface Props {
   materia: MateriaProyeccion;
@@ -25,7 +25,7 @@ const alertPostRerequisito = () => {
 };
 
 export const RequisitoMateria: React.FC<Props> = ({ materia }) => {
-  const { valueCarrera, carreras } = useCarreraContext();
+  const { selectedCareer } = useCareerStore();
   const isDarkMode = useThemeColor() === "dark";
 
   const [materiasHistory, setMateriasHistory] = useState([
@@ -37,7 +37,7 @@ export const RequisitoMateria: React.FC<Props> = ({ materia }) => {
   const [selectedMateria, setSelectedMateria] = useState(0);
 
   const { materiaRequisitoQuery: data } = useMateriaRequisito({
-    carrera: valueCarrera || -1,
+    carrera: selectedCareer || -1,
     materia: materiasHistory[selectedMateria],
   });
 

@@ -1,8 +1,7 @@
-import { Linking, Platform, View, Pressable } from "react-native";
+import { View } from "react-native";
 import { AntDesign, FontAwesome, MaterialIcons } from "@expo/vector-icons";
-import { Link } from "expo-router";
 import { COLORS } from "~/constants";
-import { useAuthContext, useThemeColor } from "@/hooks";
+import { useThemeColor } from "@/hooks";
 import { Texto } from "../ui";
 import { Menu } from "@/data";
 import ProtectedAuthLink from "./ProtectedAuthLink";
@@ -15,9 +14,6 @@ export const CardNavigation: React.FC<Menu> = ({
   auth,
 }) => {
   const isDarkMode = useThemeColor() === "dark";
-  const { status } = useAuthContext();
-
-  const isIos = Platform.OS === "ios";
 
   const getIcon = () => {
     if (Object.keys(AntDesign.glyphMap).includes(icon)) {

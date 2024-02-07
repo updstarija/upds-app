@@ -5,8 +5,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import { useAuthContext } from "@/hooks/useAuthContext";
-import { ICarrera } from "@/types"; //mport {useAuthContext, useCarreras} from '@/hooks';
+import { ICarrera } from "@/types";
+import { useAuth } from "@/hooks";
 
 interface CarreraContext {
   valueCarrera: number;
@@ -24,7 +24,7 @@ interface Props {
 }
 
 export const CarreraProvider: React.FC<Props> = ({ children }) => {
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   const [valueCarrera, setValueCarrera] = useState<number>(-1);
   const [boleta, setBoleta] = useState<number>(-1);

@@ -2,13 +2,12 @@ import { useEffect } from "react";
 import Toast from "react-native-toast-message";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
-import { Slot, SplashScreen, Stack } from "expo-router";
+import { Slot, SplashScreen } from "expo-router";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { AuthProvider } from "@/context";
 import { toastConfig } from "@/config";
-import { PopupWindowProvider } from "@/context/PopupWindowContext";
 import messaging from "@react-native-firebase/messaging";
 import { useTheme } from "@/hooks/useTheme";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const queryClient = new QueryClient();
 
@@ -55,13 +54,11 @@ function RootLayoutNav() {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <PopupWindowProvider>
-          <Slot />
-        </PopupWindowProvider>
-      </AuthProvider>
-      <Toast config={toastConfig} />
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <Slot />
+        <Toast config={toastConfig} />
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }

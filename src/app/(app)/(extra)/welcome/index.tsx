@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import { useNavigation } from "@react-navigation/native";
 import {
   Image,
   TouchableOpacity,
@@ -10,10 +9,8 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { Text } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useAuthContext, useThemeColor } from "@/hooks";
+import { useThemeColor } from "@/hooks";
 import { COLORS } from "~/constants";
 import { Texto } from "@/ui";
 import { useOnboardingStore } from "@/store/useOnboarding.store";

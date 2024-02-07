@@ -1,20 +1,10 @@
-import { useState } from "react";
-import DropDownPicker from "react-native-dropdown-picker";
-import {
-  useAuthContext,
-  useCarreraContext,
-  useCarreras,
-  useThemeColor,
-} from "@/hooks";
-import { FontAwesome } from "@expo/vector-icons";
-import { COLORS } from "~/constants";
-import { Texto } from "@/ui";
 import CustomDropdown from "@/ui/CustomDropDown";
+import { useCareerStore } from "@/store/useCareers";
 
 export const SelectCarrera = () => {
-  const { valueCarrera, setValueCarrera, carreras } = useCarreraContext();
+  const { selectedCareer, setSelectedCareer, careers } = useCareerStore();
 
-  const newCarreras = carreras.map((carr) => {
+  const newCarreras = careers.map((carr) => {
     return {
       ...carr,
       // disabled: carr.estado.id != 0,
@@ -30,8 +20,8 @@ export const SelectCarrera = () => {
       labelField={"nombre"}
       valueField={"id"}
       search
-      value={valueCarrera}
-      onChange={(e) => setValueCarrera(e.id)}
+      value={selectedCareer}
+      onChange={(e) => setSelectedCareer(e.id)}
     />
   );
 };
