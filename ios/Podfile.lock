@@ -642,6 +642,9 @@ PODS:
     - ExpoModulesCore
   - EXFont (11.10.2):
     - ExpoModulesCore
+  - EXImageLoader (4.6.0):
+    - ExpoModulesCore
+    - React-Core
   - EXLocation (16.5.2):
     - ExpoModulesCore
   - EXNotifications (0.27.6):
@@ -658,6 +661,8 @@ PODS:
     - SDWebImageAVIFCoder (~> 0.10.1)
     - SDWebImageSVGCoder (~> 1.7.0)
     - SDWebImageWebPCoder (~> 0.13.0)
+  - ExpoImagePicker (14.7.1):
+    - ExpoModulesCore
   - ExpoKeepAwake (12.8.2):
     - ExpoModulesCore
   - ExpoLinearGradient (12.7.1):
@@ -1963,12 +1968,14 @@ DEPENDENCIES:
   - EXApplication (from `../node_modules/expo-application/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - EXFont (from `../node_modules/expo-font/ios`)
+  - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
   - EXLocation (from `../node_modules/expo-location/ios`)
   - EXNotifications (from `../node_modules/expo-notifications/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoHead (from `../node_modules/expo-router/ios`)
   - ExpoImage (from `../node_modules/expo-image/ios`)
+  - ExpoImagePicker (from `../node_modules/expo-image-picker/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoLinearGradient (from `../node_modules/expo-linear-gradient/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core`)
@@ -2087,6 +2094,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-constants/ios"
   EXFont:
     :path: "../node_modules/expo-font/ios"
+  EXImageLoader:
+    :path: "../node_modules/expo-image-loader/ios"
   EXLocation:
     :path: "../node_modules/expo-location/ios"
   EXNotifications:
@@ -2099,6 +2108,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-router/ios"
   ExpoImage:
     :path: "../node_modules/expo-image/ios"
+  ExpoImagePicker:
+    :path: "../node_modules/expo-image-picker/ios"
   ExpoKeepAwake:
     :path: "../node_modules/expo-keep-awake/ios"
   ExpoLinearGradient:
@@ -2251,12 +2262,14 @@ SPEC CHECKSUMS:
   EXApplication: 137189a3f149b4e8e546884629392c3efc94cbd3
   EXConstants: 988aa430ca0f76b43cd46b66e7fae3287f9cc2fc
   EXFont: 21b9c760abd593ce8f0d5386b558ced76018506f
+  EXImageLoader: 55080616b2fe9da19ef8c7f706afd9814e279b6b
   EXLocation: 6ec9c861af497b548f9617a5d4301884c4d43339
   EXNotifications: e11f0e9a5b657c064a481a5d522f3bc5a07bf7cd
   Expo: 49cded7844f2ec4ffb1cc3b86504853f26952935
   ExpoFileSystem: 04795dd4d47e76eaf12e38c92091f77d794f9e7f
   ExpoHead: b4f7388cd19ef0513ec0c0329ec995c03024300d
   ExpoImage: 2b71f20472f293c1fbbf2400795b03d5bf8dd598
+  ExpoImagePicker: 66970181d1c838f444e5e1f81b804ab2d5ff49bd
   ExpoKeepAwake: 0f5cad99603a3268e50af9a6eb8b76d0d9ac956c
   ExpoLinearGradient: d10226652f849e675528883aa45afd2358c2f92f
   ExpoModulesCore: 2346e83abf90c2b2c16a54c3fc4a1169ae12816c
