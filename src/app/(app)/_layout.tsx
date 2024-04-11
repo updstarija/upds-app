@@ -147,7 +147,7 @@ const AppLayout = () => {
   }, [initialNotification, navigationState?.key, status]);
 
   useEffect(() => {
-    if (!token) signOut();
+    if (!token && status !== "guest") signOut();
   }, [token]);
 
   if (status === "pending" || !navigationState?.key) return <LoaderSplash />;

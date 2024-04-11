@@ -9,7 +9,9 @@ import { useCareerStore } from "@/store/useCareers";
 import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
 
 export const useAuth = () => {
-  const { setLogout, token, setLogin, user, setToken, status } = useAuthStore();
+  const authStore = useAuthStore();
+  const { setLogout, token, setLogin, user, setToken, status } = authStore;
+
   const { setCareers, setSelectedCareer } = useCareerStore();
 
   const authModalRef = useRef<CustomBottomSheetRef>(null);
@@ -102,14 +104,11 @@ export const useAuth = () => {
   }, []);
 
   return {
-    signIn,
-    refreshSession,
-    signOut,
-    refreshSessionTestOffice,
-    token,
-    status,
-    user,
-    setToken,
+    ...authStore,
     authModalRef,
+    signIn,
+    signOut,
+    refreshSession,
+    refreshSessionTestOffice,
   };
 };

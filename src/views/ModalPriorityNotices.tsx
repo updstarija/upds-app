@@ -34,6 +34,7 @@ const ModalPriorityNotices = () => {
   const data = announcementsPriorityQuery.data ?? [];
 
   if (isLoading || data.length == 0) return null;
+  if (announcementsPriorityQuery.isError) return null;
 
   return (
     <>
@@ -72,7 +73,7 @@ const ModalPriorityNotices = () => {
                   >
                     <View className="flex-1 relative">
                       <Image
-                        source={item.images[0].url}
+                        source={item?.images[0]?.url ?? null}
                         className="w-full h-full opacity-100 rounded-lg"
                         contentFit="cover"
                       />

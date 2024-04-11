@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "872888782411",
+    "project_id": "upds-app-5acec",
+    "storage_bucket": "upds-app-5acec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:872888782411:android:85058932142dcd494307ce",
+        "android_client_info": {
+          "package_name": "com.upds.tarija.com"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "872888782411-15qot095l8qfm0jeqbe59k2o9shaohc3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRPdUMLX5N-pou1zOvrfUcFWhnsrv7K6s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "872888782411-15qot095l8qfm0jeqbe59k2o9shaohc3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

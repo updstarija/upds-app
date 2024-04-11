@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "481502105076",
+    "project_id": "sandox-upds-app",
+    "storage_bucket": "sandox-upds-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:481502105076:android:dd9b12b3ebcfeac97ffda1",
+        "android_client_info": {
+          "package_name": "com.upds.tarija.com"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrE0cMN4w5p32YYaHEQCO910amhS9QQcg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

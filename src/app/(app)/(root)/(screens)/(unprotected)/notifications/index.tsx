@@ -1,7 +1,7 @@
 import { View, RefreshControl, useWindowDimensions } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
-import { Texto } from "@/ui";
+import { CustomBottomSheetModal, Texto } from "@/ui";
 import { INotification } from "@/types";
 import { useNotifications } from "@/hooks/useNotifications";
 import { Image } from "expo-image";
@@ -48,12 +48,29 @@ const Notificacion = () => {
           marginTop: notifications.length > 0 ? 8 : undefined,
         }}
         data={notifications}
-        renderItem={({ item }) => (
-          <NotificationItem
-            notification={item}
-            navigateNotification={navigateNotification}
-          />
-        )}
+        renderItem={({ item }) => {
+          if (item.to) {
+            return (
+              <NotificationItem
+                notification={item}
+                onPress={navigateNotification}
+              />
+            );
+          } else {
+            return (
+              <CustomBottomSheetModal
+                content={<NotificationItem notification={item} />}
+              >
+                <View className="py-4">
+                  <Texto className="text-center text-xl pb-4">
+                    {item.title}
+                  </Texto>
+                  <Texto className="leading-5">{item.body}</Texto>
+                </View>
+              </CustomBottomSheetModal>
+            );
+          }
+        }}
         estimatedItemSize={100}
         onEndReachedThreshold={0.8}
         onEndReached={() => notificationsQuery.fetchNextPage()}

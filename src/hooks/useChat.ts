@@ -17,17 +17,22 @@ export const useChat = ({ CHAT_ID }: { CHAT_ID: string | null }) => {
   const [data, setData] = useState<MensajeParsed[]>([]);
   const [isLoading, setisLoading] = useState(false);
 
-  const { user, status } = useAuth();
+  const { user, status, guestUser } = useAuth();
 
   const getMensages = async () => {
     //  setisLoading(true);
     // const CHAT_ID = userAuth.usuario.documentoIdentidad
+    console.log("🚀 ~ getMensages ~ CHAT_ID:", {
+      CHAT_ID,
+      status,
+      user: user.nombre,
+    });
 
     if (CHAT_ID) {
       if (status === "authenticated") {
         await cargarMensajes(CHAT_ID, nombreCompleto(user), setData);
       } else if (status === "guest") {
-        await cargarMensajes(CHAT_ID, user.nombre, setData);
+        await cargarMensajes(CHAT_ID, guestUser.fullName, setData);
       }
     }
     // setisLoading(false);
@@ -41,7 +46,7 @@ export const useChat = ({ CHAT_ID }: { CHAT_ID: string | null }) => {
       if (status === "authenticated") {
         await sendMessage(CHAT_ID, mensage, nombreCompleto(user));
       } else if (status === "guest") {
-        await sendMessage(CHAT_ID, mensage, user.nombre);
+        await sendMessage(CHAT_ID, mensage, guestUser.fullName);
       }
     }
   };

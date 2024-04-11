@@ -3,6 +3,10 @@ import { persist } from "zustand/middleware";
 import mmkvMiddleware from "@/lib/storage/mmkv.middleware";
 import { IResponseLogin, IUser } from "@/types";
 
+export type GuestUser = {
+  fullName: string;
+  deviceToken: string;
+};
 export type LoginStatus =
   | "authenticated"
   | "no-authenticated"
@@ -13,8 +17,9 @@ export type LoginStatus =
 type Store = {
   status: LoginStatus;
   user: IUser;
+  guestUser: GuestUser;
   token: string | null;
-
+  isRefresing: boolean;
   //
   /*   callBack: {
     value: string,
@@ -30,16 +35,20 @@ type Actions = {
   setLogin: (data: LoginData) => void;
   setLogout: () => void;
   setToken: (token: string) => void;
+  setGuestUser: (guestUser: GuestUser) => void;
 };
 
 type AuthStore = Store & Actions;
 
 const initialState: Store = {
   status: "pending",
+  isRefresing: false,
   token: null,
   user: {} as any,
-
-  //
+  guestUser: {
+    fullName: "",
+    deviceToken: "",
+  },
 };
 
 const storeData: StateCreator<Store & Actions> = (set) => ({
@@ -53,12 +62,20 @@ const storeData: StateCreator<Store & Actions> = (set) => ({
     })),
   setLogout: () => set(() => ({ ...initialState, status: "no-authenticated" })),
   setToken: (token) => set((state) => ({ ...state, token })),
+  setGuestUser: (guestUser) =>
+    set((state) => ({
+      ...state,
+      status: "guest",
+      user: {} as any,
+      token: null,
+      guestUser,
+    })),
 });
 
 export const useAuthStore = create<AuthStore>()(
   persist(storeData, {
     name: "authStore",
     storage: mmkvMiddleware,
-    partialize: ({ token, user }) => ({ token, user }),
+    //partialize: ({ token, user }) => ({ token, user }),
   })
 );

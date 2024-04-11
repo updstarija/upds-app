@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { Feather } from "@expo/vector-icons";
@@ -26,23 +25,14 @@ export const ThemeConfig = () => {
   const { colorScheme } = useColorWind();
   const isDarkMode = colorScheme === "dark";
 
-  const pagerViewRef = useRef<PagerView>(null);
-
   const onChangeTheme = async (id: number) => {
     const theme = typeThemes[id] as Theme;
     changeTheme(theme);
   };
 
-  /*   useEffect(() => {
-    if (!theme) return;
-
-    pagerViewRef.current?.setPageWithoutAnimation(ThemeEnum[theme]);
-  }, [theme]); */
-
   return (
     <View className="border-primario border rounded-full">
       <PagerView
-        ref={pagerViewRef}
         initialPage={ThemeEnum[theme]}
         className="h-10"
         orientation={"horizontal"}

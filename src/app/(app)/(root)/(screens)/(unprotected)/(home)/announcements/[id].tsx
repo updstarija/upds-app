@@ -143,7 +143,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
 
   return (
     <>
-      <View className="flex-1 bg-white dark:bg-secondary-dark ">
+      <SafeAreaView className="flex-1 bg-white dark:bg-secondary-dark ">
         <ScrollView
           style={{ flex: 1 }}
           scrollsToTop
@@ -155,7 +155,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                 {
                   position: "absolute",
                   zIndex: 30,
-                  top: 35,
+                  top: 10,
                   left: 5,
                 },
               ]}
@@ -369,7 +369,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
             }
           }}
         />
-      </View>
+      </SafeAreaView>
     </>
   );
 };

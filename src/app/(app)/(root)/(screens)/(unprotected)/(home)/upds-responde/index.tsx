@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import {
   GiftedChat,
   Send,
@@ -17,21 +17,22 @@ import { useAuth, useChat, useThemeColor } from "@/hooks";
 import { Button, Spinner, TextField } from "@/components";
 import { CustomModal, Texto } from "@/ui";
 import { keysStorage } from "@/data/storage/keys";
+import Actions from "@/modules/chat/components/actions";
 
 //TODO ADD GUEST USER STORE
 const ChatScreen = () => {
   {
-    const isDark = useThemeColor() === "dark";
-
-    const {
-      status,
-      user,
-      //setNameGuestUser
-    } = useAuth();
+    const { status, user, guestUser, setGuestUser } = useAuth();
 
     const [chatId, setChatId] = useState<null | string>(
-      user.documentoIdentidad
+      status === "authenticated"
+        ? user.documentoIdentidad
+        : status === "guest"
+        ? guestUser.deviceToken
+        : null
     );
+
+    const [sendImage, setSendImage] = useState<string | null>(null);
 
     const getTokenDevice = async () => {
       return await firebase.messaging().getToken();
@@ -43,7 +44,7 @@ const ChatScreen = () => {
 
     const [visibleModal, setVisibleModal] = useState(false);
 
-    const { control, handleSubmit } = useForm<{ nombreCompleto: "string" }>({
+    const { control, handleSubmit } = useForm<{ fullName: "string" }>({
       mode: "onChange",
     });
 
@@ -59,95 +60,23 @@ const ChatScreen = () => {
       [chatId]
     );
 
-    const Burbuja = (props: any) => {
-      return (
-        <Bubble
-          {...props}
-          wrapperStyle={{
-            right: {
-              backgroundColor: isDark
-                ? COLORS.dark.secondary
-                : COLORS.light.background,
-            },
-            left: {
-              backgroundColor: isDark ? "#3b70ff" : "#cccccc49",
-            },
-          }}
-          textStyle={{
-            right: {
-              color: "#fff",
-            },
-            left: {
-              color: isDark ? "#FFF" : "#000",
-            },
-          }}
-        />
-      );
-    };
+    const startChat = async () => {
+      console.log("🚀 ~ startChat ~ status:", status);
+      if (status === "authenticated") {
+        setChatId(user.documentoIdentidad);
+      } else {
+        const { deviceToken, fullName } = guestUser;
+        console.log("🚀 ~ startChat ~ guestUser:", guestUser);
 
-    const Input = (props: any) => {
-      return (
-        <InputToolbar
-          {...props}
-          optionTintColor="#fff"
-          renderActions={() => <></>}
-          renderComposer={(x) => (
-            <Composer
-              {...x}
-              textInputStyle={{ color: isDark ? "#FFF" : "#000" }}
-            />
-          )}
-          containerStyle={{
-            backgroundColor: isDark ? COLORS.dark.secondary : "#fff",
-            marginLeft: 15,
-            marginRight: 15,
-            marginBottom: 5,
-            borderRadius: 25,
-            borderWidth: 0.2,
-          }}
-        />
-      );
-    };
-
-    const BotonEnviar = (props: any) => {
-      return (
-        <Send {...props} containerStyle={{ borderWidth: 0 }}>
-          <View>
-            <MaterialCommunityIcons
-              name="send-circle"
-              size={35}
-              color={isDark ? "#FFF" : COLORS.light.background}
-              style={{ padding: 5 }}
-            />
-          </View>
-        </Send>
-      );
+        if (deviceToken) setChatId(deviceToken);
+        else {
+          setVisibleModal(true);
+        }
+      }
     };
 
     useEffect(() => {
-      (async () => {
-        if (status === "authenticated") {
-          setChatId(user.documentoIdentidad);
-        } else {
-          const tokenStorage = await AsyncStorage.getItem(
-            keysStorage.DEVICE_TOKEN
-          );
-
-          // console.log(tokenStorage);
-
-          if (tokenStorage) {
-            const nameGuestUser = await AsyncStorage.getItem(
-              keysStorage.GUEST_USER_NAME
-            );
-            // setNameGuestUser(nameGuestUser || "GUEST_USER");
-            setChatId(tokenStorage);
-          } else {
-            setVisibleModal(true);
-          }
-        }
-      })();
-      // console.log("GET MENSAJES")
-      // getMensages()
+      startChat();
     }, []);
 
     useEffect(() => {
@@ -167,22 +96,38 @@ const ChatScreen = () => {
       }
     }, [chatId]) */
 
-    const setChatIdDevice = async () => {
-      const deviceToken = await getTokenDevice();
-      await AsyncStorage.setItem(keysStorage.DEVICE_TOKEN, deviceToken);
-      setChatId(deviceToken);
-    };
-
     const onSubmit = async (data: any) => {
-      console.log(22222222);
-      await AsyncStorage.setItem(
-        keysStorage.GUEST_USER_NAME,
-        data.nombreCompleto
-      );
-      //     setNameGuestUser(data.nombreCompleto);
-      setChatIdDevice();
+      const deviceToken = await getTokenDevice();
+      setGuestUser({
+        fullName: data.fullName,
+        deviceToken,
+      });
+      setChatId(deviceToken);
+
       setVisibleModal(false);
     };
+
+    const onSendFromUser = useCallback((messages: any[] = []) => {
+      console.log("🚀 ~ onSendFromUser ~ messages:", messages);
+      /* const createdAt = new Date();
+
+      const messagesToUpload = messages.map((message) => ({
+        ...message,
+        user,
+        createdAt,
+        _id: Math.round(Math.random() * 1000000),
+      }));
+ */
+      //onSend(messagesToUpload)
+    }, []);
+
+    const renderActions = useCallback(
+      (props: any) =>
+        Platform.OS === "web" ? null : (
+          <Actions {...props} onSend={onSendFromUser} />
+        ),
+      [onSendFromUser]
+    );
 
     return (
       <View className="bg-white dark:bg-primario-dark flex-1">
@@ -190,7 +135,33 @@ const ChatScreen = () => {
           <Spinner />
         ) : (
           <GiftedChat
-            messages={data}
+            messages={[
+              {
+                _id: 6,
+                text: "Paris",
+                createdAt: new Date(),
+                user: {
+                  _id: 2,
+                  name: "React Native",
+                },
+                image:
+                  "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Paris_-_Eiffelturm_und_Marsfeld2.jpg/280px-Paris_-_Eiffelturm_und_Marsfeld2.jpg",
+                sent: true,
+                received: true,
+              },
+              {
+                _id: 4,
+                text: "",
+                createdAt: new Date(),
+                user: {
+                  _id: 2,
+                  name: "React Native",
+                },
+                sent: true,
+                received: true,
+              },
+              ...data,
+            ]}
             onQuickReply={(s) => {
               // console.log(s);
             }}
@@ -200,10 +171,11 @@ const ChatScreen = () => {
             }}
             infiniteScroll
             alwaysShowSend
-            renderSend={BotonEnviar}
+            renderSend={(props) => <BotonEnviar {...props} />}
             placeholder="Escribe algo..."
-            renderBubble={Burbuja}
-            renderInputToolbar={Input}
+            renderBubble={(props) => <Burbuja {...props} />}
+            renderInputToolbar={(props) => <Input {...props} />}
+            renderActions={renderActions}
             scrollToBottom
             scrollToBottomComponent={() => (
               <View>
@@ -224,7 +196,7 @@ const ChatScreen = () => {
             <TextField
               control={control}
               label="Nombre Completo"
-              name="nombreCompleto"
+              name="fullName"
               rules={{ required: "El nombre es obligatorio" }}
             />
             {/*  <TextInput /> */}
@@ -251,6 +223,70 @@ const ChatScreen = () => {
       </View>
     );
   }
+};
+
+const Burbuja = (props: any) => {
+  const isDark = useThemeColor() === "dark";
+  return (
+    <Bubble
+      {...props}
+      wrapperStyle={{
+        right: {
+          backgroundColor: isDark
+            ? COLORS.dark.secondary
+            : COLORS.light.background,
+        },
+        left: {
+          backgroundColor: isDark ? "#3b70ff" : "#cccccc49",
+        },
+      }}
+      textStyle={{
+        right: {
+          color: "#fff",
+        },
+        left: {
+          color: isDark ? "#FFF" : "#000",
+        },
+      }}
+    />
+  );
+};
+
+const Input = (props: any) => {
+  const isDark = useThemeColor() === "dark";
+  return (
+    <InputToolbar
+      {...props}
+      optionTintColor="#fff"
+      renderComposer={(x) => (
+        <Composer {...x} textInputStyle={{ color: isDark ? "#FFF" : "#000" }} />
+      )}
+      containerStyle={{
+        backgroundColor: isDark ? COLORS.dark.secondary : "#fff",
+        marginLeft: 15,
+        marginRight: 15,
+        marginBottom: 5,
+        borderRadius: 25,
+        borderWidth: 0.2,
+      }}
+    />
+  );
+};
+
+const BotonEnviar = (props: any) => {
+  const isDark = useThemeColor() === "dark";
+  return (
+    <Send {...props} containerStyle={{ borderWidth: 0 }}>
+      <View>
+        <MaterialCommunityIcons
+          name="send-circle"
+          size={35}
+          color={isDark ? "#FFF" : COLORS.light.background}
+          style={{ padding: 5 }}
+        />
+      </View>
+    </Send>
+  );
 };
 
 export default ChatScreen;

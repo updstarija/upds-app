@@ -61,6 +61,12 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Permitir a ${PRODUCT_NAME} acceder a tu ubicacion."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them in chat."
+        }
       ]
     ],
     "experiments": {
