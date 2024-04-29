@@ -3,39 +3,28 @@
 <plist version="1.0">
 <dict>
 	<key>API_KEY</key>
-	<string>AIzaSyAfx6cybFWVm_k9w7aoj89QcL7l_TwzdPg</string>
-	<key>BUNDLE_ID</key>
-	<string>com.upds.tarija.com</string>
-	<key>CLIENT_ID</key>
-	<string>872888782411-elsdt9c0b78voiq5b1jbhsp9emo4fjk7.apps.googleusercontent.com</string>
+	<string>AIzaSyBWCjE8eqkLTxUNZv3L_3F2lOzw_ayHx8k</string>
 	<key>GCM_SENDER_ID</key>
-	<string>872888782411</string>
-	<key>GOOGLE_APP_ID</key>
-	<string>1:872888782411:ios:57b0f858253b6c2b4307ce</string>
-	<key>IS_ADS_ENABLED</key>
-	<false/>
-	<key>IS_ANALYTICS_ENABLED</key>
-	<false/>
-	<key>IS_APPINVITE_ENABLED</key>
-	<true/>
-	<key>IS_GCM_ENABLED</key>
-	<true/>
-	<key>IS_SIGNIN_ENABLED</key>
-	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<false/>
-		<key>NSAllowsLocalNetworking</key>
-		<true/>
-	</dict>
+	<string>481502105076</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.upds.tarija.com</string>
 	<key>PROJECT_ID</key>
-	<string>upds-app-5acec</string>
-	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.872888782411-elsdt9c0b78voiq5b1jbhsp9emo4fjk7</string>
+	<string>sandox-upds-app</string>
 	<key>STORAGE_BUCKET</key>
-	<string>upds-app-5acec.appspot.com</string>
+	<string>sandox-upds-app.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:481502105076:ios:beb3a64a000a4d227ffda1</string>
 </dict>
 </plist>
