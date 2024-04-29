@@ -6,6 +6,7 @@ import {
   Bubble,
   InputToolbar,
   Composer,
+  IChatMessage,
 } from "react-native-gifted-chat";
 import { useForm } from "react-hook-form";
 import { firebase } from "@react-native-firebase/messaging";
@@ -18,8 +19,11 @@ import { Button, Spinner, TextField } from "@/components";
 import { CustomModal, Texto } from "@/ui";
 import { keysStorage } from "@/data/storage/keys";
 import Actions from "@/modules/chat/components/actions";
+import { Image } from "expo-image";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { useStorage } from "@/modules/shared/hooks/use-storage";
+import Toast from "react-native-toast-message";
 
-//TODO ADD GUEST USER STORE
 const ChatScreen = () => {
   {
     const { status, user, guestUser, setGuestUser } = useAuth();
@@ -32,7 +36,7 @@ const ChatScreen = () => {
         : null
     );
 
-    const [sendImage, setSendImage] = useState<string | null>(null);
+    const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
     const getTokenDevice = async () => {
       return await firebase.messaging().getToken();
@@ -48,25 +52,88 @@ const ChatScreen = () => {
       mode: "onChange",
     });
 
-    const onSend = useCallback(
-      (messages = []) => {
-        /* @ts-ignore */
-        enviarMensage(messages[0].text);
+    const { uploadFileMutation } = useStorage();
 
-        setData((previousMessages: any) =>
+    const onSend = useCallback(
+      async (messages: IChatMessage[] = []) => {
+        let _id = Math.floor(Math.random() * 1000000);
+
+        try {
+          if (selectedImages.length) {
+            const payload = {
+              message: messages[0]?.text,
+              type: "image",
+              image: selectedImages[0],
+            } as const;
+
+            const parsedPayload: IChatMessage = {
+              _id,
+              text: messages[0]?.text,
+              user: {
+                _id: 1,
+              },
+              createdAt: new Date(),
+              image: payload.image,
+            };
+
+            setSelectedImages([]);
+
+            setData((previousMessages: IChatMessage[]) =>
+              GiftedChat.append(previousMessages, [parsedPayload])
+            );
+
+            const urlImage = await uploadFileMutation.mutateAsync({
+              uri: payload.image,
+              folderName: "chat",
+            });
+
+            await enviarMensage({
+              ...payload,
+              image: urlImage,
+            });
+          } else if (messages[0]?.text) {
+            const payload = {
+              message: messages[0]?.text,
+              type: "text",
+            } as const;
+
+            const parsedPayload: IChatMessage = {
+              _id,
+              text: messages[0]?.text,
+              user: {
+                _id: 1,
+              },
+              createdAt: new Date(),
+            };
+
+            setData((previousMessages: IChatMessage[]) =>
+              GiftedChat.append(previousMessages, [parsedPayload])
+            );
+
+            await enviarMensage(payload);
+          }
+        } catch (e) {
+          Toast.show({
+            text1: "Error",
+            text2: "No se pudo enviar el mensaje, vuelve a intentarlo",
+            type: "error",
+          });
+          setData((previousMessages: IChatMessage[]) =>
+            previousMessages.filter((msg) => msg._id !== _id)
+          );
+        }
+        /*   setData((previousMessages: any) =>
           GiftedChat.append(previousMessages, messages)
-        );
+        ); */
       },
-      [chatId]
+      [chatId, selectedImages]
     );
 
     const startChat = async () => {
-      console.log("🚀 ~ startChat ~ status:", status);
       if (status === "authenticated") {
         setChatId(user.documentoIdentidad);
       } else {
         const { deviceToken, fullName } = guestUser;
-        console.log("🚀 ~ startChat ~ guestUser:", guestUser);
 
         if (deviceToken) setChatId(deviceToken);
         else {
@@ -107,27 +174,41 @@ const ChatScreen = () => {
       setVisibleModal(false);
     };
 
-    const onSendFromUser = useCallback((messages: any[] = []) => {
-      console.log("🚀 ~ onSendFromUser ~ messages:", messages);
-      /* const createdAt = new Date();
-
-      const messagesToUpload = messages.map((message) => ({
-        ...message,
-        user,
-        createdAt,
-        _id: Math.round(Math.random() * 1000000),
-      }));
- */
-      //onSend(messagesToUpload)
-    }, []);
+    const onSendAction = (data: { image: string }[]) => {
+      setSelectedImages(data.map((img) => img.image));
+    };
 
     const renderActions = useCallback(
       (props: any) =>
         Platform.OS === "web" ? null : (
-          <Actions {...props} onSend={onSendFromUser} />
+          <Actions {...props} onSend={onSendAction} />
         ),
-      [onSendFromUser]
+      [onSendAction]
     );
+
+    const renderChatFooter = () => {
+      if (!selectedImages.length) return null;
+
+      const removeImage = (uri: string) => {
+        setSelectedImages((images) => images.filter((img) => img !== uri));
+      };
+
+      return (
+        <View className="flex-row items-center  h-full  bg-white dark:bg-secondary-dark px-4 mb-2">
+          {selectedImages.map((uri) => (
+            <View key={uri} className="relative mr-5 w-full h-60 ">
+              <Image source={uri} contentFit="cover" className="h-full" />
+
+              <View className="absolute -top-2 -right-2 bg-white w-8 h-8 rounded-full items-center justify-center">
+                <TouchableOpacity onPress={() => removeImage(uri)}>
+                  <MaterialCommunityIcons name="close" size={20} />
+                </TouchableOpacity>
+              </View>
+            </View>
+          ))}
+        </View>
+      );
+    };
 
     return (
       <View className="bg-white dark:bg-primario-dark flex-1">
@@ -135,33 +216,8 @@ const ChatScreen = () => {
           <Spinner />
         ) : (
           <GiftedChat
-            messages={[
-              {
-                _id: 6,
-                text: "Paris",
-                createdAt: new Date(),
-                user: {
-                  _id: 2,
-                  name: "React Native",
-                },
-                image:
-                  "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Paris_-_Eiffelturm_und_Marsfeld2.jpg/280px-Paris_-_Eiffelturm_und_Marsfeld2.jpg",
-                sent: true,
-                received: true,
-              },
-              {
-                _id: 4,
-                text: "",
-                createdAt: new Date(),
-                user: {
-                  _id: 2,
-                  name: "React Native",
-                },
-                sent: true,
-                received: true,
-              },
-              ...data,
-            ]}
+            renderChatFooter={renderChatFooter}
+            messages={data}
             onQuickReply={(s) => {
               // console.log(s);
             }}

@@ -29,7 +29,7 @@ updsApi.interceptors.request.use(
     };
 
     const token = useAuthStore.getState().token;
-    // console.log("🚀 ~ token:", token);
+    console.log("🚀 ~ token:", token);
 
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;

@@ -2,6 +2,9 @@ import firestore from "@react-native-firebase/firestore";
 import { Message } from "../types/message";
 import { firebase } from "@react-native-firebase/messaging";
 import { MensajeParsed } from "../hooks";
+import * as Device from "expo-device";
+import { Platform } from "react-native";
+import { IChatMessage } from "react-native-gifted-chat";
 
 const db = firestore();
 
@@ -27,17 +30,24 @@ export const getChatMessages = async (chatId: string) => {
   }
 };
 
+export type MessagePayload = {
+  message: string;
+  type: "text" | "image" | "video";
+  image?: string;
+};
 export const sendMessage = async (
   chatId: string,
-  mensaje: string,
+  payload: MessagePayload,
   uname: string
 ) => {
   try {
-    // console.log(chatId, "SEND MESSAGE")
-    const device = await firebase.messaging().getToken();
+    const device =
+      Platform.OS === "ios" && !Device.isDevice
+        ? ""
+        : await firebase.messaging().getToken();
 
     const newMessage: Message = {
-      message: mensaje.trim(),
+      ...payload,
       isSent: true,
       date: firestore.Timestamp.now(),
       device,
@@ -52,6 +62,7 @@ export const sendMessage = async (
     await firestore().collection(`CHATS/${chatId}/messages`).add(newMessage);
   } catch (error) {
     console.log(error);
+    throw new Error("Error al enviar mensaje");
   }
 };
 
@@ -67,7 +78,10 @@ const sendInitialMessage = async (chatId: string, uname: string) => {
     doc.set({
       uname,
     });
-    const device = await firebase.messaging().getToken();
+    const device =
+      Platform.OS === "ios" && !Device.isDevice
+        ? ""
+        : await firebase.messaging().getToken();
 
     await firestore().collection(`CHATS/${chatId}/messages`).add({
       message:
@@ -99,11 +113,25 @@ export const cargarMensajes = async (
 
   chats.onSnapshot((snapShot) => {
     const mensajes = snapShot.docs.map((doc) => ({
-      ...(doc.data() as Message),
+      ...(doc.data() as Message & MessagePayload),
       id: doc.id,
     }));
 
-    const mensajesParsed: MensajeParsed[] = mensajes.map((msg) => {
+    const mensajesParsed: IChatMessage[] = mensajes.map((msg) => {
+      if (msg.type === "image") {
+        return {
+          _id: msg.id,
+          text: msg.message,
+          createdAt: msg.date.toDate(),
+          user: {
+            _id: msg.isSent ? 1 : 2,
+            avatar: msg.isSent
+              ? ""
+              : "https://scontent.flpb2-2.fna.fbcdn.net/v/t39.30808-6/324587280_505638334992771_7839182741225428604_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=09cbfe&_nc_ohc=qVtb-s0bTAcAX9nYaHI&_nc_ht=scontent.flpb2-2.fna&oh=00_AfAZwMlQKerguZqryKGMHOCscZxDizeIgCSHAffFmZPQjQ&oe=64893FAB",
+          },
+          image: msg.image,
+        };
+      }
       return {
         _id: msg.id,
         text: msg.message,

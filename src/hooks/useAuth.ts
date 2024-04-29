@@ -56,7 +56,7 @@ export const useAuth = () => {
     }
   );
 
-  const refreshSession = useQuery(["auth", "session"], authService.getProfile, {
+  /*   const refreshSession = useQuery(["auth", "session"], authService.getProfile, {
     onSuccess: (response) => {
       setLogin(response.data);
     },
@@ -68,8 +68,8 @@ export const useAuth = () => {
     enabled: !!token,
     //enabled: false,
   });
-
-  const refreshSessionTestOffice = useQuery(
+ */
+  /* const refreshSessionTestOffice = useQuery(
     ["auth", "session", "officece"],
     authService.getProfileTestOffice,
     {
@@ -87,7 +87,7 @@ export const useAuth = () => {
       //enabled: !!token,
       enabled: false,
     }
-  );
+  ); */
 
   const signOut = () => {
     setLogout();
@@ -108,7 +108,7 @@ export const useAuth = () => {
     authModalRef,
     signIn,
     signOut,
-    refreshSession,
-    refreshSessionTestOffice,
+    // refreshSession,
+    // refreshSessionTestOffice,
   };
 };
