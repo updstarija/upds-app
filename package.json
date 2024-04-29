@@ -5,7 +5,13 @@
   "scripts": {
     "start": "expo start --localhost -d",
     "android": "expo run:android --device",
+    "android:sandbox": "NODE_ENV=local npm run prepare:sandbox && expo run:android --device",
+    "android:prerelease": "NODE_ENV=prerelease npm run prepare:prerelease &&  expo run:android --device",
+    "android:production": "NODE_ENV=production npm run prepare:production && expo run:android --device",
     "ios": "expo run:ios --device",
+    "ios:sandbox": "NODE_ENV=local npm run prepare:sandbox && expo run:ios --device",
+    "ios:prerelease": "NODE_ENV=prerelease npm run prepare:prerelease &&  expo run:ios --device",
+    "ios:production": "NODE_ENV=production npm run prepare:production && expo run:ios --device",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "build:prerelease": "eas build -p android --profile prerelease --local",
