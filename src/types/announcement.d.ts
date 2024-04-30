@@ -6,6 +6,7 @@ export interface IAnnouncement {
   description: string;
   category: string;
   date: Date;
+  dateLimit?: Date;
   like: number;
   priority: boolean;
   superpriority: boolean;
@@ -13,5 +14,5 @@ export interface IAnnouncement {
   images: TUploadFile[];
   filename: string;
   state: boolean;
-  isLiked: boolean
+  isLiked: boolean;
 }

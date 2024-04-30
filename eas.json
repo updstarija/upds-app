@@ -19,6 +19,20 @@
         "buildType": "apk"
       }
     },
+    "sandbox": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_APP_NAME": "UPDS APP SANDBOX",
+        "EXPO_PUBLIC_API_BASE_URL": "https://tarija.upds.edu.bo/SANDBOX/ApiUpdsApp/api",
+
+        "EXPO_PUBLIC_MODE": "development",
+        "EXPO_PUBLIC_DEV": "true",
+        "EXPO_PUBLIC_PROD": "false"
+      }
+    },
     "prerelease": {
       "distribution": "internal",
       "android": {

@@ -46,7 +46,7 @@ const LayoutDrawer = () => {
           name="testing"
           options={configScreen.Drawer("Testing", {
             drawerItemStyle: {
-              display: "none",
+              display: process.env.EXPO_PUBLIC_DEV ? "flex" : "none",
             },
           })}
         />

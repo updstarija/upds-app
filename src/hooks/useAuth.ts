@@ -33,9 +33,8 @@ export const useAuth = () => {
         });
       },
       onError: (error: any) => {
-        //console.log(error, "DESDE USE QUERY");
         setLogout();
-        console.log(error.response.status, "ERRORRRRR");
+
         if (error && error.message && error.message.includes("CanceledError")) {
           Toast.show({
             type: "error",
@@ -56,19 +55,6 @@ export const useAuth = () => {
     }
   );
 
-  /*   const refreshSession = useQuery(["auth", "session"], authService.getProfile, {
-    onSuccess: (response) => {
-      setLogin(response.data);
-    },
-    onError: () => {
-      setLogout();
-    },
-    retry: false,
-    refetchInterval: token ? 1000000 : false,
-    enabled: !!token,
-    //enabled: false,
-  });
- */
   /* const refreshSessionTestOffice = useQuery(
     ["auth", "session", "officece"],
     authService.getProfileTestOffice,
@@ -111,4 +97,23 @@ export const useAuth = () => {
     // refreshSession,
     // refreshSessionTestOffice,
   };
+};
+
+export const useRefresh = () => {
+  const authStore = useAuthStore();
+
+  const { setLogout, token, setLogin } = authStore;
+
+  return useQuery(["auth", "session"], authService.getProfile, {
+    onSuccess: (response) => {
+      setLogin(response.data);
+    },
+    onError: () => {
+      setLogout();
+    },
+    retry: false,
+    // refetch 10 minutes
+    refetchInterval: Boolean(token) ? 1000000 : undefined,
+    enabled: Boolean(token),
+  });
 };

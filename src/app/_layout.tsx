@@ -8,6 +8,7 @@ import { toastConfig } from "@/config";
 import messaging from "@react-native-firebase/messaging";
 import { useTheme } from "@/hooks/useTheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useAuthStore } from "@/store/useAuth.store";
 
 const queryClient = new QueryClient();
 
@@ -49,8 +50,24 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const { changeTheme, theme } = useTheme();
 
+  const { user, status, token } = useAuthStore();
+  console.log(
+    "🚀 ~ RootLayoutNav ~ infoStore:",
+    status,
+    user.documentoIdentidad
+  );
+
   useEffect(() => {
     changeTheme(theme);
+  }, []);
+
+  useEffect(() => {
+    const isDev = process.env.EXPO_PUBLIC_DEV;
+    if (!isDev) return;
+
+    const modeRunning = process.env.EXPO_PUBLIC_MODE;
+
+    alert("Running App in " + modeRunning + " mode");
   }, []);
 
   return (

@@ -4,8 +4,8 @@ import { TourGuideProvider } from "rn-tourguide";
 import { ProyeccionesProvider } from "@/context/ProyeccionesContext";
 import ModalAuthCaution from "@/views/ModalAuthCaution";
 import { StatusBar } from "expo-status-bar";
-import { CarreraProvider } from "@/context";
 import { useOnboardingStore } from "@/store/useOnboarding.store";
+import DevMenuEnviroment from "@/modules/dev/dev-menu-enviroment";
 
 const RootLayout = () => {
   const { isViewed } = useOnboardingStore();
@@ -36,6 +36,8 @@ const RootLayout = () => {
                 }}
               />
             </Stack>
+
+            {process.env.EXPO_PUBLIC_DEV && <DevMenuEnviroment />}
 
             <ModalAuthCaution />
           </TourGuideProvider>

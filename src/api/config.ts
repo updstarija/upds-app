@@ -23,13 +23,8 @@ updsApi.interceptors.request.use(
         second: "2-digit",
       })} ~ REQUEST ~ ${config.baseURL || "" + config.method}${config.url}`
     );
-    const getToken = async () => {
-      const token = await AsyncStorage.getItem(keysStorage.JWT_TOKEN);
-      return token;
-    };
 
     const token = useAuthStore.getState().token;
-    console.log("🚀 ~ token:", token);
 
     if (token) {
       config.headers["Authorization"] = `Bearer ${token}`;
@@ -95,7 +90,7 @@ updsApi.interceptors.response.use(
     } else if (error?.response?.status === 500) {
       Toast.show({
         type: "error",
-        text1: "Error",
+        text1: "Error Interno del Servidor",
         text2:
           error?.response?.data?.msg ||
           "Vuelve a intentarlo. Si el problema persiste contacta con soporte",

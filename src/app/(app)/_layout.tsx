@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Slot, router, useRootNavigationState } from "expo-router";
-import { useAuth } from "@/hooks";
+import { useAuth, useRefresh } from "@/hooks";
 import messaging, {
   FirebaseMessagingTypes,
 } from "@react-native-firebase/messaging";
@@ -9,9 +9,12 @@ import * as Notifications from "expo-notifications";
 import { PermissionsAndroid, Platform, View } from "react-native";
 import { FirebaseNotification } from "~/constants/Firebase";
 import LoaderSplash from "@/components/LoaderSplash";
+import { openURL } from "expo-linking";
 
 const AppLayout = () => {
   const { signOut, token, status } = useAuth();
+  useRefresh();
+
   const navigationState = useRootNavigationState();
 
   const isIos = Platform.OS === "ios";
@@ -113,6 +116,10 @@ const AppLayout = () => {
   // ON OPENED APP NOTIFICATION
   useEffect(() => {
     messaging().onNotificationOpenedApp(async (data) => {
+      if (data?.data?.externalLink) {
+        return openURL(data?.data?.externalLink);
+      }
+
       if (data && data?.data && data?.data.to && data.data.to !== "") {
         router.push(data.data.to as any);
       }
@@ -135,13 +142,14 @@ const AppLayout = () => {
     if (!navigationState?.key) return;
     if (status === "pending") return;
 
-    if (
+    if (initialNotification?.data?.externalLink) {
+      openURL(initialNotification?.data?.externalLink);
+    } else if (
       initialNotification &&
       initialNotification?.data &&
       initialNotification?.data.to &&
       initialNotification.data.to !== ""
     ) {
-      console.log("INITIAL NOTIFICATION", initialNotification.data);
       router.push(initialNotification.data.to as any);
     }
   }, [initialNotification, navigationState?.key, status]);

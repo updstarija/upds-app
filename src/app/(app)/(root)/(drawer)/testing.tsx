@@ -1,72 +1,163 @@
-import { View, Button } from 'react-native';
-import React, { useMemo, useRef, useState } from 'react';
+import { View, Button } from "react-native";
+import React, { useMemo, useRef, useState } from "react";
 import {
-    BottomSheetModal,
-    BottomSheetModalProvider,
-    BottomSheetBackdrop,
-    BottomSheetTextInput,
-} from '@gorhom/bottom-sheet';
-import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
-import { Texto } from '@/ui';
+  BottomSheetModal,
+  BottomSheetModalProvider,
+  BottomSheetBackdrop,
+  BottomSheetTextInput,
+} from "@gorhom/bottom-sheet";
+import { BottomSheetModalMethods } from "@gorhom/bottom-sheet/lib/typescript/types";
+import { Texto } from "@/ui";
+import StoreReviewButton from "@/modules/testing/store-review";
 
 const InputComponent = () => {
-    const [title, setTitle] = useState('');
-    return (
-        <BottomSheetTextInput
-            style={{
-                borderBottomWidth: 1,
-            }}
-            placeholder="Title"
-            value={title}
-            onChangeText={(text) => setTitle(text)}
-        />
-    )
-}
+  const [title, setTitle] = useState("");
+  return (
+    <BottomSheetTextInput
+      style={{
+        borderBottomWidth: 1,
+      }}
+      placeholder="Title"
+      value={title}
+      onChangeText={(text) => setTitle(text)}
+    />
+  );
+};
 
 const Index = () => {
-    const snapPoints = useMemo(() => ['25%', '60%', '80%'], []);
-    const itemRef = useRef<BottomSheetModalMethods>(null);
-    return (
-        <>
-            <View
-                style={{
-                    flex: 1,
-                }}>
-                <Button onPress={() => itemRef.current?.present()} title="open modal" />
-            </View>
-            <BottomSheetModal
-                snapPoints={snapPoints}
-                index={1}
-                backdropComponent={BottomSheetBackdrop}
-                keyboardBehavior="interactive"
-                keyboardBlurBehavior="restore"
-                ref={itemRef}>
-                <View
-                    style={{
-                        paddingHorizontal: 20,
-                    }}>
-                    <InputComponent />
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                    <Texto>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis non nostrum iure repellendus hic obcaecati ratione! Explicabo at voluptatibus molestias, minima numquam commodi modi sit libero reprehenderit nisi voluptate quidem.</Texto>
-                </View>
-            </BottomSheetModal>
-        </>
-    );
+  const snapPoints = useMemo(() => ["25%", "60%", "80%"], []);
+  const itemRef = useRef<BottomSheetModalMethods>(null);
+  return (
+    <>
+      <StoreReviewButton />
+
+      <View
+        style={{
+          flex: 1,
+        }}
+      >
+        <Button onPress={() => itemRef.current?.present()} title="open modal" />
+      </View>
+      <BottomSheetModal
+        snapPoints={snapPoints}
+        index={1}
+        backdropComponent={BottomSheetBackdrop}
+        keyboardBehavior="interactive"
+        keyboardBlurBehavior="restore"
+        ref={itemRef}
+      >
+        <View
+          style={{
+            paddingHorizontal: 20,
+          }}
+        >
+          <InputComponent />
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+          <Texto>
+            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis
+            non nostrum iure repellendus hic obcaecati ratione! Explicabo at
+            voluptatibus molestias, minima numquam commodi modi sit libero
+            reprehenderit nisi voluptate quidem.
+          </Texto>
+        </View>
+      </BottomSheetModal>
+    </>
+  );
 };
 
 export default Index;

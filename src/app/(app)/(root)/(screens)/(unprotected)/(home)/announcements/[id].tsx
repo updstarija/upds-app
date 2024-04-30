@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TouchableOpacity,
   ScrollView,
@@ -31,6 +31,9 @@ import { extractPlainText } from "@/helpers/extractPlainText";
 import { useImageDimensions } from "@react-native-community/hooks";
 import PaginationDot from "react-native-animated-pagination-dot";
 import { openURL, canOpenURL } from "expo-linking";
+import { sleep } from "@/helpers";
+import { rateApp } from "@/modules/store-review/lib/rate-app";
+
 const actionsFloatButton: IActionProps[] = [
   {
     text: "Compartir",
@@ -43,6 +46,8 @@ const actionsFloatButton: IActionProps[] = [
     icon: <FontAwesome name="send" color="#fff" size={20} />,
   },
 ];
+
+const MemoizedRenderHtml = React.memo(RenderHTML);
 
 const defaultAnnouncement = {
   title: "",
@@ -82,6 +87,10 @@ export const NoticeDetail = () => {
       id: announcementQuery.data.id,
       like: isLiked ? like - 1 : like + 1,
     });
+
+    await sleep(1000);
+
+    await rateApp();
   };
 
   const shareAnnouncement = async () => {
@@ -132,7 +141,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
     isLiked,
   } = announcementQuery.data ?? defaultAnnouncement;
   const source = { uri: images[0]?.url || "" };
-  console.log(moreInfoUrl);
+
   const { dimensions, loading, error } = useImageDimensions(source);
 
   if (announcementQuery.isError) return <Texto>ERROR</Texto>;
@@ -344,7 +353,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                   {isLoading ? (
                     <CustomSkeleton width={"100%"} height={50} />
                   ) : (
-                    <RenderHTML
+                    <MemoizedRenderHtml
                       baseStyle={{ color: isDark ? "#FFF" : "#000" }}
                       contentWidth={width}
                       source={{ html: description }}
