@@ -134,7 +134,7 @@ export const getTopPriority = async ({
     });
 
     const filterData = data.filter((item) =>
-      item.dateLimit ? item.dateLimit >= new Date() : true
+      item.dateLimit ? item.dateLimit >= new Date() : false
     );
 
     return filterData;

@@ -1,17 +1,11 @@
+import CONSTANTS, { CONSTANT_TYPE } from "@/constants/CONSTANTS";
 import { CustomBottomSheetModal, CustomButton, Texto } from "@/ui";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { View, Text } from "react-native";
+import { FirebaseNotification } from "~/constants/Firebase";
 const DevMenuEnviroment = () => {
   const env = process.env;
 
-  const envObj: any = {
-    EXPO_PUBLIC_APP_NAME: process.env.EXPO_PUBLIC_APP_NAME,
-    EXPO_PUBLIC_API_BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL,
-
-    EXPO_PUBLIC_MODE: process.env.EXPO_PUBLIC_MODE,
-    EXPO_PUBLIC_DEV: process.env.EXPO_PUBLIC_DEV,
-    EXPO_PUBLIC_PROD: process.env.EXPO_PUBLIC_PROD,
-  };
   return (
     <View>
       <CustomBottomSheetModal
@@ -23,12 +17,16 @@ const DevMenuEnviroment = () => {
           </View>
         }
       >
-        {Object.keys(envObj).map((key) => (
+        {Object.keys(CONSTANTS).map((key) => (
           <View key={key} className="flex-row justify-between items-center p-4">
             <Texto>{key.replace("EXPO_PUBLIC_", "")}</Texto>
-            <Texto className="">{envObj[key]}</Texto>
+            <Texto className="">{CONSTANTS[key as CONSTANT_TYPE]}</Texto>
           </View>
         ))}
+        <View className="flex-row justify-between items-center p-4">
+          <Texto>NOTIFICATION TOPIC</Texto>
+          <Texto className="">{FirebaseNotification.NOTIFICATION_TOPIC}</Texto>
+        </View>
       </CustomBottomSheetModal>
     </View>
   );

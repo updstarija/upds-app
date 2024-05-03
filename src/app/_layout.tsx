@@ -9,6 +9,9 @@ import messaging from "@react-native-firebase/messaging";
 import { useTheme } from "@/hooks/useTheme";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useAuthStore } from "@/store/useAuth.store";
+import { FirebaseNotification } from "~/constants/Firebase";
+import mmkvStorage from "@/lib/storage/mmkv.storage";
+import CONSTANTS from "@/constants/CONSTANTS";
 
 const queryClient = new QueryClient();
 
@@ -62,12 +65,25 @@ function RootLayoutNav() {
   }, []);
 
   useEffect(() => {
-    const isDev = process.env.EXPO_PUBLIC_DEV;
-    if (!isDev) return;
+    const isProd = CONSTANTS.PROD;
+    const isDev = CONSTANTS.DEV;
 
-    const modeRunning = process.env.EXPO_PUBLIC_MODE;
+    if (isProd && !isDev) return;
 
-    alert("Running App in " + modeRunning + " mode");
+    const modeRunning = CONSTANTS.MODE;
+
+    const isFakeProduction =
+      (modeRunning === "production" && isDev) || modeRunning === "prerelease";
+
+    alert(`
+Running App in ${modeRunning} mode
+Firebase Notification Key ${FirebaseNotification.NOTIFICATION_TOPIC}
+    `);
+
+    isFakeProduction &&
+      alert(
+        "You are running in a pre production mode, all data changes will be saved in the production database, BE CAREFUL!!!!!"
+      );
   }, []);
 
   return (

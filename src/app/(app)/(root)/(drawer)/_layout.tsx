@@ -5,6 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useThemeColor } from "@/hooks";
 import configScreen from "@/helpers/configScreen";
 import { StatusBar } from "expo-status-bar";
+import CONSTANTS from "@/constants/CONSTANTS";
 
 const LayoutDrawer = () => {
   return (
@@ -46,7 +47,7 @@ const LayoutDrawer = () => {
           name="testing"
           options={configScreen.Drawer("Testing", {
             drawerItemStyle: {
-              display: process.env.EXPO_PUBLIC_DEV ? "flex" : "none",
+              display: CONSTANTS.PROD ? "none" : "flex",
             },
           })}
         />

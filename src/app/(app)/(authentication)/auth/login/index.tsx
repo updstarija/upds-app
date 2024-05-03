@@ -135,7 +135,7 @@ const Login = () => {
         <KeyboardAvoidingScrollView
           stickyFooter={
             <View className="px-8 py-2 bg-white dark:bg-secondary-dark">
-              <Button
+              {/*  <Button
                 classNameBtn=" rounded-xl bg-orange-500 p-3 h-14 mb-2"
                 onPress={async () => {
                   const result = await WebBrowser.openAuthSessionAsync(
@@ -155,7 +155,7 @@ const Login = () => {
                 <Texto className="text-center text-xl text-white ">
                   OFFICE 365
                 </Texto>
-              </Button>
+              </Button> */}
               <Button
                 classNameBtn=" rounded-xl bg-primario p-3 h-14"
                 onPress={handleSubmit(onSubmit)}

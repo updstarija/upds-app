@@ -6,6 +6,9 @@ import ModalAuthCaution from "@/views/ModalAuthCaution";
 import { StatusBar } from "expo-status-bar";
 import { useOnboardingStore } from "@/store/useOnboarding.store";
 import DevMenuEnviroment from "@/modules/dev/dev-menu-enviroment";
+import { useEffect } from "react";
+import { rateApp } from "@/modules/store-review/lib/rate-app";
+import CONSTANTS from "@/constants/CONSTANTS";
 
 const RootLayout = () => {
   const { isViewed } = useOnboardingStore();
@@ -13,6 +16,10 @@ const RootLayout = () => {
   if (!isViewed) {
     return <Redirect href={"/welcome"} />;
   }
+
+  useEffect(() => {
+    rateApp();
+  }, []);
 
   return (
     <>
@@ -37,7 +44,7 @@ const RootLayout = () => {
               />
             </Stack>
 
-            {process.env.EXPO_PUBLIC_DEV && <DevMenuEnviroment />}
+            {!CONSTANTS.PROD && <DevMenuEnviroment />}
 
             <ModalAuthCaution />
           </TourGuideProvider>

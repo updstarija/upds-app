@@ -159,6 +159,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
           contentContainerStyle={{ flexGrow: 1 }}
         >
           <View className="bg-white dark:bg-primario-dark flex-1 relative">
+            {/* BACK BUTTON */}
             <View
               style={[
                 {
@@ -176,6 +177,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                 <AntDesign name="left" size={20} color={"#FFF"} />
               </TouchableOpacity>
             </View>
+            {/* END BACK BUTTON */}
 
             <View className="flex-1">
               <View>
@@ -239,7 +241,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
 
                 <Spacer height={20} />
 
-                <View className="mb-10 flex-1">
+                <View className="mb-10 ">
                   <View className="flex-row justify-evenly">
                     <View className="flex-row items-center">
                       <TouchableOpacity
@@ -261,18 +263,12 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                         )}
                       </TouchableOpacity>
 
-                      {isLoading ? (
-                        <View className="ml-2">
-                          <CustomSkeleton width={20} height={20} />
-                        </View>
-                      ) : (
-                        <Texto
-                          className="ml-1 text-black dark:text-white"
-                          weight="Bold"
-                        >
-                          {like}
-                        </Texto>
-                      )}
+                      <Texto
+                        className="ml-1 text-black dark:text-white"
+                        weight="Bold"
+                      >
+                        {like}
+                      </Texto>
                     </View>
 
                     <View className="flex-row items-center">
@@ -281,18 +277,12 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                         size={20}
                         color={isDark ? "#FFF" : "#000"}
                       />
-                      {isLoading ? (
-                        <View className="ml-2">
-                          <CustomSkeleton width={100} height={20} />
-                        </View>
-                      ) : (
-                        <Texto
-                          className="ml-1  text-black dark:text-white"
-                          weight="Bold"
-                        >
-                          {formatDateForDisplay(date)}
-                        </Texto>
-                      )}
+                      <Texto
+                        className="ml-1  text-black dark:text-white"
+                        weight="Bold"
+                      >
+                        {formatDateForDisplay(date)}
+                      </Texto>
                     </View>
                   </View>
                 </View>
