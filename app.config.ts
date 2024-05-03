@@ -2,14 +2,14 @@ import { ExpoConfig, ConfigContext } from "@expo/config";
 import prevConfig from "./app.json";
 
 const config = ({ config }: ConfigContext): ExpoConfig => {
-  const versionCode = 20;
+  const versionCode = 21;
 
   return {
     //...(prevConfig.expo as ExpoConfig),
     ...config,
-    name: process.env.EXPO_PUBLIC_APP_NAME ?? "UPDS Tarija UNKNOW",
+    name: "UPDS Tarija",
     slug: "upds-tarija",
-    version: "1.1.7",
+    version: "1.2.0",
     orientation: "default",
     notification: {
       icon: "./assets/images/app/icon.png",
