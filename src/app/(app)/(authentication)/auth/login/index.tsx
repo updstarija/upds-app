@@ -4,69 +4,75 @@ import {
   Image,
   Alert,
   BackHandler,
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { StatusBar } from "expo-status-bar";
 import Checkbox from "expo-checkbox";
-import { useAuth, useAuthContext, useThemeColor } from "@/hooks";
+import { useAuth, useThemeColor } from "@/hooks";
 import { IFormLogin } from "@/types";
 import { COLORS } from "~/constants";
 import { Button, TextField } from "@/components";
 import { Texto } from "@/ui";
 import { useEffect } from "react";
-import { useStorageState } from "@/hooks/useStorageState";
-import { keysStorage } from "@/data/storage/keys";
 import { KeyboardAvoidingScrollView } from "react-native-keyboard-avoiding-scroll-view";
+import * as WebBrowser from "expo-web-browser";
+import { openURL } from "expo-linking";
+import { useLoginRememberCredentialsStore } from "@/store/useLoginRememberCredentials.store";
+import { useCallbackUrlStore } from "@/store/useCallbackUrl.store";
+
+WebBrowser.maybeCompleteAuthSession();
 
 const Login = () => {
   const isDarkMode = useThemeColor() === "dark";
+  const rememberCredentialsStore = useLoginRememberCredentialsStore();
+
+  const defaultValues: Partial<IFormLogin> = {
+    contraseña: rememberCredentialsStore.password,
+    usuario: rememberCredentialsStore.email,
+    remember: rememberCredentialsStore.remember,
+  };
 
   const { signIn } = useAuth();
-  const { login: loginContext, callBack } = useAuthContext();
+  const callBack = useCallbackUrlStore();
 
-  const { control, handleSubmit, setValue } = useForm<IFormLogin>({
+  const { control, handleSubmit } = useForm<IFormLogin>({
     mode: "onChange",
+    defaultValues,
   });
 
-  const [
-    [isLoadingRememberCredentials, rememberCredentials],
-    setRememberCredentials,
-  ] = useStorageState<boolean>(keysStorage.CREDENTIALS_AUTH_REMEMBER);
-
-  const [[isLoadingEmailStorage, emailStorage], setEmailStorage] =
-    useStorageState<string>(keysStorage.EMAIL_AUTH_REMEMBER);
-
-  const [[isLoadingPasswordStorage, passwordStorage], setPasswordStorage] =
-    useStorageState<string>(keysStorage.PASSWORD_AUTH_REMEMBER);
-
   const onSubmit = async (data: IFormLogin) => {
-    if (rememberCredentials) {
-      setEmailStorage(data.usuario);
-      setPasswordStorage(data.contraseña);
+    const { usuario: email, contraseña: password, remember } = data;
+
+    if (data.remember) {
+      rememberCredentialsStore.setCredentials({
+        email,
+        password,
+        remember,
+      });
     } else {
-      setEmailStorage(null);
-      setPasswordStorage(null);
+      rememberCredentialsStore.clearCredentials();
     }
 
     const user = await signIn.mutateAsync(data);
-    console.log(user, "DESDE FRONT");
+
     if (user) {
       navigateScreen(true);
     }
   };
 
   const navigateScreen = (auth: boolean = false) => {
-    if (auth && callBack.value?.auth) {
-      router.replace(callBack.value?.auth as any);
-      callBack.clearCallback();
+    if (auth && callBack.url?.auth) {
+      router.replace(callBack.url?.auth as any);
+      callBack.clearUrl();
       return;
     }
 
-    if (!auth && callBack.value?.prev) {
-      router.replace(callBack.value?.prev as any);
-      callBack.clearCallback();
+    if (!auth && callBack.url?.prev) {
+      router.replace(callBack.url?.prev as any);
+      callBack.clearUrl();
       return;
     }
 
@@ -98,36 +104,10 @@ const Login = () => {
     );
   };
 
-  /* useEffect(() => {
-    (async () => {
-      const email = await AsyncStorage.getItem("email-user");
-      const contrasena = await AsyncStorage.getItem("contrasena-user");
-      if (email) {
-        setValue("usuario", email);
-        setRecordar(true);
-      }
-
-      if (contrasena) {
-        setValue("contraseña", contrasena);
-        setRecordar(true);
-      }
-    })();
-  }, []); */
-
-  useEffect(() => {
-    if (emailStorage) {
-      setValue("usuario", emailStorage);
-    }
-
-    if (passwordStorage) {
-      setValue("contraseña", passwordStorage);
-    }
-  }, [emailStorage, passwordStorage]);
-
   const handleBackButtonPress = () => {
-    if (callBack.value?.prev) {
-      router.push((callBack.value?.prev as any) || "/");
-      callBack.clearCallback();
+    if (callBack.url?.prev) {
+      router.push((callBack.url?.prev as any) || "/");
+      callBack.clearUrl();
       return true;
     }
     return false;
@@ -140,7 +120,7 @@ const Login = () => {
     );
 
     return () => backHandler.remove();
-  }, [callBack.value]);
+  }, [callBack.url]);
 
   return (
     <>
@@ -155,6 +135,27 @@ const Login = () => {
         <KeyboardAvoidingScrollView
           stickyFooter={
             <View className="px-8 py-2 bg-white dark:bg-secondary-dark">
+              {/*  <Button
+                classNameBtn=" rounded-xl bg-orange-500 p-3 h-14 mb-2"
+                onPress={async () => {
+                  const result = await WebBrowser.openAuthSessionAsync(
+                    "https://login-qa.upds.edu.bo/SAADS-WEB?returnUrlLogin=updstarija://auth/token",
+                    "updstarija://auth/token"
+                  );
+
+                  if (result.type == "success" && Platform.OS == "ios") {
+                    openURL(result.url);
+                  }
+
+                  console.log(result);
+                }}
+                //disabled={signIn.isLoading}
+                showLoader
+              >
+                <Texto className="text-center text-xl text-white ">
+                  OFFICE 365
+                </Texto>
+              </Button> */}
               <Button
                 classNameBtn=" rounded-xl bg-primario p-3 h-14"
                 onPress={handleSubmit(onSubmit)}
@@ -225,14 +226,18 @@ const Login = () => {
 
             <View className="flex-row items-center justify-between">
               <View className="flex-row items-center">
-                <Checkbox
-                  value={rememberCredentials || false}
-                  className="mr-1"
-                  onValueChange={() =>
-                    setRememberCredentials(!rememberCredentials)
-                  }
-                  color={COLORS.light.background}
-                  disabled={isLoadingRememberCredentials}
+                <Controller
+                  name="remember"
+                  control={control}
+                  render={({ field }) => (
+                    <Checkbox
+                      value={field.value}
+                      className="mr-1"
+                      onValueChange={(e) => field.onChange(e)}
+                      color={COLORS.light.background}
+                      //disabled={isLoadingRememberCredentials}
+                    />
+                  )}
                 />
 
                 <Texto className="text-black dark:text-white">Recordarme</Texto>

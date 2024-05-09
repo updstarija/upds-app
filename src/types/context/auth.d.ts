@@ -13,6 +13,7 @@ export type AuthContextType = {
     completeWelcome: Function;
   };
   token: string | null;
+  setToken: (token: string) => void;
   modalAuthRef: React.RefObject<CustomBottomSheetRef>;
   callBack: {
     value: CallBackUrlType | null;

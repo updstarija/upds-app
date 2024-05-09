@@ -19,7 +19,66 @@
         "buildType": "apk"
       }
     },
-    "production": {}
+    "sandbox": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_APP_NAME": "UPDS APP SANDBOX",
+        "EXPO_PUBLIC_API_BASE_URL": "https://tarija.upds.edu.bo/SANDBOX/ApiUpdsApp/api",
+
+        "EXPO_PUBLIC_MODE": "development",
+        "EXPO_PUBLIC_DEV": "true",
+        "EXPO_PUBLIC_PROD": "false",
+
+        "EXPO_PUBLIC_NOTIFICATION_TOPIC": "upds-test"
+      }
+    },
+    "prerelease": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_APP_NAME": "UPDS APP PRERELEASE",
+        "EXPO_PUBLIC_API_BASE_URL": "https://tarija.upds.edu.bo/PRERELEASE/ApiUpdsApp/api",
+
+        "EXPO_PUBLIC_MODE": "prerelease",
+        "EXPO_PUBLIC_DEV": "true",
+        "EXPO_PUBLIC_PROD": "true",
+
+        "EXPO_PUBLIC_NOTIFICATION_TOPIC": "upds-app"
+      }
+    },
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_APP_NAME": "UPDS APP PROD",
+        "EXPO_PUBLIC_API_BASE_URL": "https://tarija.upds.edu.bo/ApiUpdsApp/api",
+
+        "EXPO_PUBLIC_MODE": "production",
+        "EXPO_PUBLIC_DEV": "false",
+        "EXPO_PUBLIC_PROD": "true",
+
+        "EXPO_PUBLIC_NOTIFICATION_TOPIC": "upds-app"
+      }
+    },
+    "production-apk": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_APP_NAME": "UPDS APP PROD",
+        "EXPO_PUBLIC_API_BASE_URL": "https://tarija.upds.edu.bo/ApiUpdsApp/api",
+
+        "EXPO_PUBLIC_MODE": "production",
+        "EXPO_PUBLIC_DEV": "false",
+        "EXPO_PUBLIC_PROD": "true",
+
+        "EXPO_PUBLIC_NOTIFICATION_TOPIC": "upds-app"
+      }
+    }
   },
   "submit": {
     "production": {}

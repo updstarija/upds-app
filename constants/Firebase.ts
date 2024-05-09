@@ -1,3 +1,3 @@
 export const FirebaseNotification = {
-  NOTIFICATION_TOPIC: "upds-app",
+  NOTIFICATION_TOPIC: process.env.EXPO_PUBLIC_NOTIFICATION_TOPIC,
 };

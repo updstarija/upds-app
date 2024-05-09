@@ -3,10 +3,16 @@ module.exports = function (api) {
   return {
     presets: ['babel-preset-expo'],
     plugins: [
-      // Required for expo-router
-      'expo-router/babel',
       'nativewind/babel',
-      'react-native-reanimated/plugin'
+      [
+        'module-resolver',
+        {
+          root: ['.'],
+          alias: {
+            'react-native-device-info': './react-native-device-info.js'
+          }
+        }
+      ],
     ],
   };
 };

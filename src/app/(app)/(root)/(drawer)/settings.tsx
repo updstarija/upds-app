@@ -1,6 +1,5 @@
-import { View, TouchableOpacity, Platform } from "react-native";
+import { View, Platform } from "react-native";
 import React from "react";
-import { Link } from "expo-router";
 import {
   FontAwesome,
   MaterialCommunityIcons,
@@ -8,7 +7,7 @@ import {
 } from "@expo/vector-icons";
 import { FlashList } from "@shopify/flash-list";
 import { Menu, menuAjustes } from "@/data";
-import { useAuthContext, useThemeColor } from "@/hooks";
+import { useAuth, useThemeColor } from "@/hooks";
 import { Texto } from "@/ui";
 import ProtectedAuthLink from "@/components/ProtectedAuthLink";
 
@@ -38,7 +37,7 @@ const EnlaceMenu: React.FC<Menu> = ({ icon, text, link, to, auth }) => {
   const isDark = useThemeColor() == "dark";
   const isIos = Platform.OS == "ios";
 
-  const { status } = useAuthContext();
+  const { status } = useAuth();
   return (
     <>
       <ProtectedAuthLink auth={auth || false} isLink={link} to={to}>

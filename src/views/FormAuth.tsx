@@ -4,7 +4,7 @@ import { Button, TextField } from "@/components";
 import Checkbox from "expo-checkbox";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useAuth, useAuthContext } from "@/hooks";
+import { useAuth } from "@/hooks";
 import { useForm } from "react-hook-form";
 import { IFormLogin } from "@/types";
 import { router } from "expo-router";
@@ -12,13 +12,6 @@ import { COLORS } from "~/constants";
 import { Texto } from "@/ui";
 
 const FormAuth = () => {
-  const { login, isLoading } = useAuth();
-  const {
-    // mostrarBtnBackLogin,
-    login: loginContext,
-    //setMostrarBtnBackLogin,
-  } = useAuthContext();
-
   const { control, handleSubmit, setValue } = useForm<IFormLogin>({
     mode: "onChange",
   });
@@ -30,11 +23,11 @@ const FormAuth = () => {
       await AsyncStorage.setItem("contrasena-user", data.contraseña);
     }
 
-    const user = await login(data);
-    if (user) {
-      loginContext(user);
+    //   const user = await login(data);
+    /*    if (user) {
+    //  loginContext(user);
       navigateToHome();
-    }
+    } */
   };
 
   const navigateToHome = () => {
@@ -131,7 +124,7 @@ const FormAuth = () => {
       <Button
         classNameBtn="mt-5 rounded-xl bg-primario py-3  h-13"
         onPress={handleSubmit(onSubmit)}
-        disabled={isLoading}
+        //  disabled={isLoading}
         showLoader
       >
         <Texto className="text-center text-xl text-white ">

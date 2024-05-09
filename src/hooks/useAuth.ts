@@ -1,21 +1,34 @@
 import Toast from "react-native-toast-message";
 import { IFormLogin } from "@/types";
-import { useAuthContext } from "./useAuthContext";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import authService from "@/services/authService";
-import axios, { AxiosError } from "axios";
 import { updsApi } from "@/api";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
+import { useAuthStore } from "@/store/useAuth.store";
+import { useCareerStore } from "@/store/useCareers";
+import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
 
 export const useAuth = () => {
-  const { logout, token, login } = useAuthContext();
+  const authStore = useAuthStore();
+
+  const queryClient = useQueryClient();
+  const { setLogout, token, setLogin, user, setToken, status } = authStore;
+
+  const { setCareers, setSelectedCareer, setSelectedInscriptionCareer } =
+    useCareerStore();
+
+  const authModalRef = useRef<CustomBottomSheetRef>(null);
 
   const signIn = useMutation(
     ["auth", "session"],
     (data: IFormLogin) => authService.login(data),
     {
       onSuccess: (response) => {
-        login(response.data);
+        const careers = response.data.usuario.carreras;
+        setCareers(careers);
+        setSelectedCareer(careers[0]?.id);
+        setSelectedInscriptionCareer(careers[0]?.inscripcionCarreraId);
+        setLogin(response.data);
 
         Toast.show({
           type: "success",
@@ -24,9 +37,8 @@ export const useAuth = () => {
         });
       },
       onError: (error: any) => {
-        //console.log(error, "DESDE USE QUERY");
-        logout();
-        console.log(error.response.status, "ERRORRRRR");
+        setLogout();
+
         if (error && error.message && error.message.includes("CanceledError")) {
           Toast.show({
             type: "error",
@@ -47,39 +59,72 @@ export const useAuth = () => {
     }
   );
 
-  const refreshSession = useQuery(["auth", "session"], authService.getProfile, {
-    onSuccess: (response) => {
-      login(response.data);
-    },
-    onError: () => {
-      console.log("ERROR REFRESH LOGOUT");
-      logout();
-    },
-    retry: false,
-    refetchInterval: token ? 1000000 : false,
-    enabled: !!token,
-  });
+  /* const refreshSessionTestOffice = useQuery(
+    ["auth", "session", "officece"],
+    authService.getProfileTestOffice,
+    {
+      onSuccess: (response) => {
+        console.log("🚀 ~ useAuth ~ response:", response);
+        // login(response.data);
+      },
+      onError: () => {
+        console.log("ERROR REFRESH LOGOUT");
+        //  setLogout();
+      },
+      retry: false,
+      refetchInterval: token ? 1000000 : false,
+      //TODO: DISABLE ON SERVER
+      //enabled: !!token,
+      enabled: false,
+    }
+  ); */
 
   const signOut = () => {
-    logout();
+    queryClient.clear();
+    setLogout();
   };
 
   useEffect(() => {
     updsApi.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response && error.response.status === 401) {
-          console.log("LOGOUNT INTERCEPTROS");
-          logout();
-        }
+        if (error.response && error.response.status === 401) setLogout();
         return Promise.reject(error);
       }
     );
   }, []);
 
   return {
+    ...authStore,
+    authModalRef,
     signIn,
-    refreshSession,
     signOut,
+    // refreshSession,
+    // refreshSessionTestOffice,
   };
+};
+
+export const useRefresh = () => {
+  const authStore = useAuthStore();
+
+  const { setLogout, token, setLogin } = authStore;
+  const { setCareers, setSelectedCareer, setSelectedInscriptionCareer } =
+    useCareerStore();
+
+  return useQuery(["auth", "session"], authService.getProfile, {
+    onSuccess: (response) => {
+      const careers = response.data.usuario.carreras;
+      setCareers(careers);
+      setSelectedCareer(careers[0]?.id);
+      setSelectedInscriptionCareer(careers[0]?.inscripcionCarreraId);
+      setLogin(response.data);
+    },
+    onError: () => {
+      setLogout();
+    },
+    retry: false,
+    // refetch 10 minutes
+    refetchInterval: Boolean(token) ? 1000000 : undefined,
+    enabled: Boolean(token),
+  });
 };

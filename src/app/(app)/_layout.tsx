@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { Slot, router, useRootNavigationState } from "expo-router";
-import { useAuth, useAuthContext } from "@/hooks";
-import { useStorageState } from "@/hooks/useStorageState";
-import { keysStorage } from "@/data/storage/keys";
-import { Texto } from "@/ui";
+import { useAuth, useRefresh } from "@/hooks";
 import messaging, {
   FirebaseMessagingTypes,
 } from "@react-native-firebase/messaging";
@@ -11,21 +8,13 @@ import { Toast } from "react-native-toast-message/lib/src/Toast";
 import * as Notifications from "expo-notifications";
 import { PermissionsAndroid, Platform, View } from "react-native";
 import { FirebaseNotification } from "~/constants/Firebase";
-import * as Animatable from "react-native-animatable";
 import LoaderSplash from "@/components/LoaderSplash";
-
-const fadeIn = {
-  from: {
-    opacity: 0,
-  },
-  to: {
-    opacity: 1,
-  },
-};
+import { openURL } from "expo-linking";
 
 const AppLayout = () => {
-  const { signOut } = useAuth();
-  const { status } = useAuthContext();
+  const { signOut, token, status } = useAuth();
+  useRefresh();
+
   const navigationState = useRootNavigationState();
 
   const isIos = Platform.OS === "ios";
@@ -59,29 +48,20 @@ const AppLayout = () => {
     });
   }
 
-  const [[isLoadingToken, token], setToken] = useStorageState(
-    keysStorage.JWT_TOKEN
-  );
-
-  //CHECK IF THERE IS TOKEN: LOG OUT IF NOT
-  useEffect(() => {
-    if (!isLoadingToken) {
-      if (!token) signOut();
-    }
-  }, [token, isLoadingToken]);
-
   // REQUEST NOTIFICATION PERMISSIONS
   useEffect(() => {
     const identi = async () => {
       if (isIos) {
         await requestPermissionIos();
       } else {
-        await requestPermissionsAndroid();
-        await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-        ).then((x) => {
-          console.log("PERMISOS NOTIFICATION ANDROID: ", x);
-        });
+        if (Platform.OS == "android") {
+          await requestPermissionsAndroid();
+          await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+          ).then((x) => {
+            console.log("PERMISOS NOTIFICATION ANDROID: ", x);
+          });
+        }
       }
 
       if (isIos && !__DEV__) {
@@ -90,7 +70,7 @@ const AppLayout = () => {
         // setNotificacionState(token);
       }
 
-      if (!isIos) {
+      if (Platform.OS === "android") {
         try {
           const token = await messaging().getToken();
           console.log(`TOKEN NOTIFICATIONS ${token}`);
@@ -136,6 +116,10 @@ const AppLayout = () => {
   // ON OPENED APP NOTIFICATION
   useEffect(() => {
     messaging().onNotificationOpenedApp(async (data) => {
+      if (data?.data?.externalLink) {
+        return openURL(data?.data?.externalLink);
+      }
+
       if (data && data?.data && data?.data.to && data.data.to !== "") {
         router.push(data.data.to as any);
       }
@@ -156,21 +140,25 @@ const AppLayout = () => {
   // CHECK IF AN INITIAL NOTIFICATION EXISTS AND REDIRECT IF THERE IS A ROUTING SPECIFIED
   useEffect(() => {
     if (!navigationState?.key) return;
-    if (isLoadingToken || status === "pending") return;
+    if (status === "pending") return;
 
-    if (
+    if (initialNotification?.data?.externalLink) {
+      openURL(initialNotification?.data?.externalLink);
+    } else if (
       initialNotification &&
       initialNotification?.data &&
       initialNotification?.data.to &&
       initialNotification.data.to !== ""
     ) {
-      console.log("INITIAL NOTIFICATION", initialNotification.data);
       router.push(initialNotification.data.to as any);
     }
-  }, [initialNotification, navigationState?.key, isLoadingToken, status]);
+  }, [initialNotification, navigationState?.key, status]);
 
-  if (isLoadingToken || status === "pending" || !navigationState?.key)
-    return <LoaderSplash />;
+  useEffect(() => {
+    if (!token && status !== "guest") signOut();
+  }, [token]);
+
+  if (status === "pending" || !navigationState?.key) return <LoaderSplash />;
 
   return <Slot />;
 };

@@ -1,9 +1,8 @@
 import { View, BackHandler, useWindowDimensions } from "react-native";
 import { useEffect, useRef, useState } from "react";
 import { WebView } from "react-native-webview";
-import { COLORS } from "~/constants";
 import CONSTANTS from "expo-constants";
-import { useAuthContext, useThemeColor } from "@/hooks";
+import { useAuth, useThemeColor } from "@/hooks";
 import { Spinner } from "@/components";
 
 const ELibro = () => {
@@ -20,7 +19,7 @@ const ELibro = () => {
 
   const {
     user: { emailOffice365 },
-  } = useAuthContext();
+  } = useAuth();
 
   const [urlELibro, setUrlELibro] = useState("");
 

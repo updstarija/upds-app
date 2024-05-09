@@ -12,12 +12,9 @@ import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
 
 type Props = {
   notification: INotification;
-  navigateNotification: any;
+  onPress?: Function;
 };
-const NotificationItem: React.FC<Props> = ({
-  notification,
-  navigateNotification,
-}) => {
+const NotificationItem: React.FC<Props> = ({ notification, onPress }) => {
   const isDark = useThemeColor() === "dark";
 
   const {
@@ -44,6 +41,29 @@ const NotificationItem: React.FC<Props> = ({
     ref.current?.close();
   };
 
+  const asChild = onPress ? true : false;
+
+  const Content = (
+    <>
+      <Texto
+        className="text-black dark:text-white text-base"
+        weight="Bold"
+        numberOfLines={1}
+      >
+        {notification.title}
+      </Texto>
+      <Texto
+        numberOfLines={2}
+        className="text-black dark:text-white my-1 text-xs"
+      >
+        {notification.body}
+      </Texto>
+      <Texto className="text-gray-400 text-xs" weight="Bold">
+        {formatDateForDisplay(notification.date)}
+      </Texto>
+    </>
+  );
+
   return (
     <View
       className={clsx([
@@ -57,27 +77,16 @@ const NotificationItem: React.FC<Props> = ({
       ])}
     >
       <View className="flex-row justify-between items-center ">
-        <TouchableOpacity
-          onPress={() => navigateNotification(notification)}
-          className="flex-1 mr-4"
-        >
-          <Texto
-            className="text-black dark:text-white text-base"
-            weight="Bold"
-            numberOfLines={1}
+        {asChild ? (
+          <TouchableOpacity
+            onPress={() => onPress && onPress(notification)}
+            className="flex-1 mr-4"
           >
-            {notification.title}
-          </Texto>
-          <Texto
-            numberOfLines={2}
-            className="text-black dark:text-white my-1 text-xs"
-          >
-            {notification.body}
-          </Texto>
-          <Texto className="text-gray-400 text-xs" weight="Bold">
-            {formatDateForDisplay(notification.date)}
-          </Texto>
-        </TouchableOpacity>
+            {Content}
+          </TouchableOpacity>
+        ) : (
+          <View className="flex-1 mr-4">{Content}</View>
+        )}
 
         <CustomBottomSheetModal
           ref={ref}

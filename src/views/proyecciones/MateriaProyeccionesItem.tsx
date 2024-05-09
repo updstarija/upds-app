@@ -5,8 +5,7 @@ import { MateriaStateProyecciones, SwiperV2 } from "@/components";
 import { CustomBottomSheetModal, Texto } from "@/ui";
 import { MateriaProyeccion } from "@/types";
 import {
-  useAuthContext,
-  useCarreraContext,
+  useAuth,
   useMateriasProyeccion,
   useProyeccionesContext,
   useThemeColor,
@@ -18,6 +17,7 @@ import { RequisitoMateria } from "./RequisitoMateria";
 import Toast from "react-native-toast-message";
 import * as Animatable from "react-native-animatable";
 import { Image } from "expo-image";
+import { useCareerStore } from "@/store/useCareers";
 
 interface Props {
   materia: MateriaProyeccion;
@@ -59,9 +59,9 @@ const MateriaProyeccionesItem: React.FC<Props> = memo(
     const swiperRef = useRef<SwiperV2Ref>(null);
     const bottomSheetRef = useRef<CustomBottomSheetRef>(null);
     const isDark = useThemeColor() === "dark";
-    const { user } = useAuthContext();
+    const { user } = useAuth();
 
-    const { valueCarrera } = useCarreraContext();
+    const { selectedCareer } = useCareerStore();
     const { boleta, scrollToTop } = useProyeccionesContext();
 
     const handleClose = () => {

@@ -56,10 +56,12 @@
           }
         }
       ],
+
       [
-        "expo-location",
+        "expo-image-picker",
         {
-          "locationAlwaysAndWhenInUsePermission": "Permitir a ${PRODUCT_NAME} acceder a tu ubicacion."
+          "photosPermission": "The app accesses your photos to let you share them in chat.",
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera"
         }
       ]
     ],

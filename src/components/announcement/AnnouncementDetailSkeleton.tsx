@@ -1,12 +1,13 @@
 import { CustomSkeleton } from "@/ui";
 import { View, Text, useWindowDimensions } from "react-native";
 import Spacer from "../Spacer";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { IconLabel } from "../IconLabel";
 import { Icon, IconType } from "../Icon";
+import { useThemeColor } from "@/hooks";
+
 const AnnouncementDetailSkeleton = () => {
   const { width, height } = useWindowDimensions();
+  const isDark = useThemeColor() === "dark";
   return (
     <View className="flex-1 bg-white dark:bg-secondary-dark">
       <View className="">
@@ -22,8 +23,8 @@ const AnnouncementDetailSkeleton = () => {
                   type: IconType.AntDesign,
                   name: "like2",
                 }}
-                color={"#FFF"}
-                size={20}
+                color={isDark ? "#FFF" : "#000"}
+                size={25}
               />
               <CustomSkeleton width={50} height={15} />
             </View>
@@ -34,7 +35,8 @@ const AnnouncementDetailSkeleton = () => {
                   type: IconType.AntDesign,
                   name: "calendar",
                 }}
-                size={20}
+                size={25}
+                color={isDark ? "#FFF" : "#000"}
               />
               <CustomSkeleton width={80} height={15} />
             </View>

@@ -1,9 +1,9 @@
 import React from "react";
 import { AlertCard } from "@/components";
-import { useAuthContext } from "@/hooks";
+import { useAuth } from "@/hooks";
 
 const AlertsProyecciones = () => {
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   const isIrregular = user.irregular;
 

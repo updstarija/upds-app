@@ -1,39 +1,26 @@
-import { View, Text, Platform, ScrollView, Dimensions } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, ScrollView } from "react-native";
 import { Texto } from "@/ui";
-import { Picker } from "@react-native-picker/picker";
-import { LineChart, PieChart } from "react-native-gifted-charts";
-import {
-  useCarreraContext,
-  useProgreso,
-  usePromedio,
-  useThemeColor,
-} from "@/hooks";
+import { useProgreso, usePromedio, useThemeColor } from "@/hooks";
 import { SelectCarrera } from "@/views/SelectCarrera";
-import DropDownPicker from "react-native-dropdown-picker";
 import { COLORS } from "~/constants";
-import {
-  Easing,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from "react-native-reanimated";
 import Counter from "@/components/Counter";
 import CircularProgress from "react-native-circular-progress-indicator";
 import Spinner from "@/components/Spinner";
+import { useCareerStore } from "@/store/useCareers";
+import PerformanceStudent from "@/modules/profile/components/performance-student";
 
 const Stats = () => {
   const isDarkMode = useThemeColor() === "dark";
 
-  const { valueCarrera } = useCarreraContext();
+  const { selectedCareer } = useCareerStore();
 
   const { promedioQuery } = usePromedio({
-    carrera: valueCarrera || -1,
+    carrera: selectedCareer || -1,
     tiempo: 1,
   });
 
   const { progresoQuery } = useProgreso({
-    carrera: valueCarrera || -1,
+    carrera: selectedCareer || -1,
   });
 
   const renderPromedio = () => {
@@ -99,7 +86,7 @@ const Stats = () => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flex: 1 }}
+        //contentContainerStyle={{ flex: 1 }}
       >
         <View className="flex-1  px-2 gap-2">
           <>
@@ -115,6 +102,7 @@ const Stats = () => {
                 </Texto>
               </View>
             </View>
+
             <View
               className="bg-white dark:bg-primario-dark rounded-xl"
               style={{ elevation: 10 }}
@@ -145,6 +133,22 @@ const Stats = () => {
                 {/* <SelectCarrera /> */}
 
                 {renderProgreso()}
+              </View>
+            </View>
+
+            <View
+              className="bg-white dark:bg-primario-dark rounded-xl"
+              style={{ elevation: 10 }}
+            >
+              <View className="bg-white dark:bg-secondary-dark  rounded-xl p-6 border-gray-300  border-[.5px] dark:border-[0px] ">
+                <Texto
+                  className="text-black dark:text-white text-center text-xl my-3"
+                  weight="Bold"
+                >
+                  RENDIMIENTO
+                </Texto>
+
+                <PerformanceStudent />
               </View>
             </View>
 

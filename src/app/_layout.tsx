@@ -2,16 +2,16 @@ import { useEffect } from "react";
 import Toast from "react-native-toast-message";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useFonts } from "expo-font";
-import { SplashScreen, Stack } from "expo-router";
+import { Slot, SplashScreen } from "expo-router";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
-import { AuthProvider } from "@/context";
 import { toastConfig } from "@/config";
-import { Theme, ThemeProvider } from "@/context/ThemeContext";
-import { PopupWindowProvider } from "@/context/PopupWindowContext";
 import messaging from "@react-native-firebase/messaging";
-import { useStorageState } from "@/hooks/useStorageState";
-import { keysStorage } from "@/data/storage/keys";
-import { useColorScheme } from "nativewind";
+import { useTheme } from "@/hooks/useTheme";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { useAuthStore } from "@/store/useAuth.store";
+import { FirebaseNotification } from "~/constants/Firebase";
+import mmkvStorage from "@/lib/storage/mmkv.storage";
+import CONSTANTS from "@/constants/CONSTANTS";
 
 const queryClient = new QueryClient();
 
@@ -33,42 +33,65 @@ export default function RootLayout() {
     ...FontAwesome.font,
   });
 
-  const [[isLoadingTheme, theme]] = useStorageState<Theme>(keysStorage.THEME);
-  const { setColorScheme } = useColorScheme();
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded && !isLoadingTheme) {
-      setColorScheme(theme || "system");
-
+    if (loaded) {
       SplashScreen.hideAsync();
     }
-  }, [loaded, isLoadingTheme]);
+  }, [loaded]);
 
-  if (!loaded || isLoadingTheme) {
+  if (!loaded) {
     return null;
   }
 
-  return (
-    <ThemeProvider initialTheme={theme || "system"}>
-      <RootLayoutNav />
-    </ThemeProvider>
-  );
+  return <RootLayoutNav />;
 }
 
 function RootLayoutNav() {
+  const { changeTheme, theme } = useTheme();
+
+  const { user, status, token } = useAuthStore();
+  console.log(
+    "🚀 ~ RootLayoutNav ~ infoStore:",
+    status,
+    user.documentoIdentidad
+  );
+
+  useEffect(() => {
+    changeTheme(theme);
+  }, []);
+
+  useEffect(() => {
+    const isProd = CONSTANTS.PROD;
+    const isDev = CONSTANTS.DEV;
+
+    if (isProd && !isDev) return;
+
+    const modeRunning = CONSTANTS.MODE;
+
+    const isFakeProduction =
+      (modeRunning === "production" && isDev) || modeRunning === "prerelease";
+
+    alert(`
+Running App in ${modeRunning} mode
+Firebase Notification Key ${FirebaseNotification.NOTIFICATION_TOPIC}
+    `);
+
+    isFakeProduction &&
+      alert(
+        "You are running in a pre production mode, all data changes will be saved in the production database, BE CAREFUL!!!!!"
+      );
+  }, []);
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <PopupWindowProvider>
-          <Stack>
-            <Stack.Screen name="(app)" options={{ headerShown: false }} />
-          </Stack>
-        </PopupWindowProvider>
-      </AuthProvider>
-      <Toast config={toastConfig} />
-    </QueryClientProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <QueryClientProvider client={queryClient}>
+        <Slot />
+        <Toast config={toastConfig} />
+      </QueryClientProvider>
+    </GestureHandlerRootView>
   );
 }

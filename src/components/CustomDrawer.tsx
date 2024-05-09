@@ -13,21 +13,21 @@ import {
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
 import { Link, router } from "expo-router";
-import { useAuthContext, useThemeColor } from "@/hooks";
+import { useAuth, useThemeColor } from "@/hooks";
 import { ThemeConfig } from "@/views/ThemeConfig";
 import { Texto } from "@/ui";
 import { menuFacultades } from "@/data";
 
 const CustomDrawer = (props: DrawerContentComponentProps) => {
   const isDarkMode = useThemeColor() === "dark";
-  const { status, user, logout } = useAuthContext();
+  const { status, user, signOut } = useAuth();
 
   const [menuActual, setMenuActual] = useState(menuFacultades);
   const [historyMenu, setHistoryMenu] = useState<any[]>([]);
   const [title, setTitle] = useState("");
 
   const cerrarSesion = async () => {
-    logout();
+    signOut();
     router.replace("/auth/login");
   };
 

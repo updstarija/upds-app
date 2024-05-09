@@ -1,16 +1,16 @@
 import { View } from "react-native";
 import { etiquetas } from "@/data";
 import { Texto } from "@/ui";
-import { IEstado, MateriaProyeccion } from "@/types";
+import { MateriaProyeccion } from "@/types";
 import { FontAwesome } from "@expo/vector-icons";
-import { useAuthContext } from "@/hooks";
+import { useAuth } from "@/hooks";
 
 interface Props {
   materia: MateriaProyeccion;
   withModulo?: boolean;
 }
 const MateriaState: React.FC<Props> = ({ materia, withModulo = false }) => {
-  const { user } = useAuthContext();
+  const { user } = useAuth();
   const isElectiva = materia.materia.startsWith("Electiva - ");
   const isPendiente = materia.estado.id == 0;
   const isAprobado = materia.estado.id == 1;

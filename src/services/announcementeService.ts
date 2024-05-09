@@ -122,12 +122,22 @@ export const getTopPriority = async ({
 
     const snapshot = await query.get();
 
-    const data: IAnnouncement[] = snapshot.docs.map((doc) => ({
-      ...(doc.data() as IAnnouncement),
-      id: doc.id,
-    }));
+    const data: IAnnouncement[] = snapshot.docs.map((doc) => {
+      const announcement = doc.data();
+      return {
+        ...announcement,
+        dateLimit: announcement.dateLimit
+          ? announcement.dateLimit.toDate()
+          : undefined,
+        id: doc.id,
+      } as IAnnouncement;
+    });
 
-    return data;
+    const filterData = data.filter((item) =>
+      item.dateLimit ? item.dateLimit >= new Date() : false
+    );
+
+    return filterData;
   } catch (e: any) {
     console.log(e);
 

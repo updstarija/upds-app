@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TouchableOpacity,
   ScrollView,
@@ -31,6 +31,9 @@ import { extractPlainText } from "@/helpers/extractPlainText";
 import { useImageDimensions } from "@react-native-community/hooks";
 import PaginationDot from "react-native-animated-pagination-dot";
 import { openURL, canOpenURL } from "expo-linking";
+import { sleep } from "@/helpers";
+import { rateApp } from "@/modules/store-review/lib/rate-app";
+
 const actionsFloatButton: IActionProps[] = [
   {
     text: "Compartir",
@@ -43,6 +46,8 @@ const actionsFloatButton: IActionProps[] = [
     icon: <FontAwesome name="send" color="#fff" size={20} />,
   },
 ];
+
+const MemoizedRenderHtml = React.memo(RenderHTML);
 
 const defaultAnnouncement = {
   title: "",
@@ -82,6 +87,10 @@ export const NoticeDetail = () => {
       id: announcementQuery.data.id,
       like: isLiked ? like - 1 : like + 1,
     });
+
+    await sleep(1000);
+
+    await rateApp();
   };
 
   const shareAnnouncement = async () => {
@@ -132,7 +141,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
     isLiked,
   } = announcementQuery.data ?? defaultAnnouncement;
   const source = { uri: images[0]?.url || "" };
-  console.log(moreInfoUrl);
+
   const { dimensions, loading, error } = useImageDimensions(source);
 
   if (announcementQuery.isError) return <Texto>ERROR</Texto>;
@@ -143,19 +152,20 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
 
   return (
     <>
-      <View className="flex-1 bg-white dark:bg-secondary-dark ">
+      <SafeAreaView className="flex-1 bg-white dark:bg-secondary-dark ">
         <ScrollView
           style={{ flex: 1 }}
           scrollsToTop
           contentContainerStyle={{ flexGrow: 1 }}
         >
           <View className="bg-white dark:bg-primario-dark flex-1 relative">
+            {/* BACK BUTTON */}
             <View
               style={[
                 {
                   position: "absolute",
                   zIndex: 30,
-                  top: 35,
+                  top: 10,
                   left: 5,
                 },
               ]}
@@ -167,6 +177,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                 <AntDesign name="left" size={20} color={"#FFF"} />
               </TouchableOpacity>
             </View>
+            {/* END BACK BUTTON */}
 
             <View className="flex-1">
               <View>
@@ -230,7 +241,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
 
                 <Spacer height={20} />
 
-                <View className="mb-10 flex-1">
+                <View className="mb-10 ">
                   <View className="flex-row justify-evenly">
                     <View className="flex-row items-center">
                       <TouchableOpacity
@@ -252,18 +263,12 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                         )}
                       </TouchableOpacity>
 
-                      {isLoading ? (
-                        <View className="ml-2">
-                          <CustomSkeleton width={20} height={20} />
-                        </View>
-                      ) : (
-                        <Texto
-                          className="ml-1 text-black dark:text-white"
-                          weight="Bold"
-                        >
-                          {like}
-                        </Texto>
-                      )}
+                      <Texto
+                        className="ml-1 text-black dark:text-white"
+                        weight="Bold"
+                      >
+                        {like}
+                      </Texto>
                     </View>
 
                     <View className="flex-row items-center">
@@ -272,18 +277,12 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                         size={20}
                         color={isDark ? "#FFF" : "#000"}
                       />
-                      {isLoading ? (
-                        <View className="ml-2">
-                          <CustomSkeleton width={100} height={20} />
-                        </View>
-                      ) : (
-                        <Texto
-                          className="ml-1  text-black dark:text-white"
-                          weight="Bold"
-                        >
-                          {formatDateForDisplay(date)}
-                        </Texto>
-                      )}
+                      <Texto
+                        className="ml-1  text-black dark:text-white"
+                        weight="Bold"
+                      >
+                        {formatDateForDisplay(date)}
+                      </Texto>
                     </View>
                   </View>
                 </View>
@@ -344,7 +343,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
                   {isLoading ? (
                     <CustomSkeleton width={"100%"} height={50} />
                   ) : (
-                    <RenderHTML
+                    <MemoizedRenderHtml
                       baseStyle={{ color: isDark ? "#FFF" : "#000" }}
                       contentWidth={width}
                       source={{ html: description }}
@@ -369,7 +368,7 @@ Mas Informacion: ${announcementQuery.data.moreInfoUrl}
             }
           }}
         />
-      </View>
+      </SafeAreaView>
     </>
   );
 };

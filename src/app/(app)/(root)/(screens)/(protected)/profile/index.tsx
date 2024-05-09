@@ -1,5 +1,5 @@
 import { ScrollView, View } from "react-native";
-import { useAuthContext, useThemeColor } from "@/hooks";
+import { useAuth, useThemeColor } from "@/hooks";
 import { Texto } from "@/ui";
 import {
   FontAwesome,
@@ -11,7 +11,7 @@ import { formatCumpleanios, nombreCompleto } from "@/helpers";
 const Perfil = () => {
   const isDarkMode = useThemeColor() === "dark";
 
-  const { user } = useAuthContext();
+  const { user } = useAuth();
 
   return (
     <View className=" flex-1 bg-primario dark:bg-secondary-dark">

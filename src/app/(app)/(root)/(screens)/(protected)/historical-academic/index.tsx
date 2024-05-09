@@ -7,12 +7,13 @@ import {
   ListRenderItemInfo,
 } from "react-native";
 import { TourGuideZone, useTourGuideController } from "rn-tourguide";
-import { useCarreraContext, useRegistroHistorico } from "@/hooks";
+import { useRegistroHistorico } from "@/hooks";
 import { verTutorial } from "@/helpers";
 import { MateriaHistoricoItem } from "@/views";
 import { CustomSkeleton, Texto } from "@/ui";
 import { IRegistroHistorico } from "@/types";
 import { RefreshControl } from "react-native-gesture-handler";
+import { useCareerStore } from "@/store/useCareers";
 
 const tutorialHistoricoSteps = {
   1: "Presiona en el registro para obtener mas información acerca de la materia",
@@ -26,10 +27,10 @@ const HistoricoMaterias = () => {
     step: 1,
   });
 
-  const { valueCarrera } = useCarreraContext();
+  const { selectedCareer } = useCareerStore();
 
   const { registroHistoricoQuery } = useRegistroHistorico({
-    carrera: valueCarrera || -1,
+    carrera: selectedCareer || -1,
   });
 
   const { canStart, start, tourKey, eventEmitter, stop } =
