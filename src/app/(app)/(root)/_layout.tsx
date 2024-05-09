@@ -9,6 +9,16 @@ import DevMenuEnviroment from "@/modules/dev/dev-menu-enviroment";
 import { useEffect } from "react";
 import { rateApp } from "@/modules/store-review/lib/rate-app";
 import CONSTANTS from "@/constants/CONSTANTS";
+import SpInAppUpdates, {
+  NeedsUpdateResponse,
+  IAUUpdateKind,
+  StartUpdateOptions,
+} from "sp-react-native-in-app-updates";
+import { Platform } from "react-native";
+
+const inAppUpdates = new SpInAppUpdates(
+  false // isDebug
+);
 
 const RootLayout = () => {
   const { isViewed } = useOnboardingStore();
@@ -19,6 +29,20 @@ const RootLayout = () => {
 
   useEffect(() => {
     rateApp();
+  }, []);
+
+  useEffect(() => {
+    inAppUpdates.checkNeedsUpdate().then((result) => {
+      if (result.shouldUpdate) {
+        let updateOptions: StartUpdateOptions = {};
+        if (Platform.OS === "android") {
+          updateOptions = {
+            updateType: IAUUpdateKind.FLEXIBLE,
+          };
+        }
+        inAppUpdates.startUpdate(updateOptions); // https://github.com/SudoPlz/sp-react-native-in-app-updates/blob/master/src/types.ts#L78
+      }
+    });
   }, []);
 
   return (

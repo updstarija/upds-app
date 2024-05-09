@@ -406,7 +406,7 @@ export const DetalleMateriaV2: React.FC<Props> = memo(
                     className="text-center text-lg uppercase text-white"
                     weight="Bold"
                   >
-                    Detalle notas
+                    Detalle notas2
                   </Texto>
 
                   <View className="mx-auto mt-5 p-3">
@@ -415,7 +415,8 @@ export const DetalleMateriaV2: React.FC<Props> = memo(
                       color={isDarkMode ? "#fff" : "#091f4e"}
                       maxValue={100}
                       noOfSections={5}
-                      width={width - 180}
+                      width={width - 200}
+                      adjustToWidth
                       areaChart
                       yAxisTextStyle={{ color: "#Fff" }}
                       //@ts-ignore

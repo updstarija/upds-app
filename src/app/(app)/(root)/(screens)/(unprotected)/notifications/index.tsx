@@ -60,6 +60,7 @@ const Notificacion = () => {
             return (
               <CustomBottomSheetModal
                 content={<NotificationItem notification={item} />}
+                onPressButton={() => navigateNotification(item)}
               >
                 <View className="py-4">
                   <Texto className="text-center text-xl pb-4">

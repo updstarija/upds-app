@@ -1,8 +1,14 @@
 import CustomDropdown from "@/ui/CustomDropDown";
 import { useCareerStore } from "@/store/useCareers";
+import { ICarrera } from "@/types";
 
 export const SelectCarrera = () => {
-  const { selectedCareer, setSelectedCareer, careers } = useCareerStore();
+  const {
+    selectedCareer,
+    setSelectedCareer,
+    careers,
+    setSelectedInscriptionCareer,
+  } = useCareerStore();
 
   const newCarreras = careers.map((carr) => {
     return {
@@ -21,7 +27,10 @@ export const SelectCarrera = () => {
       valueField={"id"}
       search
       value={selectedCareer}
-      onChange={(e) => setSelectedCareer(e.id)}
+      onChange={(e: ICarrera) => {
+        setSelectedCareer(e.id);
+        setSelectedInscriptionCareer(e.inscripcionCarreraId);
+      }}
     />
   );
 };

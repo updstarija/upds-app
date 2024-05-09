@@ -21,10 +21,6 @@ const LoaderSplash = () => {
             height: 80,
           }}
         />
-
-        <Button onPress={() => setLogout()}>
-          <Texto>CLEAR SESSION</Texto>
-        </Button>
       </View>
     </View>
   );

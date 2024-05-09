@@ -1,6 +1,6 @@
 import Toast from "react-native-toast-message";
 import { IFormLogin } from "@/types";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import authService from "@/services/authService";
 import { updsApi } from "@/api";
 import { useEffect, useRef } from "react";
@@ -10,9 +10,12 @@ import { CustomBottomSheetRef } from "@/ui/CustomBottomSheetModal";
 
 export const useAuth = () => {
   const authStore = useAuthStore();
+
+  const queryClient = useQueryClient();
   const { setLogout, token, setLogin, user, setToken, status } = authStore;
 
-  const { setCareers, setSelectedCareer } = useCareerStore();
+  const { setCareers, setSelectedCareer, setSelectedInscriptionCareer } =
+    useCareerStore();
 
   const authModalRef = useRef<CustomBottomSheetRef>(null);
 
@@ -24,6 +27,7 @@ export const useAuth = () => {
         const careers = response.data.usuario.carreras;
         setCareers(careers);
         setSelectedCareer(careers[0]?.id);
+        setSelectedInscriptionCareer(careers[0]?.inscripcionCarreraId);
         setLogin(response.data);
 
         Toast.show({
@@ -76,6 +80,7 @@ export const useAuth = () => {
   ); */
 
   const signOut = () => {
+    queryClient.clear();
     setLogout();
   };
 
@@ -103,9 +108,15 @@ export const useRefresh = () => {
   const authStore = useAuthStore();
 
   const { setLogout, token, setLogin } = authStore;
+  const { setCareers, setSelectedCareer, setSelectedInscriptionCareer } =
+    useCareerStore();
 
   return useQuery(["auth", "session"], authService.getProfile, {
     onSuccess: (response) => {
+      const careers = response.data.usuario.carreras;
+      setCareers(careers);
+      setSelectedCareer(careers[0]?.id);
+      setSelectedInscriptionCareer(careers[0]?.inscripcionCarreraId);
       setLogin(response.data);
     },
     onError: () => {

@@ -7,6 +7,7 @@ import Counter from "@/components/Counter";
 import CircularProgress from "react-native-circular-progress-indicator";
 import Spinner from "@/components/Spinner";
 import { useCareerStore } from "@/store/useCareers";
+import PerformanceStudent from "@/modules/profile/components/performance-student";
 
 const Stats = () => {
   const isDarkMode = useThemeColor() === "dark";
@@ -85,7 +86,7 @@ const Stats = () => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flex: 1 }}
+        //contentContainerStyle={{ flex: 1 }}
       >
         <View className="flex-1  px-2 gap-2">
           <>
@@ -101,6 +102,7 @@ const Stats = () => {
                 </Texto>
               </View>
             </View>
+
             <View
               className="bg-white dark:bg-primario-dark rounded-xl"
               style={{ elevation: 10 }}
@@ -131,6 +133,22 @@ const Stats = () => {
                 {/* <SelectCarrera /> */}
 
                 {renderProgreso()}
+              </View>
+            </View>
+
+            <View
+              className="bg-white dark:bg-primario-dark rounded-xl"
+              style={{ elevation: 10 }}
+            >
+              <View className="bg-white dark:bg-secondary-dark  rounded-xl p-6 border-gray-300  border-[.5px] dark:border-[0px] ">
+                <Texto
+                  className="text-black dark:text-white text-center text-xl my-3"
+                  weight="Bold"
+                >
+                  RENDIMIENTO
+                </Texto>
+
+                <PerformanceStudent />
               </View>
             </View>
 
