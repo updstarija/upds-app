@@ -2,7 +2,7 @@ import { ExpoConfig, ConfigContext } from "@expo/config";
 import prevConfig from "./app.json";
 
 const config = ({ config }: ConfigContext): ExpoConfig => {
-  const versionCode = 21;
+  const versionCode = 26;
 
   return {
     //...(prevConfig.expo as ExpoConfig),
@@ -58,13 +58,13 @@ const config = ({ config }: ConfigContext): ExpoConfig => {
           },
         },
       ],
-      [
+      /*  [
         "expo-location",
         {
           locationAlwaysAndWhenInUsePermission:
             "Permitir a ${PRODUCT_NAME} acceder a tu ubicacion.",
         },
-      ],
+      ], */
       [
         "expo-image-picker",
         {

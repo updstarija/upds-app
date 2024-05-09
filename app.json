@@ -56,12 +56,7 @@
           }
         }
       ],
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Permitir a ${PRODUCT_NAME} acceder a tu ubicacion."
-        }
-      ],
+
       [
         "expo-image-picker",
         {

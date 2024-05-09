@@ -42,4 +42,4 @@ expo-env.d.ts
 
 build-*
 
-.package-lock.json
+package-lock.*
