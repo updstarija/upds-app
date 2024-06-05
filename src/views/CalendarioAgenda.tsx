@@ -10,7 +10,7 @@ import { useCalendario, useThemeColor } from "@/hooks";
 import { Button, Option } from "@/components";
 import { CustomModal, Modal, Texto } from "@/ui";
 import { useAcademicCalendar } from "@/hooks/useAcademicCalendar";
-import { TTypeCalendar } from "@/types";
+import { ICalendarioAcademico, TTypeCalendar } from "@/types";
 
 const dayNames = ["Dom.", "Lun.", "Mar.", "Mie.", "Jue.", "Vie.", "Sab."];
 
@@ -142,16 +142,25 @@ const CalendarioAgenda = () => {
     return <View className="w-16" />;
   };
 
-  const renderItem = (reservation: any, isFirst: boolean) => {
+  const renderItem = (reservation: ICalendarioAcademico, isFirst: boolean) => {
     return (
       <TouchableOpacity
-        className={` p-4 mb-2 ${isFirst ? "mt-5" : ""}`}
+        className={`rounded-xl p-4 mb-2 ${isFirst ? "mt-5" : ""}`}
         style={{ backgroundColor: reservation.color }}
         onPress={() =>
           reservation.description ? Alert.alert(reservation.description) : null
         }
       >
         <Texto className="text-white">{reservation.name}</Texto>
+
+        <View className="flex-row gap-1 mt-2  flex-wrap">
+        {reservation.typeCalendar.map((type) => (
+          <Texto className="bg-white px-2 py-0.5 rounded-full text-black text-xs"
+          //style={{ backgroundColor: reservation.color, opacity: 0.1}}
+          >{type}</Texto>
+        ))}
+        </View>
+      
       </TouchableOpacity>
     );
   };
