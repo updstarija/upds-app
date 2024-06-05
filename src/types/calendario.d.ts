@@ -7,6 +7,7 @@ export interface ICalendarioAcademico {
   description?: string;
   typeCalendar: TTypeCalendar[];
   fullDay: boolean;
+  name: string;
 }
 
 export type TTypeCalendar =
