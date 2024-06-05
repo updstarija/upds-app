@@ -5,6 +5,7 @@ import {
   Alert,
   BackHandler,
   Platform,
+  TextInput
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { router } from "expo-router";
@@ -16,18 +17,48 @@ import { IFormLogin } from "@/types";
 import { COLORS } from "~/constants";
 import { Button, TextField } from "@/components";
 import { Texto } from "@/ui";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { KeyboardAvoidingScrollView } from "react-native-keyboard-avoiding-scroll-view";
 import * as WebBrowser from "expo-web-browser";
 import { openURL } from "expo-linking";
 import { useLoginRememberCredentialsStore } from "@/store/useLoginRememberCredentials.store";
 import { useCallbackUrlStore } from "@/store/useCallbackUrl.store";
+import {
+  exchangeCodeAsync,
+  makeRedirectUri,
+  useAuthRequest,
+  useAutoDiscovery,
+} from 'expo-auth-session';
 
 WebBrowser.maybeCompleteAuthSession();
 
 const Login = () => {
   const isDarkMode = useThemeColor() === "dark";
   const rememberCredentialsStore = useLoginRememberCredentialsStore();
+
+
+  const discovery = useAutoDiscovery(
+    'https://login.microsoftonline.com/common/v2.0',
+  );
+  const redirectUri = makeRedirectUri({
+    scheme: undefined,
+    path: 'auth/login',
+  });
+  const clientId = '1006a296-8502-457c-ac0e-e4b25ed2f82f';
+
+  // We store the JWT in here
+  const [token, setToken] = useState<string | null>(null);
+
+  // Request
+  const [request, , promptAsync] = useAuthRequest(
+    {
+      clientId,
+      scopes: ['openid', 'profile', 'email', 'offline_access'],
+      redirectUri,
+    },
+    discovery,
+  );
+
 
   const defaultValues: Partial<IFormLogin> = {
     contraseña: rememberCredentialsStore.password,
@@ -122,6 +153,39 @@ const Login = () => {
     return () => backHandler.remove();
   }, [callBack.url]);
 
+/*    return (
+    <SafeAreaView>
+      <Button
+        disabled={!request}
+        
+        onPress={() => {
+          promptAsync().then((codeResponse) => {
+            if (request && codeResponse?.type === 'success' && discovery) {
+              exchangeCodeAsync(
+                {
+                  clientId,
+                  code: codeResponse.params.code,
+                  extraParams: request.codeVerifier
+                    ? { code_verifier: request.codeVerifier }
+                    : undefined,
+                  redirectUri,
+                },
+                discovery,
+              ).then((res) => {
+                setToken(res.accessToken);
+              });
+            }
+          });
+        }}
+      ><Texto>OAUTH</Texto></Button>
+      
+      <TextInput
+           value={token ?? ""}
+            />
+         
+    </SafeAreaView>
+  );
+ */
   return (
     <>
       <StatusBar
