@@ -647,7 +647,9 @@ PODS:
     - React-Core
   - EXNotifications (0.27.7):
     - ExpoModulesCore
-  - Expo (50.0.18):
+  - Expo (50.0.19):
+    - ExpoModulesCore
+  - ExpoCrypto (12.8.1):
     - ExpoModulesCore
   - ExpoDevice (5.9.4):
     - ExpoModulesCore
@@ -1742,8 +1744,10 @@ PODS:
   - React-Mapbuffer (0.73.6):
     - glog
     - React-debug
-  - react-native-mmkv (2.11.0):
-    - MMKV (>= 1.2.13)
+  - react-native-mmkv (2.12.2):
+    - glog
+    - MMKV (>= 1.3.3)
+    - RCT-Folly (= 2022.05.16.00)
     - React-Core
   - react-native-pager-view (6.2.3):
     - glog
@@ -1951,7 +1955,7 @@ PODS:
     - React-Core
   - RNPermissions (3.10.1):
     - React-Core
-  - RNReanimated (3.6.2):
+  - RNReanimated (3.6.3):
     - glog
     - RCT-Folly (= 2022.05.16.00)
     - React-Core
@@ -1987,6 +1991,7 @@ DEPENDENCIES:
   - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
   - EXNotifications (from `../node_modules/expo-notifications/ios`)
   - Expo (from `../node_modules/expo`)
+  - ExpoCrypto (from `../node_modules/expo-crypto/ios`)
   - ExpoDevice (from `../node_modules/expo-device/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoHead (from `../node_modules/expo-router/ios`)
@@ -2121,6 +2126,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-notifications/ios"
   Expo:
     :path: "../node_modules/expo"
+  ExpoCrypto:
+    :path: "../node_modules/expo-crypto/ios"
   ExpoDevice:
     :path: "../node_modules/expo-device/ios"
   ExpoFileSystem:
@@ -2287,7 +2294,8 @@ SPEC CHECKSUMS:
   EXFont: f20669cb266ef48b004f1eb1f2b20db96cd1df9f
   EXImageLoader: 55080616b2fe9da19ef8c7f706afd9814e279b6b
   EXNotifications: 1c117bf042bd05a5b1a1ffd06f4c36ff9921ed2b
-  Expo: 09bd48f31bb7f1a3c97fd5a6cb28feae89cb4e40
+  Expo: ad8bce0c0fc557cae703cc8dbce73d61a90ab5c5
+  ExpoCrypto: b6428f48599c007676dc81a9b5f72c07e62fdccc
   ExpoDevice: 97307196d8cab694e245752b8a7afacc35c14e03
   ExpoFileSystem: 74cc0fae916f9f044248433971dcfc8c3befd057
   ExpoHead: 89ffd324e60520751c2c285233fe45e875c91874
@@ -2353,7 +2361,7 @@ SPEC CHECKSUMS:
   React-jsinspector: 85583ef014ce53d731a98c66a0e24496f7a83066
   React-logger: 3eb80a977f0d9669468ef641a5e1fabbc50a09ec
   React-Mapbuffer: d81d930c1b7f4db284e1d721fe7fdc99230ca108
-  react-native-mmkv: e97c0c79403fb94577e5d902ab1ebd42b0715b43
+  react-native-mmkv: c405cc720dbdd8b1330b1bcf064196ca8cbb5a7c
   react-native-pager-view: 3796df305c59c352a26811ead0f6ea78acac1886
   react-native-render-html: 984dfe2294163d04bf5fe25d7c9f122e60e05ebe
   react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
@@ -2386,7 +2394,7 @@ SPEC CHECKSUMS:
   RNFlashList: 4b4b6b093afc0df60ae08f9cbf6ccd4c836c667a
   RNGestureHandler: 12833709769dde5fdb36ec9d4cdf4d3a1a024122
   RNPermissions: 4e3714e18afe7141d000beae3755e5b5fb2f5e05
-  RNReanimated: 548d4cb6785a032be887c66433082155d12baba0
+  RNReanimated: 41963a348e738c496a9b129bba9a9217017cd530
   RNScreens: a4d9ce8f68f833f4e42410140eafd88e38bba163
   RNShare: 32e97adc8d8c97d4a26bcdd3c45516882184f8b6
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
@@ -2395,8 +2403,8 @@ SPEC CHECKSUMS:
   SDWebImageSVGCoder: 15a300a97ec1c8ac958f009c02220ac0402e936c
   SDWebImageWebPCoder: af09429398d99d524cae2fe00f6f0f6e491ed102
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
-  Yoga: d17d2cc8105eed528474683b42e2ea310e1daf61
+  Yoga: 805bf71192903b20fc14babe48080582fee65a80
 
 PODFILE CHECKSUM: 71a4b2c8c22ecbfc4aa6ae069e4d1f1ee1e68a53
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.2

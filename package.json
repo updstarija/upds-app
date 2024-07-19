@@ -3,7 +3,7 @@
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
-    "start": "expo start --localhost -d",
+    "start": "expo start --localhost --dev-client",
     "android": "npm run android:sandbox",
     "android:sandbox": "npm run prepare:sandbox && expo run:android --device",
     "android:prerelease": "npm run prepare:prerelease &&  NODE_ENV=prerelease expo run:android --device",
