@@ -249,7 +249,7 @@ const Login = () => {
 
 							<Button
 								disabled={!request}
-								classNameBtn=" rounded-xl bg-orange-500  h-14 mt-2 items-center justify-center"
+								classNameBtn=" rounded-xl bg-orange-500  h-14 mt-2 items-center justify-center flex-row "
 								onPress={() => {
 									promptAsync().then((codeResponse) => {
 										if (
@@ -274,6 +274,7 @@ const Login = () => {
 									});
 								}}
 							>
+								<Texto className="text-xl text-white">OFFICE 365</Texto>
 								<MaterialCommunityIcons
 									name="microsoft-office"
 									color="#FFF"

@@ -1,7 +1,7 @@
 import { updsApi } from "@/api";
 import { useAuth } from "@/hooks";
 import { Texto } from "@/ui";
-import { Redirect, useLocalSearchParams } from "expo-router";
+import { Redirect, router, useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
 import { ActivityIndicator, StyleSheet, View } from "react-native";
@@ -13,7 +13,11 @@ const OAuthScreen = () => {
 	const { token = "" } = params;
 
 	const getSession = async () => {
-		const response = await signInOffice365.mutateAsync(token);
+		try {
+			await signInOffice365.mutateAsync(token);
+		} catch (error) {
+			router.replace("/auth/login");
+		}
 	};
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>

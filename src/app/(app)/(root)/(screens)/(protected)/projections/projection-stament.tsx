@@ -197,13 +197,16 @@ const Boleta = () => {
 						<>
 							{renderHeaderBody()}
 
-							<SemestreProyeccionItem
-								semestre={{
-									id: -1,
-									nombre: "ELECTIVAS",
-								}}
-								modulo={valueModulo}
-							/>
+							<View className="z-0">
+								<SemestreProyeccionItem
+									semestre={{
+										id: -1,
+										nombre: "ELECTIVAS",
+									}}
+									modulo={valueModulo}
+								/>
+								<View className="border-[.5px] border-primario-dark" />
+							</View>
 						</>
 					}
 					ItemSeparatorComponent={() => (
