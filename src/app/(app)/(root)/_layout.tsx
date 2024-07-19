@@ -10,72 +10,89 @@ import { useEffect } from "react";
 import { rateApp } from "@/modules/store-review/lib/rate-app";
 import CONSTANTS from "@/constants/CONSTANTS";
 import SpInAppUpdates, {
-  NeedsUpdateResponse,
-  IAUUpdateKind,
-  StartUpdateOptions,
+	NeedsUpdateResponse,
+	IAUUpdateKind,
+	StartUpdateOptions,
 } from "sp-react-native-in-app-updates";
 import { Platform } from "react-native";
+import { useAppStore } from "@/store/use-app-store";
+import { updsApi } from "@/api";
 
 const inAppUpdates = new SpInAppUpdates(
-  false // isDebug
+	false, // isDebug
 );
 
 const RootLayout = () => {
-  const { isViewed } = useOnboardingStore();
+	const { isViewed } = useOnboardingStore();
+	const { setEnabledProjections } = useAppStore();
 
-  if (!isViewed) {
-    return <Redirect href={"/welcome"} />;
-  }
+	if (!isViewed) {
+		return <Redirect href={"/welcome"} />;
+	}
 
-  useEffect(() => {
-    rateApp();
-  }, []);
+	const getStatusProjections = async () => {
+		const { data } = await updsApi.get<{ status: number; data: boolean }>(
+			"/service/proyecciones/status",
+		);
+		console.log("🚀 ~ getStatusProjections ~ data:", data);
 
-  useEffect(() => {
-    inAppUpdates.checkNeedsUpdate().then((result) => {
-      if (result.shouldUpdate) {
-        let updateOptions: StartUpdateOptions = {};
-        if (Platform.OS === "android") {
-          updateOptions = {
-            updateType: IAUUpdateKind.FLEXIBLE,
-          };
-        }
-        inAppUpdates.startUpdate(updateOptions); // https://github.com/SudoPlz/sp-react-native-in-app-updates/blob/master/src/types.ts#L78
-      }
-    });
-  }, []);
+		setEnabledProjections(data?.data ?? false);
+	};
 
-  return (
-    <>
-      <StatusBar style="light" />
+	useEffect(() => {
+		rateApp();
+	}, []);
 
-      <ProyeccionesProvider>
-        <BottomSheetModalProvider>
-          <TourGuideProvider>
-            <Stack>
-              <Stack.Screen
-                name="(drawer)"
-                options={{
-                  headerShown: false,
-                }}
-              />
+	useEffect(() => {
+		!__DEV__ &&
+			inAppUpdates.checkNeedsUpdate().then((result) => {
+				if (result.shouldUpdate) {
+					let updateOptions: StartUpdateOptions = {};
+					if (Platform.OS === "android") {
+						updateOptions = {
+							updateType: IAUUpdateKind.FLEXIBLE,
+						};
+					}
+					inAppUpdates.startUpdate(updateOptions); // https://github.com/SudoPlz/sp-react-native-in-app-updates/blob/master/src/types.ts#L78
+				}
+			});
+	}, []);
 
-              <Stack.Screen
-                name="(screens)"
-                options={{
-                  headerShown: false,
-                }}
-              />
-            </Stack>
+	useEffect(() => {
+		getStatusProjections();
+	}, []);
 
-            {!CONSTANTS.PROD && <DevMenuEnviroment />}
+	return (
+		<>
+			<StatusBar style="light" />
 
-            <ModalAuthCaution />
-          </TourGuideProvider>
-        </BottomSheetModalProvider>
-      </ProyeccionesProvider>
-    </>
-  );
+			<ProyeccionesProvider>
+				<BottomSheetModalProvider>
+					<TourGuideProvider>
+						<Stack>
+							<Stack.Screen
+								name="(drawer)"
+								options={{
+									headerShown: false,
+								}}
+							/>
+
+							<Stack.Screen
+								name="(screens)"
+								options={{
+									headerShown: false,
+								}}
+							/>
+						</Stack>
+
+						{!CONSTANTS.PROD && <DevMenuEnviroment />}
+
+						<ModalAuthCaution />
+					</TourGuideProvider>
+				</BottomSheetModalProvider>
+			</ProyeccionesProvider>
+		</>
+	);
 };
 
 export default RootLayout;
