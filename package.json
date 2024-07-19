@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@expo/vector-icons": "^14.0.0",
-    "@gorhom/bottom-sheet": "^5.0.0-alpha.6",
+    "@gorhom/bottom-sheet": "5.0.0-alpha.6",
     "@react-native-async-storage/async-storage": "1.21.0",
     "@react-native-community/hooks": "^3.0.0",
     "@react-native-firebase/app": "~18.1.0",

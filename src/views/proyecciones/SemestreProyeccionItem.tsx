@@ -19,7 +19,7 @@ import {
 import MateriaProyeccionesItem from "./MateriaProyeccionesItem";
 import clsx from "clsx";
 import { COLORS } from "~/constants";
-import { Spacer } from "@/components";
+import { AlertCard, Spacer } from "@/components";
 import SelectTurnos from "../SelectTurnos";
 import { useCareerStore } from "@/store/useCareers";
 
@@ -214,6 +214,18 @@ const SemestreProyeccionItem: React.FC<Props> = ({
 								/>
 
 								<SelectTurnos />
+
+								{data.isLoading && semestre.id === -1 && (
+									<>
+										<AlertCard
+											content="Este proceso puede demorar unos segundos, por favor espere."
+											header="Importante"
+											variant="info"
+										/>
+
+										<Spacer />
+									</>
+								)}
 
 								{!data.isLoading && !filterData.length && (
 									<View className="items-center bg-primario dark:bg-secondary-dark p-4 rounded-2xl m-4">

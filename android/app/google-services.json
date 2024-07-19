@@ -1,26 +1,36 @@
 {
   "project_info": {
-    "project_number": "481502105076",
-    "project_id": "sandox-upds-app",
-    "storage_bucket": "sandox-upds-app.appspot.com"
+    "project_number": "872888782411",
+    "project_id": "upds-app-5acec",
+    "storage_bucket": "upds-app-5acec.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:481502105076:android:dd9b12b3ebcfeac97ffda1",
+        "mobilesdk_app_id": "1:872888782411:android:85058932142dcd494307ce",
         "android_client_info": {
           "package_name": "com.upds.tarija.com"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "872888782411-15qot095l8qfm0jeqbe59k2o9shaohc3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
-          "current_key": "AIzaSyCrE0cMN4w5p32YYaHEQCO910amhS9QQcg"
+          "current_key": "AIzaSyDRPdUMLX5N-pou1zOvrfUcFWhnsrv7K6s"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "872888782411-15qot095l8qfm0jeqbe59k2o9shaohc3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -134,6 +134,7 @@ import {
 	TouchableOpacityProps,
 	TouchableOpacity,
 	Platform,
+	Keyboard,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -180,6 +181,42 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> =
 			},
 			ref,
 		) => {
+			const [keyboardOpen, setKeyboardOpen] = useState(false);
+			const [enableDismissOnClose, setEnableDismissOnClose] = useState(true);
+
+			useEffect(() => {
+				if (Platform.OS !== "android") return;
+
+				const keyboardDidShowListener = Keyboard.addListener(
+					"keyboardDidShow",
+					() => setKeyboardOpen(true),
+				);
+
+				const keyboardDidHideListener = Keyboard.addListener(
+					"keyboardDidHide",
+					() => setKeyboardOpen(false),
+				);
+
+				return () => {
+					keyboardDidShowListener.remove();
+					keyboardDidHideListener.remove();
+				};
+			}, []);
+
+			useEffect(() => {
+				if (keyboardOpen) {
+					setEnableDismissOnClose(false);
+				}
+			}, [keyboardOpen]);
+
+			useEffect(() => {
+				if (!enableDismissOnClose && keyboardOpen) {
+					setTimeout(() => {
+						setEnableDismissOnClose(true);
+					}, 10);
+				}
+			}, [enableDismissOnClose, keyboardOpen]);
+
 			const isDark = useThemeColor() === "dark";
 			const [isOpen, setIsOpen] = useState(false);
 
@@ -259,9 +296,12 @@ const CustomBottomSheetModal: React.FC<React.PropsWithChildren<Props>> =
 						backdropComponent={renderBackdrop}
 						onDismiss={onDismiss}
 						onChange={handleChange}
-						keyboardBehavior={
-							Platform.OS === "android" ? "fillParent" : "interactive"
-						}
+						android_keyboardInputMode="adjustResize"
+						keyboardBlurBehavior="restore"
+						enableDismissOnClose={enableDismissOnClose}
+						// keyboardBehavior={
+						// 	Platform.OS === "android" ? "fillParent" : "interactive"
+						// }
 						//  keyboardBlurBehavior="restore"
 						//  android_keyboardInputMode="adjustResize"
 						handleIndicatorStyle={{ backgroundColor: "#0D1F46" }}
