@@ -57,6 +57,27 @@ const login = async (data: IFormLogin): Promise<IResponseLogin> => {
     const response = await updsApi.post<IResponseLogin>("/auth/login", data);
     return response.data;
   } catch (e) {
+    // biome-ignore lint/complexity/noUselessCatch: <explanation>
+    throw e;
+  } finally {
+    clearInterval(timeoutId);
+  }
+};
+
+const loginWithOffice365 = async (token: string): Promise<IResponseLogin> => {
+  const timeoutId = setInterval(() => {
+    Toast.show({
+      type: "warning",
+      text1: "Alerta",
+      text2: "Estamos presentando una alta demanda en el servidor. Se paciente",
+    });
+  }, 15000);
+
+  try {
+    const response = await updsApi.post<IResponseLogin>("/auth/oauth", token);
+    return response.data;
+  } catch (e) {
+    // biome-ignore lint/complexity/noUselessCatch: <explanation>
     throw e;
   } finally {
     clearInterval(timeoutId);
@@ -79,6 +100,7 @@ const getProfile = async (): Promise<IResponseLogin> => {
     const response = await updsApi<IResponseLogin>("/auth/perfil");
     return response.data;
   } catch (e) {
+    // biome-ignore lint/complexity/noUselessCatch: <explanation>
     throw e;
   } finally {
     clearInterval(timeoutId);
@@ -100,6 +122,7 @@ const getProfileTestOffice = async (): Promise<IResponseLogin> => {
     const response = await updsApi<IResponseLogin>("/auth/perfil-test-office");
     return response.data;
   } catch (e) {
+    // biome-ignore lint/complexity/noUselessCatch: <explanation>
     throw e;
   } finally {
     clearInterval(timeoutId);
@@ -107,6 +130,7 @@ const getProfileTestOffice = async (): Promise<IResponseLogin> => {
 };
 export default {
   login,
+  loginWithOffice365,
   getProfile,
   getProfileTestOffice,
 };

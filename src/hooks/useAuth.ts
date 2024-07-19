@@ -39,7 +39,7 @@ export const useAuth = () => {
       onError: (error: any) => {
         setLogout();
 
-        if (error && error.message && error.message.includes("CanceledError")) {
+        if (error?.message?.includes("CanceledError")) {
           Toast.show({
             type: "error",
             text1: "Algo salio mal",
@@ -48,6 +48,44 @@ export const useAuth = () => {
           });
         } else if ([400, 401, 403].includes(error?.response?.status || 0)) {
           console.log("XDD");
+          Toast.show({
+            type: "error",
+            text1: "Algo salio mal",
+            text2:
+              error.response.data.msg || "Usuario o contrasena incorrectos :(",
+          });
+        }
+      },
+    }
+  );
+  const signInOffice365 = useMutation(
+    ["auth", "office365"],
+    (token: string) => authService.loginWithOffice365(token),
+    {
+      onSuccess: (response) => {
+        const careers = response.data.usuario.carreras;
+        setCareers(careers);
+        setSelectedCareer(careers[0]?.id);
+        setSelectedInscriptionCareer(careers[0]?.inscripcionCarreraId);
+        setLogin(response.data);
+
+        Toast.show({
+          type: "success",
+          text1: "Excelente",
+          text2: "Has iniciado sesion correctamente :)",
+        });
+      },
+      onError: (error: any) => {
+        setLogout();
+
+        if (error?.message?.includes("CanceledError")) {
+          Toast.show({
+            type: "error",
+            text1: "Algo salio mal",
+            text2:
+              "La solicitud fue cancelada debido a una alta demanda con el servidor",
+          });
+        } else if ([400, 401, 403].includes(error?.response?.status || 0)) {
           Toast.show({
             type: "error",
             text1: "Algo salio mal",
@@ -99,6 +137,7 @@ export const useAuth = () => {
     authModalRef,
     signIn,
     signOut,
+    signInOffice365,
     // refreshSession,
     // refreshSessionTestOffice,
   };
@@ -124,7 +163,7 @@ export const useRefresh = () => {
     },
     retry: false,
     // refetch 10 minutes
-    refetchInterval: Boolean(token) ? 1000000 : undefined,
+    refetchInterval: token ? 1000000 : undefined,
     enabled: Boolean(token),
   });
 };

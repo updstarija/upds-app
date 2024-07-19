@@ -1,4 +1,4 @@
-/* const CONSTANTS = {
+const CONSTANTS = {
   APP_NAME: process.env.EXPO_PUBLIC_APP_NAME ?? "UPDS Tarija",
   API_BASE_URL:
     process.env.EXPO_PUBLIC_API_BASE_URL ??
@@ -8,9 +8,8 @@
   PROD: JSON.parse(process.env.EXPO_PUBLIC_PROD ?? "false") as boolean,
   NOTIFICATION_TOPIC: process.env.EXPO_PUBLIC_NOTIFICATION_TOPIC ?? "upds-test",
 } as const;
- */
 
-// !ALERT: CONSTANS OBJECT IS ONLY FOR IOS PRODUCTION BUILD
+/* // !ALERT: CONSTANS OBJECT IS ONLY FOR IOS PRODUCTION BUILD
 const CONSTANTS = {
   APP_NAME: "UPDS Tarija",
   API_BASE_URL: "https://tarija.upds.edu.bo/ApiUpdsApp/api",
@@ -18,7 +17,7 @@ const CONSTANTS = {
   DEV: false,
   PROD: true,
   NOTIFICATION_TOPIC: "upds-app",
-} as const;
+} as const; */
 
 export default CONSTANTS;
 
