@@ -1,73 +1,93 @@
-import { Dispatch, useEffect, useState } from 'react';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { FontAwesome } from '@expo/vector-icons';
-import { useModulos, useThemeColor } from '@/hooks';
-import { Texto } from '@/ui';
-import { COLORS } from '~/constants';
-import { View } from 'react-native';
+import { Dispatch, useEffect, useState } from "react";
+import DropDownPicker from "react-native-dropdown-picker";
+import { FontAwesome } from "@expo/vector-icons";
+import { useModulos, useThemeColor } from "@/hooks";
+import { Texto } from "@/ui";
+import { COLORS } from "~/constants";
+import { View } from "react-native";
+import CustomDropdown from "@/ui/CustomDropDown";
 
 interface Props {
-    valueModulo: number
-    setvalueModulo: React.Dispatch<React.SetStateAction<number>>
-    tutorial?: {
-        inCourse: boolean;
-        step: number;
-    };
+	valueModulo: number;
+	setvalueModulo: React.Dispatch<React.SetStateAction<number>>;
+	tutorial?: {
+		inCourse: boolean;
+		step: number;
+	};
 }
 
-const SelectModulos: React.FC<Props> = ({ setvalueModulo, valueModulo, tutorial }) => {
-    const isDark = useThemeColor() === "dark";
+const SelectModulos: React.FC<Props> = ({
+	setvalueModulo,
+	valueModulo,
+	tutorial,
+}) => {
+	const isDark = useThemeColor() === "dark";
 
-    const [openModulo, setOpenModulo] = useState(false);
+	const [openModulo, setOpenModulo] = useState(false);
 
-    const { modulosQuery } = useModulos();
+	const { modulosQuery } = useModulos();
 
+	useEffect(() => {
+		let animationInterval: NodeJS.Timeout;
 
-    useEffect(() => {
-        let animationInterval: NodeJS.Timeout;
+		const startAnimation = () => {
+			if (!modulosQuery.data?.data) return;
+			animationInterval = setInterval(() => {
+				setvalueModulo(
+					modulosQuery.data.data[
+						Math.floor(Math.random() * modulosQuery.data.data.length)
+					].id || modulosQuery.data.data[0].id,
+				);
+			}, 2000);
+		};
 
-        const startAnimation = () => {
+		const stopAnimation = () => {
+			if (modulosQuery.data?.data) {
+				setvalueModulo(modulosQuery.data.data[0].id);
+			}
 
-            if (!modulosQuery.data?.data) return
-            animationInterval = setInterval(() => {
-                setvalueModulo(modulosQuery.data.data[Math.floor(Math.random() * modulosQuery.data.data.length)].id || modulosQuery.data.data[0].id)
-            }, 2000);
-        };
+			clearInterval(animationInterval);
+		};
 
-        const stopAnimation = () => {
-            if (modulosQuery.data?.data) {
-                setvalueModulo(modulosQuery.data.data[0].id)
-            }
+		if (tutorial?.inCourse && tutorial.step === 8) {
+			stopAnimation();
+			startAnimation();
+		} else {
+			stopAnimation();
+		}
 
-            clearInterval(animationInterval);
-        };
+		return stopAnimation;
+	}, [tutorial?.inCourse, tutorial?.step]);
 
-        if (tutorial?.inCourse && tutorial.step === 8) {
-            stopAnimation();
-            startAnimation();
-        } else {
-            stopAnimation();
+	useEffect(() => {
+		if (modulosQuery.data?.data && !valueModulo) {
+			setvalueModulo(modulosQuery.data.data[0].id);
+		}
+	}, [modulosQuery.data?.data]);
 
-        }
+	if (modulosQuery.isLoading) return <Texto>CARGANDO MODULOS..</Texto>;
+	if (modulosQuery.isError)
+		return <Texto>HUBO UN ERROR CARGAND MODULO..</Texto>;
 
-        return stopAnimation;
-    }, [tutorial?.inCourse, tutorial?.step]);
+	const modulos = modulosQuery.data.data;
 
+	return (
+		<View style={{ zIndex: 999999 }}>
+			<CustomDropdown
+				data={modulosQuery.data.data}
+				labelField={"nombre"}
+				valueField={"id"}
+				value={valueModulo}
+				onChange={(e: any) => {
+					console.log(e);
+					setvalueModulo(e.id);
+				}}
+				inputSearchStyle={{
+					backgroundColor: "red",
+				}}
+			/>
 
-    useEffect(() => {
-        if (modulosQuery.data?.data && !valueModulo) {
-            setvalueModulo(modulosQuery.data.data[0].id);
-        }
-
-    }, [modulosQuery.data?.data])
-
-    if (modulosQuery.isLoading) return <Texto>CARGANDO MODULOS..</Texto>;
-    if (modulosQuery.isError) return <Texto>HUBO UN ERROR MODYLO..</Texto>;
-
-
-    return (
-        <View style={{ zIndex: 999999 }}>
-            <DropDownPicker
+			{/* <DropDownPicker
                 listMode='SCROLLVIEW'
                 open={openModulo}
                 value={valueModulo}
@@ -121,8 +141,8 @@ const SelectModulos: React.FC<Props> = ({ setvalueModulo, valueModulo, tutorial 
                         { zIndex: 99999 }
                     ]
                 }
-            />
-        </View>
-    )
-}
-export default SelectModulos
+            /> */}
+		</View>
+	);
+};
+export default SelectModulos;
