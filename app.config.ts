@@ -2,14 +2,14 @@ import type { ExpoConfig, ConfigContext } from "@expo/config";
 import prevConfig from "./app.json";
 
 const config = ({ config }: ConfigContext): ExpoConfig => {
-  const versionCode = 30;
+  const versionCode = 31;
 
   return {
     //...(prevConfig.expo as ExpoConfig),
     ...config,
     name: "UPDS Tarija",
     slug: "upds-tarija",
-    version: "1.3.0",
+    version: "1.3.1",
     orientation: "default",
     notification: {
       icon: "./assets/images/app/icon.png",
